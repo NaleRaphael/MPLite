@@ -24,5 +24,20 @@ namespace MPLite
         {
             InitializeComponent();
         }
+
+        private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            Frame_PageSwitcher.NavigationService.Navigate(new PagePlaylist());
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            Frame_PageSwitcher.NavigationService.Navigate(new PageSetting());
+        }
     }
 }

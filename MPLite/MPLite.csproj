@@ -71,8 +71,23 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PagePlaylist.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PageSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PagePlaylist.xaml.cs">
+      <DependentUpon>PagePlaylist.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PageSetting.xaml.cs">
+      <DependentUpon>PageSetting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PageSwitcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

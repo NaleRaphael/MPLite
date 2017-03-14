@@ -1,0 +1,19 @@
+﻿<Window x:Class="MPLite.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MPLite"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525" WindowStyle="None" Background="#FF323232" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" MinWidth="525" MinHeight="350">
+    <Grid x:Name="Grid_Background">
+        <DockPanel x:Name="DPane_Header" Height="50" LastChildFill="False" Width="Auto" Background="#FF4B4B4B" VerticalAlignment="Top" MouseDown="DPane_Header_MouseDown"/>
+        <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="50" Width="Auto" VerticalAlignment="Bottom">
+            <StackPanel Width="100" Orientation="Horizontal" Margin="10,0,0,20"/>
+        </DockPanel>
+        <Frame x:Name="Frame_PageSwitcher" Content="" Margin="0,50" NavigationUIVisibility="Hidden"/>
+        <Button x:Name="button" Content="" HorizontalAlignment="Left" Margin="10,300,0,0" VerticalAlignment="Top" Width="30" Height="30" Click="button_Click"/>
+        <Button x:Name="button1" Content="" HorizontalAlignment="Left" Margin="40,300,0,0" VerticalAlignment="Top" Width="30" Height="30" Click="button1_Click"/>
+
+    </Grid>
+</Window>
