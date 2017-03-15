@@ -1,19 +1,19 @@
-﻿<Page
+﻿<Page x:Class="MPLite.PageCalendar"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MPLite"
-      xmlns:NET="clr-namespace:Calendar.NET;assembly=Calendar.NET" x:Class="MPLite.PageCalendar"
+      xmlns:calendar="clr-namespace:Calendar.NET;assembly=Calendar.NET"
+      xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="PageCalendar">
 
-    <Grid Background="#FF4B4B4B">
-
-        <Grid.DataContext>
-            <NET:Calendar/>
-        </Grid.DataContext>
-
+    <Grid x:Name="GridContainer">
+        <WindowsFormsHost Background="#FF00B9FF">
+            <calendar:Calendar x:Name="scheduler"/>
+        </WindowsFormsHost>
+        <Label x:Name="label" Content="Calendar" HorizontalAlignment="Left" Margin="68,60,0,0" VerticalAlignment="Top" Background="#FFFFB900" MouseDown="label_MouseDown"/>
     </Grid>
 </Page>

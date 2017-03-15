@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace MPLite
 {
-    /// <summary>
-    /// PageSetting.xaml 的互動邏輯
-    /// </summary>
     public partial class PageSetting : Page
     {
         public PageSetting()

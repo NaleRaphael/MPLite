@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MPLite"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" WindowStyle="None" Background="#FF323232" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" MinWidth="525" MinHeight="350">
+        Title="MainWindow" Height="350" Width="525" Background="#FF323232" ResizeMode="CanResizeWithGrip" MinWidth="525" MinHeight="350" WindowStyle="None" AllowDrop="True" AllowsTransparency="True">
     <Grid x:Name="Grid_Background">
         <DockPanel x:Name="DPane_Header" Height="50" LastChildFill="False" Width="Auto" Background="#FF4B4B4B" VerticalAlignment="Top" MouseDown="DPane_Header_MouseDown">
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
@@ -14,7 +14,7 @@
                         <Image Source="images/icons/exit.ico"/>
                     </Button>
                 </StackPanel>
-            
+
             </ContentControl>
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <StackPanel x:Name="SPane_PlaybackControl" Width="120" HorizontalAlignment="Left" Margin="20,10,0,10" Orientation="Horizontal">
