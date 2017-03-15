@@ -59,6 +59,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="PageCalendar.xaml.cs">
+      <DependentUpon>PageCalendar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -71,6 +75,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PageCalendar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PagePlaylist.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -113,6 +121,37 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\icons\backward-disabled.ico" />
+    <Resource Include="images\icons\backward.ico" />
+    <Resource Include="images\icons\forward-disabled.ico" />
+    <Resource Include="images\icons\forward.ico" />
+    <Resource Include="images\icons\pause-disabled.ico" />
+    <Resource Include="images\icons\pause.ico" />
+    <Resource Include="images\icons\play-disabled.ico" />
+    <Resource Include="images\icons\play.ico" />
+    <Resource Include="images\icons\playlist-clicked.ico" />
+    <Resource Include="images\icons\playlist.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\icons\gear-clicked.ico" />
+    <Resource Include="images\icons\gear.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\icons\exit.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\icons\vol_0.ico" />
+    <Resource Include="images\icons\vol_100.ico" />
+    <Resource Include="images\icons\vol_33.ico" />
+    <Resource Include="images\icons\vol_66.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\icons\volw_0.ico" />
+    <Resource Include="images\icons\volw_100.ico" />
+    <Resource Include="images\icons\volw_33.ico" />
+    <Resource Include="images\icons\volw_66.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

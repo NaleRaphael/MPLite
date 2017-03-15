@@ -6,9 +6,16 @@
       xmlns:local="clr-namespace:MPLite"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="PagePlaylist">
+      Title="PagePlaylist" Width="525" Height="265">
 
-    <Grid Background="White">
-        
+    <Grid Background="White" Width="525" Height="265">
+        <ListView x:Name="LV_Playlist" HorizontalAlignment="Left" Height="265" VerticalAlignment="Top" Width="525" Background="#FF4B4B4B" BorderBrush="#00000000" BorderThickness="0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Page>
