@@ -15,14 +15,16 @@ using Itenso.Windows.Controls.ListViewLayout;
 
 namespace MPLite
 {
-    /// <summary>
-    /// PagePlaylist.xaml 的互動邏輯
-    /// </summary>
     public partial class PagePlaylist : Page
     {
         public PagePlaylist()
         {
             InitializeComponent();
+        }
+
+        private void InitData()
+        {
+            //this.LV_Playlist.ItemsSource;
         }
     }
 }

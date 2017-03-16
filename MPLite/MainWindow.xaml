@@ -11,7 +11,7 @@
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <StackPanel Height="30" VerticalAlignment="Top" Width="30" Margin="20,10,0,0">
                     <Button x:Name="Btn_ExitProgram" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="Btn_ExitProgram_Click">
-                        <Image Source="images/icons/exit.ico"/>
+                        <Image Source="images/icons/exit.png"/>
                     </Button>
                 </StackPanel>
 
@@ -21,32 +21,39 @@
                     <Button x:Name="Btn_PrevTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/backward.ico"/>
                     </Button>
-                    <Button x:Name="Btn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Button x:Name="Btn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="Btn_StartPlayback_Click">
                         <Image Source="images/icons/play.ico"/>
                     </Button>
                     <Button x:Name="Btn_NextTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/forward.ico"/>
                     </Button>
                     <Button x:Name="Btn_VolumnControl" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                        <Image Source="images/icons/volw_100.ico"/>
+                        <Image Source="images/icons/volw_100.png"/>
                     </Button>
                 </StackPanel>
             </ContentControl>
+            <DockPanel x:Name="DPane_PlaybackStatus" VerticalAlignment="Top" Margin="0" Width="250" LastChildFill="False">
+                <Label x:Name="label" Content="Soundtrack" Height="23" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="90,0,0,27"/>
+            </DockPanel>
         </DockPanel>
         <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
             <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="100" Margin="10,0,0,0" Orientation="Horizontal">
                 <Button x:Name="Btn_Playlist" BorderThickness="1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
-                    <Image Source="images/icons/playlist.ico"/>
+                    <Image Source="images/icons/playlist.png"/>
                 </Button>
                 <Button x:Name="Btn_Setting" BorderThickness="0,0,1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Setting_Click" BorderBrush="#FF323232">
-                    <Image Source="images/icons/gear.ico"/>
+                    <Image Source="images/icons/gear.png"/>
                 </Button>
             </StackPanel>
-            <Button x:Name="button" Content="Button" Height="35" VerticalAlignment="Top" Width="75" Click="button_Click"/>
 
         </DockPanel>
 
         <Frame x:Name="Frame_PageSwitcher" Content="" Margin="0,50,0,35" NavigationUIVisibility="Hidden"/>
+        <Menu x:Name="Menu_Setting" HorizontalAlignment="Left" Height="63" Margin="70,252,0,0" VerticalAlignment="Top" Width="110" Background="#FF7D7D7D" Foreground="#FFC8C8C8" Panel.ZIndex="1000">
+            <MenuItem x:Name="MItem_Basic" Header="Basic" Width="110" Background="#FF646464" Click="MItem_Basic_Click"/>
+            <MenuItem x:Name="MItem_Scheduler" Header="Scheduler" Width="110" Background="#FF646464" Click="MItem_Scheduler_Click"/>
+        </Menu>
+
 
     </Grid>
 </Window>

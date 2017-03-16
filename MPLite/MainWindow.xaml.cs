@@ -19,12 +19,15 @@ namespace MPLite
     public partial class MainWindow : Window
     {
         // Window control
-        bool isWindowMaximized = false;
+        private bool isWindowMaximized = false;
 
         // Pages
         private PagePlaylist pagePlaylist = null;
         private PageSetting pageSetting = null;
         private PageCalendar pageCalendar = null;
+
+        // Menu_Setting
+        private bool isMenuCollapsed = true;
 
         // Try to turn off navigation sound
         private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
@@ -43,6 +46,9 @@ namespace MPLite
 
             // Page switcher
             PageSwitcher.pageSwitcher = this.Frame_PageSwitcher;
+
+            // Menu_Setting
+            Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #region PageControl
@@ -52,26 +58,33 @@ namespace MPLite
             {
                 target = new T();
             }
-            PageSwitcher.Switch((Page)target);
+            PageSwitcher.Switch(target);
         }
 
         private void Btn_Playlist_Click(object sender, RoutedEventArgs e)
         {
-            //Frame_PageSwitcher.NavigationService.Navigate(new PagePlaylist());
-            //PageSwitcher.Switch(new PagePlaylist());
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
         }
 
         private void Btn_Setting_Click(object sender, RoutedEventArgs e)
         {
-            //Frame_PageSwitcher.NavigationService.Navigate(new PageSetting());
-            //PageSwitcher.Switch(new PageSetting());
-            PageSwitchControl<PageSetting>(ref pageSetting);
+            //isMenuCollapsed = !isMenuCollapsed;
+            //Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            CollapseMenuSetting(false);
+            
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void MItem_Basic_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: navigate to desired page
+            PageSwitchControl<PageSetting>(ref pageSetting);
+            CollapseMenuSetting(true);
+        }
+
+        private void MItem_Scheduler_Click(object sender, RoutedEventArgs e)
         {
             PageSwitchControl<PageCalendar>(ref pageCalendar);
+            CollapseMenuSetting(true);
             /*if (pageScheduler == null)
             {
                 pageScheduler = new PageCalendar();
@@ -112,10 +125,23 @@ namespace MPLite
             Application.Current.Shutdown();
         }
 
+        private void CollapseMenuSetting(bool collapse)
+        {
+            Menu_Setting.Visibility = collapse ? Visibility.Collapsed : Visibility.Visible;
+            isMenuCollapsed = collapse;
+        }
+
         private void CloseProxyWindow()
         {
             //scheduler;
         }
 
+        private void Btn_StartPlayback_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: play music
+            // TODO: show status of playback
+        }
+
+        
     }
 }

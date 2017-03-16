@@ -8,5 +8,9 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="PageSetting">
 
-    <Grid Background="#FFFFFFC1"/>
+    <Grid Background="#FF323232">
+        <StackPanel Height="50" VerticalAlignment="Top" Background="#FF2D2D2D">
+            <Label x:Name="lbl_Basic" Content="Basic" Height="24" Margin="0,13,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FFC8C8C8" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe UI" FontWeight="Bold"/>
+        </StackPanel>
+    </Grid>
 </Page>
