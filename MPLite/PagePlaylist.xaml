@@ -8,14 +8,32 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="PagePlaylist" Width="525" Height="265">
 
+    <Page.Resources>
+        <!-- Column header style -->
+        <Style x:Key="StylePlaylist" TargetType="GridViewColumnHeader">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent">
+                            <TextBlock x:Name="ContentHeader" Text="{TemplateBinding Content}" Padding="5,5,5,0" Width="{TemplateBinding Width}" TextAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="White" Width="525" Height="265">
-        <ListView x:Name="LV_Playlist" HorizontalAlignment="Left" Height="265" VerticalAlignment="Top" Width="525" Background="#FF4B4B4B" BorderBrush="#00000000" BorderThickness="0">
+        <ListView x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0">
             <ListView.View>
-                <GridView>
+                <GridView ColumnHeaderContainerStyle="{StaticResource StylePlaylist}">
                     <GridViewColumn/>
                 </GridView>
             </ListView.View>
         </ListView>
-
     </Grid>
 </Page>

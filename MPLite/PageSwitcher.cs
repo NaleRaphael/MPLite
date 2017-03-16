@@ -10,7 +10,7 @@ namespace MPLite
     {
         public static Frame pageSwitcher;
 
-        public static void Switch(UserControl newPage)
+        public static void Switch(Page newPage)
         {
             pageSwitcher.NavigationService.Navigate(newPage);
         }

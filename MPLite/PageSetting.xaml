@@ -8,5 +8,5 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="PageSetting">
 
-    <Grid Background="#FFBE7800"/>
+    <Grid Background="#FF323232"/>
 </Page>

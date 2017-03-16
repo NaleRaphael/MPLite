@@ -9,5 +9,7 @@
 ## other files
 *.7z
 *.zip
+*.rar
 *.VC.db
 *.VC.opendb
+*.TMP

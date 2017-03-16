@@ -21,6 +21,12 @@ namespace MPLite
         // Window control
         bool isWindowMaximized = false;
 
+        // Pages
+        private PagePlaylist pagePlaylist = null;
+        private PageSetting pageSetting = null;
+        private PageCalendar pageCalendar = null;
+
+        // Try to turn off navigation sound
         private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
         private const int SetFeatureOnProcess = 0x00000002;
         [DllImport("urlmon.dll")]
@@ -34,23 +40,58 @@ namespace MPLite
             InitializeComponent();
             //CoInternetSetFeatureEnabled(Feature, SetFeatureOnProcess, true);
             URLSecurityZoneAPI.InternetSetFeatureEnabled(URLSecurityZoneAPI.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, URLSecurityZoneAPI.SetFeatureOn.PROCESS, true);
+
+            // Page switcher
+            PageSwitcher.pageSwitcher = this.Frame_PageSwitcher;
         }
 
-        private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
+        #region PageControl
+        private void PageSwitchControl<T>(ref T target) where T : Page, new()
         {
-            DragMove();
+            if (target == null)
+            {
+                target = new T();
+            }
+            PageSwitcher.Switch((Page)target);
         }
 
         private void Btn_Playlist_Click(object sender, RoutedEventArgs e)
         {
-            URLSecurityZoneAPI.InternetSetFeatureEnabled(URLSecurityZoneAPI.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, URLSecurityZoneAPI.SetFeatureOn.PROCESS, true);
-            Frame_PageSwitcher.NavigationService.Navigate(new PagePlaylist());
+            //Frame_PageSwitcher.NavigationService.Navigate(new PagePlaylist());
+            //PageSwitcher.Switch(new PagePlaylist());
+            PageSwitchControl<PagePlaylist>(ref pagePlaylist);
         }
 
         private void Btn_Setting_Click(object sender, RoutedEventArgs e)
         {
-            URLSecurityZoneAPI.InternetSetFeatureEnabled(URLSecurityZoneAPI.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, URLSecurityZoneAPI.SetFeatureOn.PROCESS, true);
-            Frame_PageSwitcher.NavigationService.Navigate(new PageSetting());
+            //Frame_PageSwitcher.NavigationService.Navigate(new PageSetting());
+            //PageSwitcher.Switch(new PageSetting());
+            PageSwitchControl<PageSetting>(ref pageSetting);
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            PageSwitchControl<PageCalendar>(ref pageCalendar);
+            /*if (pageScheduler == null)
+            {
+                pageScheduler = new PageCalendar();
+            }
+            else
+            {
+                return;
+            }
+            Frame_PageSwitcher.NavigationService.Navigate(pageScheduler);*/
+
+            /*if (proxyScheduler == null)
+            {
+                proxyScheduler = new ProxyWindow();
+            }*/
+        }
+        #endregion
+
+        private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            DragMove();
         }
 
         private void ContentControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -65,15 +106,16 @@ namespace MPLite
                 Application.Current.MainWindow.WindowState = WindowState.Normal;
             }
         }
-
+        
         private void Btn_ExitProgram_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void CloseProxyWindow()
         {
-            Frame_PageSwitcher.NavigationService.Navigate(new PageCalendar());
+            //scheduler;
         }
+
     }
 }

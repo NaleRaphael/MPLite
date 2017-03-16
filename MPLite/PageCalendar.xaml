@@ -8,12 +8,11 @@
       xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="PageCalendar">
+      Title="PageCalendar" Loaded="Page_Loaded" Unloaded="Page_Unloaded" Background="#FF323232">
 
     <Grid x:Name="GridContainer">
-        <WindowsFormsHost Background="#FF00B9FF">
-            <calendar:Calendar x:Name="scheduler"/>
+        <WindowsFormsHost Name="wfh">
+            <calendar:Calendar/>
         </WindowsFormsHost>
-        <Label x:Name="label" Content="Calendar" HorizontalAlignment="Left" Margin="68,60,0,0" VerticalAlignment="Top" Background="#FFFFB900" MouseDown="label_MouseDown"/>
     </Grid>
 </Page>
