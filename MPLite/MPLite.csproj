@@ -39,6 +39,10 @@
     <Reference Include="Calendar.NET">
       <HintPath>dll\Calendar.NET.dll</HintPath>
     </Reference>
+    <Reference Include="Itenso.Windows.Controls.ListViewLayout, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dll\Itenso.Windows.Controls.ListViewLayout.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -164,6 +168,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="styles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dll\Calendar.NET.dll" />
+    <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

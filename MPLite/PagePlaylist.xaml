@@ -4,9 +4,10 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MPLite"
+      xmlns:lvctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
-      Title="PagePlaylist" Width="525" Height="265">
+      Title="PagePlaylist" Width="Auto" Height="Auto">
 
     <Page.Resources>
         <!-- Column header style -->
@@ -27,8 +28,11 @@
         </Style>
     </Page.Resources>
     
-    <Grid Background="White" Width="525" Height="265">
-        <ListView x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0">
+    <Grid Background="#FF323232">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" lvctrl:ListViewLayoutManager.Enabled="True">
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource StylePlaylist}">
                     <GridViewColumn/>
