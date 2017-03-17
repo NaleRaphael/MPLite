@@ -6,44 +6,79 @@
       xmlns:local="clr-namespace:MPLite"
       xmlns:lvctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
-      Title="PagePlaylist" Width="Auto" Height="Auto">
+      d:DesignHeight="300" d:DesignWidth="500"
+      Title="PagePlaylist" Width="Auto" Height="Auto" AllowDrop="True">
 
     <Page.Resources>
+        <Style x:Key="StyleMenuItem" TargetType="MenuItem">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="LightGray" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <MenuItem Height="35" Background="#FF4B4B4B">
+                            <MenuItem.Header>
+                                <TextBlock x:Name="MenuHeader" Text="Default" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF00FFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Column header style -->
-        <Style x:Key="StylePlaylist" TargetType="GridViewColumnHeader">
+        <Style x:Key="StylePlaylistHeader" TargetType="GridViewColumnHeader">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
-                        <Border BorderThickness="0,0,0,1" BorderBrush="Black" Background="Transparent">
+                        <Border BorderThickness="0,0,1,1" BorderBrush="#FF4B4B4B" Background="Transparent">
                             <TextBlock x:Name="ContentHeader" Text="{TemplateBinding Content}" Padding="5,5,5,0" Width="{TemplateBinding Width}" TextAlignment="Left" Foreground="#FFC8C8C8" Background="#FF2D2D2D" UseLayoutRounding="False"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Foreground" Value="Black" />
             <Setter Property="FontFamily" Value="Segoe UI" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Foreground" Value="LightGray" />
         </Style>
+
+        <!-- Row style-->
+        <Style x:Key="StyleTrackInfo" TargetType="GridViewRowPresenter">
+            <!-- TODO: Edit this -->
+        </Style>
     </Page.Resources>
-    
+
     <Grid Background="#FF323232">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
-                  lvctrl:ListViewLayoutManager.Enabled="True" ItemsSource="{Binding}">
-            <ListView.View>
-                <GridView ColumnHeaderContainerStyle="{StaticResource StylePlaylist}">
-                    <GridViewColumn Header="Playing" lvctrl:ProportionalColumn.Width="5"/>
-                    <GridViewColumn Header="Track" lvctrl:ProportionalColumn.Width="15" DisplayMemberBinding="{Binding Name}"/>
-                    <GridViewColumn Header="Duration" lvctrl:ProportionalColumn.Width="10"/>
-                    <GridViewColumn Header="Artist" lvctrl:ProportionalColumn.Width="10"/>
-                    <GridViewColumn Header="Album" lvctrl:ProportionalColumn.Width="10"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+
+        <DockPanel>
+            <ListBox x:Name="ListBox_Playlist" Width="150" Background="#FF414141" BorderThickness="0">
+                <ListBoxItem Content="Default playlist" Background="#FF414141" BorderThickness="0,0,0,1" BorderBrush="#FF4B4B4B" Height="30" Foreground="#FFC8C8C8" FontFamily="Segoe UI" Padding="5,0,0,0"/>
+
+            </ListBox>
+
+            <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
+                  lvctrl:ListViewLayoutManager.Enabled="True" ItemsSource="{Binding}" DragEnter="LV_Playlist_DragEnter" Drop="LV_Playlist_Drop">
+                <ListView.View>
+                    <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}">
+                        <GridViewColumn Header=">" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding CurrentPlaying}"/>
+                        <GridViewColumn Header="Track" lvctrl:ProportionalColumn.Width="15" DisplayMemberBinding="{Binding TrackName}"/>
+                        <GridViewColumn Header="Duration" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Duration}"/>
+                        <GridViewColumn Header="Artist" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Artist}"/>
+                        <GridViewColumn Header="Album" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Album}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </DockPanel>
     </Grid>
 </Page>

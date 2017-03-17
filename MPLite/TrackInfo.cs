@@ -5,15 +5,9 @@ using System.Text;
 
 namespace MPLite
 {
-    class TrackInfo
+    public class TrackInfo
     {
-        string TrackName { get; set; }
-        string Path { get; set; }
-
-        public TrackInfo(string trackName, string path)
-        {
-            TrackName = trackName;
-            Path = path;
-        }
+        public string TrackName { get; set; }
+        public string TrackPath { get; set; }
     }
 }

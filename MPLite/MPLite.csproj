@@ -73,12 +73,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataControl.cs" />
     <Compile Include="PageCalendar.xaml.cs">
       <DependentUpon>PageCalendar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlaybackControl.cs" />
+    <Compile Include="PlaylistCollection.cs" />
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="TrackInfo.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">

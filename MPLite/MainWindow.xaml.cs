@@ -49,6 +49,9 @@ namespace MPLite
 
             // Menu_Setting
             Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+
+            // Default page
+            PageSwitchControl<PagePlaylist>(ref pagePlaylist);
         }
 
         #region PageControl
@@ -71,7 +74,6 @@ namespace MPLite
             //isMenuCollapsed = !isMenuCollapsed;
             //Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
             CollapseMenuSetting(false);
-            
         }
 
         private void MItem_Basic_Click(object sender, RoutedEventArgs e)
