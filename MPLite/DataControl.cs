@@ -12,14 +12,12 @@ namespace MPLite
     public static class DataControl
     {
         // WriteJsonToFile
-        public static void SaveData(string filePath, Playlist obj)
+        public static void SaveData(string filePath, PlaylistCollection obj)
         {
             using (StreamWriter sw = File.CreateText(filePath))
             using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
             {
-                PlaylistCollection playLists = new PlaylistCollection();
-                playLists.TrackLists.Add(obj);
-                ConvertToJson<PlaylistCollection>(playLists).WriteTo(jsonWriter);
+                ConvertToJson<PlaylistCollection>(obj).WriteTo(jsonWriter);
             }
         }
 
@@ -29,14 +27,25 @@ namespace MPLite
             JObject db = ReadFromJson(filePath);
             if (db == null)
             {
-                SaveData(filePath, obj);
+                PlaylistCollection plc = new PlaylistCollection();
+                plc.TrackLists.Add(obj);
+                SaveData(filePath, plc);
             }
             else
             {
-                IList<PlaylistCollection> playlist = db.ToObject<IList<PlaylistCollection>>();
+                PlaylistCollection plc = db.ToObject<PlaylistCollection>();
+                Playlist pl = plc.TrackLists.Find(x => x.ListName == obj.ListName);
+                foreach (TrackInfo track in obj.Soundtracks)
+                {
+                    pl.Soundtracks.Add(track);
+                }
+                SaveData(filePath, plc);
+                //pl.Soundtracks.Add(obj.Soundtracks);
+                //pl.Soundtracks.Add();
             }
 
             // STEP_02: add data into it
+
 
             // STEP_03: convert collection to JSON file
         }
