@@ -13,6 +13,10 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Itenso.Windows.Controls.ListViewLayout;
+using CSCore;
+using CSCore.SoundOut;
+using CSCore.Codecs.MP3;
+using System.Threading;
 
 namespace MPLite
 {
@@ -21,12 +25,20 @@ namespace MPLite
         public PagePlaylist()
         {
             InitializeComponent();
-            ListBox_Playlist.SelectedIndex = 0;
+            InitPlaylist();
+            ListBox_Playlist.SelectedIndex = 0;  // select default list
         }
 
         private void InitPlaylist()
         {
             //this.LV_Playlist.ItemsSource;
+            PlaylistCollection plc = PlaylistCollection.GetDatabase();
+            if (plc == null) return;
+
+            foreach (TrackInfo track in plc.TrackLists[0].Soundtracks)
+            {
+                LV_Playlist.Items.Add(track);
+            }
         }
 
         private void LV_Playlist_DragEnter(object sender, DragEventArgs e)
@@ -55,6 +67,45 @@ namespace MPLite
                 TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
                 LV_Playlist.Items.Add(trackInfo);
             }
+        }
+
+        private void LV_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            //MessageBox.Show(LV_Playlist.SelectedIndex.ToString());
+            Stream stream = File.Open(((TrackInfo)LV_Playlist.SelectedItem).TrackPath, FileMode.Open);
+            //Contains the sound to play
+            using (IWaveSource soundSource = GetSoundSource(stream))
+            {
+                //SoundOut implementation which plays the sound
+                using (ISoundOut soundOut = GetSoundOut())
+                {
+                    //Tell the SoundOut which sound it has to play
+                    soundOut.Initialize(soundSource);
+                    //Play the sound
+                    soundOut.Play();
+
+                    //Thread.Sleep(2000);
+
+                    //Stop the playback
+                    //soundOut.Stop();
+                }
+            }
+            //stream.Close();
+        }
+
+        private ISoundOut GetSoundOut()
+        {
+            if (WasapiOut.IsSupportedOnCurrentPlatform)
+                return new WasapiOut();
+            else
+                return new DirectSoundOut();
+        }
+
+        private IWaveSource GetSoundSource(Stream stream)
+        {
+            // Instead of using the CodecFactory as helper, you specify the decoder directly:
+            return new DmoMp3Decoder(stream);
+
         }
     }
 }

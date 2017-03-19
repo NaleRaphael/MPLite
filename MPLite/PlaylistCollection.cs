@@ -52,6 +52,12 @@ namespace MPLite
 
             DataControl.SaveData<PlaylistCollection>(configPath, plc);
         }
+
+        public static PlaylistCollection GetDatabase()
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            return DataControl.ReadFromJson<PlaylistCollection>(configPath);
+        }
     }
 
     public class Playlist
