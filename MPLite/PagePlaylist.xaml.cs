@@ -24,7 +24,7 @@ namespace MPLite
             ListBox_Playlist.SelectedIndex = 0;
         }
 
-        private void InitData()
+        private void InitPlaylist()
         {
             //this.LV_Playlist.ItemsSource;
         }
@@ -41,7 +41,11 @@ namespace MPLite
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             string selectedPlaylist = ((ListBoxItem)ListBox_Playlist.SelectedValue).Content.ToString();
-            Playlist playlist = new Playlist(selectedPlaylist);
+
+            // Update database
+            PlaylistCollection.UpdateByTracks(files, selectedPlaylist);
+
+            // Update LV_Playlist
             foreach (string filePath in files)
             {
                 // TODO: rewrite this
@@ -50,13 +54,7 @@ namespace MPLite
                 string trackName = System.IO.Path.GetFileNameWithoutExtension(filePath);
                 TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
                 LV_Playlist.Items.Add(trackInfo);
-
-                // Save trackinfo into playlist
-                playlist.Soundtracks.Add(trackInfo);
             }
-            // Store data into JSON file
-            // TODO: move this operation out of for-loop -> avoid freqnetly IO
-            DataControl.UpdateDatabase(Properties.Settings.Default.PlaylistInfoPath, playlist);
         }
     }
 }

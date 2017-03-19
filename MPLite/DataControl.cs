@@ -21,33 +21,13 @@ namespace MPLite
             }
         }
 
-        public static void UpdateDatabase(string filePath, Playlist obj)
+        public static void SaveData<T>(string filePath, T obj) where T : class
         {
-            // STEP_01: convert JSON file to a collection
-            JObject db = ReadFromJson(filePath);
-            if (db == null)
+            using (StreamWriter sw = File.CreateText(filePath))
+            using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
             {
-                PlaylistCollection plc = new PlaylistCollection();
-                plc.TrackLists.Add(obj);
-                SaveData(filePath, plc);
+                ConvertToJson<T>(obj).WriteTo(jsonWriter);
             }
-            else
-            {
-                PlaylistCollection plc = db.ToObject<PlaylistCollection>();
-                Playlist pl = plc.TrackLists.Find(x => x.ListName == obj.ListName);
-                foreach (TrackInfo track in obj.Soundtracks)
-                {
-                    pl.Soundtracks.Add(track);
-                }
-                SaveData(filePath, plc);
-                //pl.Soundtracks.Add(obj.Soundtracks);
-                //pl.Soundtracks.Add();
-            }
-
-            // STEP_02: add data into it
-
-
-            // STEP_03: convert collection to JSON file
         }
 
         public static JObject ReadFromJson(string filePath)
@@ -61,11 +41,29 @@ namespace MPLite
                     result = (JObject)JToken.ReadFrom(jsonReader);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex)    // Empty content
             {
                 return null;
             }
             return result;
+        }
+
+        public static T ReadFromJson<T>(string filePath) where T : class
+        {
+            JObject result;
+            try
+            {
+                using (StreamReader sr = File.OpenText(filePath))
+                using (JsonTextReader jsonReader = new JsonTextReader(sr))
+                {
+                    result = (JObject)JToken.ReadFrom(jsonReader);
+                }
+            }
+            catch (Exception ex)    // Empty content
+            {
+                return null;
+            }
+            return result.ToObject<T>();
         }
 
         //public static JObject ConvertFromJson()
@@ -73,10 +71,17 @@ namespace MPLite
         //    return;
         //}
 
-        // http://www.newtonsoft.com/json/help/html/FromObject.htm
+        // ref: http://www.newtonsoft.com/json/help/html/FromObject.htm
         public static JObject ConvertToJson<T>(Object obj)
         {
             return (JObject)JToken.FromObject((T)obj);
+        }
+    }
+
+    public class EmptyJsonFileException : Exception
+    {
+        public EmptyJsonFileException(string message) : base(message)
+        {
         }
     }
 }
