@@ -75,9 +75,8 @@
     </ApplicationDefinition>
     <Compile Include="DataControl.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="MusicPlayer.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="id3Lib.cs" />
+    <Compile Include="MusicPlayer.cs" />
     <Compile Include="PageCalendar.xaml.cs">
       <DependentUpon>PageCalendar.xaml</DependentUpon>
     </Compile>

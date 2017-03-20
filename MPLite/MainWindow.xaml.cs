@@ -141,8 +141,7 @@ namespace MPLite
         #region Music player control
         private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
         {
-            _musicPlayer.Open(trackInfo);
-            _musicPlayer.Play();
+            _musicPlayer.Play(trackInfo);
         }
         #endregion
     }

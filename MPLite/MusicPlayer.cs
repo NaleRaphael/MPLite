@@ -2,153 +2,303 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.ComponentModel;
-using CSCore;
-using CSCore.Codecs;
-using CSCore.CoreAudioAPI;
-using CSCore.SoundOut;
+using System.Runtime.InteropServices;   //DllImport
+using System.Windows.Forms;
 
 namespace MPLite
 {
-    public class MusicPlayer : Component
+    class MusicPlayer
     {
+        #region Field
+        private Random randomNumber = new Random();
+
+        private StringBuilder msg;  // MCI Error message
+        private StringBuilder returnData;  // MCI return data
+        private int error;
+
+        // String that holds the MCI command
+        // format: "s1 s2 s3 s4"
+        // s1: 1st command(necessary), see also http://goo.gl/P39rDs
+        // s2: file's name
+        // s3: 2nd command
+        // s4: 3rd command
+        private ListView playList;
+        #endregion
+
         #region Properties
-        private ISoundOut _soundOut;
-        private IWaveSource _waveSource;
-
         public TrackInfo CurrentTrack { get; set; }
-        public MMDevice CurrentDevice { get; set; }
-        public List<MMDevice> MMDeviceList;
-        public event EventHandler<PlaybackStoppedEventArgs> PlaybackStopped;
+        public int CurrentTrackNum { get; set; }
+        public bool Paused { get; set; }
+        public bool Loop { get; set; }
+        public bool Shuffle { get; set; }
+        #endregion
 
-        public PlaybackState PlaybackState
-        {
-            get
-            {
-                if (_soundOut != null)
-                    return _soundOut.PlaybackState;
-                else
-                    return PlaybackState.Stopped;
-            }
-        }
+        #region MCI API calls
+        /// <summary>
+        /// --- Parameters ---
+        /// strCommand: Pointer to a null-terminated string that specifies an MCI command string. For a list, see Multimedia Command Strings.
+        /// strReturn: Pointer to a buffer that receives return information. If no return information is needed, this parameter can be NULL.
+        /// ReturnLength: Size, in characters, of the return buffer specified by the lpszReturnString parameter.
+        /// hwndCallback: Handle to a callback window if the "notify" flag was specified in the command string.
+        /// --- Returns ---
+        /// (see [MCIERR Return Values]: http://goo.gl/fZO7Rg)
+        /// (see [Status Command]: http://goo.gl/VVBvl1)
+        /// </summary>
+        [DllImport("winmm.dll")]
+        private static extern int mciSendString(string strCommand, StringBuilder strReturn, int ReturnLength, IntPtr hwndCallback);
 
-        public TimeSpan Position
-        {
-            get
-            {
-                if (_waveSource != null)
-                    return _waveSource.GetLength();
-                else
-                    return TimeSpan.Zero;
-            }
-        }
-
-        public int Volume
-        {
-            get
-            {
-                if (_soundOut != null)
-                    return Math.Min(100, Math.Max((int)(_soundOut.Volume * 100), 0));
-                return 100;
-            }
-
-            set
-            {
-                if (_soundOut != null)
-                    _soundOut.Volume = Math.Min(1.0f, Math.Max(value / 100f, 0f));
-            }
-        }
+        /// <summary>
+        /// errCode: Error code returned by the mciSendCommand or mciSendString function.
+        /// errMsg: Pointer to a buffer that receives a null-terminated string describing the specified error.
+        /// buflen: Length of the buffer, in characters, pointed to by the lpszErrorText parameter.
+        /// </summary>
+        [DllImport("winmm.dll")]
+        public static extern int mciGetErrorString(int errCode, StringBuilder errMsg, int buflen);
         #endregion
 
         public MusicPlayer()
         {
-            GetMMDevice();
-
-            // Initialize MMDevice
-            if (MMDeviceList.Count == 0)
-            {
-                throw new Exception("No connected device can be used to play tracks.");
-            }
-
-            // TODO: Make this selectable for user
-            CurrentDevice = MMDeviceList[1];
+            Loop = false;
+            Shuffle = false;
+            Paused = false;
+            msg = new StringBuilder(128);
+            returnData = new StringBuilder(128);
         }
 
-        private void GetMMDevice()
+        #region Buttons
+        public void Close()
         {
-            if (MMDeviceList != null)
-                MMDeviceList.Clear();
-            else
-                MMDeviceList = new List<MMDevice>();
+            string cmd = "close MediaFile";
+            mciSendString(cmd, null, 0, IntPtr.Zero);
+        }
 
-            using (var mmdeviceEnumerator = new MMDeviceEnumerator())
+        public bool Open(TrackInfo track)
+        {
+            Close();
+            string cmd = "open \"" + track.TrackPath + "\" type mpegvideo alias MediaFile";
+            error = mciSendString(cmd, null, 0, IntPtr.Zero);
+
+            if (error != 0)
             {
-                using (var mmdeviceCollection = mmdeviceEnumerator.EnumAudioEndpoints(DataFlow.Render, DeviceState.Active))
+                // Cannot open file in the format ".mpeg", let MCI decide the file extension itself
+                cmd = "open \"" + track.TrackPath + "\"alias Mediafile";
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                return (error == 0) ? true : false;
+            }
+            else return true;
+        }
+
+        public bool Play(TrackInfo track)
+        {
+            if (Open(track))
+            {
+                string cmd = "play MediaFile";
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+
+                if (error == 0)
                 {
-                    foreach (var device in mmdeviceCollection)
-                    {
-                        MMDeviceList.Add(device);
-                    }
+                    CurrentTrack = track;
+                    return true;
+                }
+                else
+                {
+                    Close();
+                    return false;
                 }
             }
-        }
-
-        // TODO: implement this
-        public void SelectMMDevice()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Open(TrackInfo trackInfo)
-        {
-            CleanupPlayback();
-
-            _waveSource =
-                CodecFactory.Instance.GetCodec(trackInfo.TrackPath)
-                    .ToSampleSource()
-                    .ToMono()
-                    .ToWaveSource();
-            _soundOut = new WasapiOut() { Latency = 100, Device = CurrentDevice };
-            _soundOut.Initialize(_waveSource);
-            if (PlaybackStopped != null) _soundOut.Stopped += PlaybackStopped;
-        }
-
-        public void Play()
-        {
-            if (_soundOut != null)
-                _soundOut.Play();
+            else
+            {
+                // TODO: Exception handling
+                return false;
+            }
         }
 
         public void Pause()
         {
-            if (_soundOut != null)
-                _soundOut.Pause();
+            if (Paused)     // Music has been stopped
+            {
+                Resume();
+                Paused = false;
+            }
+            else if (IsPlaying())
+            {
+                string cmd = "pause MediaFile";
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                Paused = true;
+            }
         }
 
         public void Stop()
         {
-            if (_soundOut != null)
-                _soundOut.Stop();
+            string cmd = "stop MediaFile";
+            error = mciSendString(cmd, null, 0, IntPtr.Zero);
+            Paused = false;
+            Close();
         }
 
-        public void CleanupPlayback()
+        public void Resume()
         {
-            if (_soundOut != null)
+            string cmd = "resume MediaFile";
+            error = mciSendString(cmd, null, 0, IntPtr.Zero);
+        }
+        #endregion
+
+        #region Status
+        public bool IsPlaying()
+        {
+            string cmd = "status MediaFile mode";
+            error = mciSendString(cmd, returnData, 128, IntPtr.Zero);
+            if (returnData.Length == 7 && returnData.ToString().Substring(0, 7) == "playing")
+                return true;
+            else
+                return false;
+        }
+
+        public bool IsOpen()    //status command: mode, seems there is no status "Open"
+        {
+            string cmd = "status MediaFile mode";
+            error = mciSendString(cmd, returnData, 128, IntPtr.Zero);
+            if (returnData.Length == 4 && returnData.ToString().Substring(0, 4) == "open")
+                return true;
+            else
+                return false;
+        }
+
+        public bool IsPaused()
+        {
+            string cmd = "status MediaFile mode";
+            error = mciSendString(cmd, returnData, 128, IntPtr.Zero);
+            if (returnData.Length == 6 && returnData.ToString().Substring(0, 6) == "paused")
+                return true;
+            else
+                return false;
+        }
+
+        public bool IsStopped()
+        {
+            string cmd = "status MediaFile mode";
+            error = mciSendString(cmd, returnData, 128, IntPtr.Zero);
+            if (returnData.Length == 7 && returnData.ToString().Substring(0, 7) == "stopped")
+                return true;
+            else
+                return false;
+        }
+        #endregion
+
+        #region Logic
+        public int GetCurrentMilisecond()
+        {
+            string cmd = "status MediaFile position";
+            error = mciSendString(cmd, returnData, returnData.Capacity, IntPtr.Zero);
+            return int.Parse(returnData.ToString());
+        }
+
+        public void SetPosition(int milisecond)
+        {
+            if (IsPlaying())
             {
-                _soundOut.Dispose();
-                _soundOut = null;
+                string cmd = "play MediaFile from " + milisecond.ToString();
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
             }
-            if (_waveSource != null)
+            else
             {
-                _waveSource.Dispose();
-                _waveSource = null;
+                string cmd = "seek MediaFile to " + milisecond.ToString();
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public int GetSongLength()
         {
-            base.Dispose(disposing);
-            CleanupPlayback();
+            if (IsPlaying())
+            {
+                string cmd = "status MediaFile length";
+                error = mciSendString(cmd, returnData, returnData.Capacity, IntPtr.Zero);
+                return int.Parse(returnData.ToString());
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        #endregion
+
+        #region Audio
+        public bool SetVolume(int volume)
+        {
+            if (volume >= 0 && volume <= 1000)
+            {
+                string cmd = "setaudio MediaFile volume to " + volume.ToString();
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool SetBalance(int balance, int volume)
+        {
+            if (balance >= 0 && balance <= 2000)
+            {
+                double volPercent = (double)volume / 1000;
+                double dBalance = volPercent * balance;
+                string cmd = "setaudio MediaFile left volume to " + ((int)(balance*volPercent)).ToString();
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                cmd = "setaudio MediaFile right volume to " + ((int)((2000-dBalance)*volPercent)).ToString();
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                return true;
+            }
+            return false;
+        }
+        #endregion
+
+        public int GetSong(bool previous)
+        {
+            if (Shuffle)
+            {
+                int i;
+                if (playList.Items.Count == 1)
+                    return 0;
+                while (true)
+                {
+                    // Can be improve
+                    i = randomNumber.Next(playList.Items.Count);
+                    if (i != CurrentTrackNum)
+                        return i;
+                }
+            }
+            else if (Loop && !previous)
+            {
+                if (CurrentTrackNum == playList.Items.Count - 1)
+                    return 0;
+                else
+                    return CurrentTrackNum + 1;
+            }
+            else if (Loop && previous)
+            {
+                if (CurrentTrackNum == 0)
+                    return playList.Items.Count - 1;
+                else
+                    return CurrentTrackNum - 1;
+            }
+            else
+            {
+                if (previous)
+                {
+                    if (CurrentTrackNum != 0)
+                        return CurrentTrackNum - 1;
+                    else
+                        return 0;
+                }
+                else
+                {
+                    if (CurrentTrackNum != playList.Items.Count - 1)
+                        return CurrentTrackNum + 1;
+                    else
+                        return 0;
+                }
+            }
         }
     }
 }
