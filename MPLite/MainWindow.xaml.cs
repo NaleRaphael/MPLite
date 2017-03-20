@@ -135,6 +135,7 @@ namespace MPLite
         {
             // TODO: play music
             // TODO: show status of playback
+
         }
 
         #region Music player control
