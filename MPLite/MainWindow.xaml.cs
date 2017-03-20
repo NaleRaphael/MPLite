@@ -29,6 +29,11 @@ namespace MPLite
         // Menu_Setting
         private bool isMenuCollapsed = true;
 
+        // Music player controls
+        private readonly MusicPlayer _musicPlayer;
+        //public delegate void PlayTrackEventHandler(TrackInfo trackInfo);
+        //public static event PlayTrackEventHandler PlayTrackEvent;
+
         // Try to turn off navigation sound
         private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
         private const int SetFeatureOnProcess = 0x00000002;
@@ -52,6 +57,10 @@ namespace MPLite
 
             // Default page
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
+
+            // Music player
+            _musicPlayer = new MusicPlayer();
+            PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
         }
 
         #region PageControl
@@ -71,8 +80,6 @@ namespace MPLite
 
         private void Btn_Setting_Click(object sender, RoutedEventArgs e)
         {
-            //isMenuCollapsed = !isMenuCollapsed;
-            //Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
             CollapseMenuSetting(false);
         }
 
@@ -87,20 +94,6 @@ namespace MPLite
         {
             PageSwitchControl<PageCalendar>(ref pageCalendar);
             CollapseMenuSetting(true);
-            /*if (pageScheduler == null)
-            {
-                pageScheduler = new PageCalendar();
-            }
-            else
-            {
-                return;
-            }
-            Frame_PageSwitcher.NavigationService.Navigate(pageScheduler);*/
-
-            /*if (proxyScheduler == null)
-            {
-                proxyScheduler = new ProxyWindow();
-            }*/
         }
         #endregion
 
@@ -144,6 +137,12 @@ namespace MPLite
             // TODO: show status of playback
         }
 
-        
+        #region Music player control
+        private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
+        {
+            _musicPlayer.Open(trackInfo);
+            _musicPlayer.Play();
+        }
+        #endregion
     }
 }

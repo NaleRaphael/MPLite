@@ -58,6 +58,12 @@ namespace MPLite
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             return DataControl.ReadFromJson<PlaylistCollection>(configPath);
         }
+
+        public static Playlist GetPlaylist(string listName)
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            return DataControl.ReadFromJson<PlaylistCollection>(configPath).TrackLists.Find(x => x.ListName == listName);
+        }
     }
 
     public class Playlist
@@ -101,5 +107,12 @@ namespace MPLite
         }
 
         // TODO: move multiple tracks
+    }
+
+    public class InvalidPlaylistException : Exception
+    {
+        public InvalidPlaylistException(string message) : base(message)
+        {
+        }
     }
 }

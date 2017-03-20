@@ -27,14 +27,16 @@
                     <Button x:Name="Btn_NextTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/forward.ico"/>
                     </Button>
-                    <Button x:Name="Btn_VolumnControl" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Button x:Name="Btn_VolumeControl" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/volw_100.png"/>
                     </Button>
                 </StackPanel>
             </ContentControl>
-            <DockPanel x:Name="DPane_PlaybackStatus" VerticalAlignment="Top" Margin="0" Width="250" LastChildFill="False">
-                <Label x:Name="label" Content="Soundtrack" Height="23" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="90,0,0,27"/>
-            </DockPanel>
+            <Grid Height="50" VerticalAlignment="Top" Width="250" Margin="20,0,0,0">
+                <Label x:Name="label" Content="Soundtrack" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="88,0,88,27"/>
+                <Slider x:Name="trackBar" Height="25" VerticalAlignment="Top" Margin="0,23,0,0"/>
+            </Grid>
+
         </DockPanel>
         <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
             <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="100" Margin="10,0,0,0" Orientation="Horizontal">

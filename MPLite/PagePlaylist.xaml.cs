@@ -22,6 +22,9 @@ namespace MPLite
 {
     public partial class PagePlaylist : Page
     {
+        public delegate void PlayTrackEventHandler(TrackInfo trackInfo);
+        public static event PlayTrackEventHandler PlayTrackEvent;
+
         public PagePlaylist()
         {
             InitializeComponent();
@@ -31,7 +34,6 @@ namespace MPLite
 
         private void InitPlaylist()
         {
-            //this.LV_Playlist.ItemsSource;
             PlaylistCollection plc = PlaylistCollection.GetDatabase();
             if (plc == null) return;
 
@@ -71,41 +73,17 @@ namespace MPLite
 
         private void LV_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            //MessageBox.Show(LV_Playlist.SelectedIndex.ToString());
-            Stream stream = File.Open(((TrackInfo)LV_Playlist.SelectedItem).TrackPath, FileMode.Open);
-            //Contains the sound to play
-            using (IWaveSource soundSource = GetSoundSource(stream))
-            {
-                //SoundOut implementation which plays the sound
-                using (ISoundOut soundOut = GetSoundOut())
-                {
-                    //Tell the SoundOut which sound it has to play
-                    soundOut.Initialize(soundSource);
-                    //Play the sound
-                    soundOut.Play();
+            int selectIdx = LV_Playlist.SelectedIndex;
+            if (selectIdx < 0) return;
 
-                    //Thread.Sleep(2000);
+            Playlist pl = PlaylistCollection.GetPlaylist(((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString());
+            if (pl == null)
+                throw new InvalidPlaylistException("Invalid playlist.");
 
-                    //Stop the playback
-                    //soundOut.Stop();
-                }
-            }
-            //stream.Close();
+            // Fire event to start playing track
+            PlayTrackEvent(pl.Soundtracks[selectIdx]);
         }
 
-        private ISoundOut GetSoundOut()
-        {
-            if (WasapiOut.IsSupportedOnCurrentPlatform)
-                return new WasapiOut();
-            else
-                return new DirectSoundOut();
-        }
-
-        private IWaveSource GetSoundSource(Stream stream)
-        {
-            // Instead of using the CodecFactory as helper, you specify the decoder directly:
-            return new DmoMp3Decoder(stream);
-
-        }
+        // TrackBar
     }
 }
