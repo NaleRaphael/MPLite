@@ -22,13 +22,13 @@ namespace MPLite
         // s2: file's name
         // s3: 2nd command
         // s4: 3rd command
-        private ListView playList;
         #endregion
 
         #region Properties
         public TrackInfo CurrentTrack { get; set; }
         public int CurrentTrackNum { get; set; }
-        public bool Paused { get; set; }
+        public enum PlaybackState { Stopped = 0, Paused, Playing };
+        public PlaybackState PlayerStatus = PlaybackState.Stopped;
         public bool Loop { get; set; }
         public bool Shuffle { get; set; }
         #endregion
@@ -60,7 +60,7 @@ namespace MPLite
         {
             Loop = false;
             Shuffle = false;
-            Paused = false;
+            PlayerStatus = PlaybackState.Stopped;
             msg = new StringBuilder(128);
             returnData = new StringBuilder(128);
         }
@@ -115,16 +115,16 @@ namespace MPLite
 
         public void Pause()
         {
-            if (Paused)     // Music has been stopped
+            if (PlayerStatus == PlaybackState.Paused)
             {
                 Resume();
-                Paused = false;
+                PlayerStatus = PlaybackState.Playing;
             }
-            else if (IsPlaying())
+            else if (PlayerStatus == PlaybackState.Playing)
             {
                 string cmd = "pause MediaFile";
                 error = mciSendString(cmd, null, 0, IntPtr.Zero);
-                Paused = true;
+                PlayerStatus = PlaybackState.Paused;
             }
         }
 
@@ -132,7 +132,7 @@ namespace MPLite
         {
             string cmd = "stop MediaFile";
             error = mciSendString(cmd, null, 0, IntPtr.Zero);
-            Paused = false;
+            PlayerStatus = PlaybackState.Stopped;
             Close();
         }
 
@@ -253,7 +253,7 @@ namespace MPLite
         }
         #endregion
 
-        public int GetSong(bool previous)
+        /*public int GetSong(bool previous)
         {
             if (Shuffle)
             {
@@ -299,6 +299,6 @@ namespace MPLite
                         return 0;
                 }
             }
-        }
+        }*/
     }
 }

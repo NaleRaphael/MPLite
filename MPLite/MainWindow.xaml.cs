@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Runtime.InteropServices;
 
 namespace MPLite
@@ -33,6 +34,9 @@ namespace MPLite
         private readonly MusicPlayer _musicPlayer;
         //public delegate void PlayTrackEventHandler(TrackInfo trackInfo);
         //public static event PlayTrackEventHandler PlayTrackEvent;
+
+        // Timer
+        DispatcherTimer timer;
 
         // Try to turn off navigation sound
         private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
@@ -61,6 +65,10 @@ namespace MPLite
             // Music player
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
+
+            // Timer control
+            timer = new DispatcherTimer();
+            timer.Tick += Timer_Tick;
         }
 
         #region PageControl
@@ -135,13 +143,52 @@ namespace MPLite
         {
             // TODO: play music
             // TODO: show status of playback
-
+            if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
+            {
+                _musicPlayer.Pause();
+                timer.Stop();
+            }
+            else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
+            {
+                _musicPlayer.Resume();
+            }
         }
 
         #region Music player control
         private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
         {
+            PlayTrack(trackInfo);
+        }
+
+        private void PlayTrack(TrackInfo trackInfo)
+        {
+            _musicPlayer.Stop();
             _musicPlayer.Play(trackInfo);
+            trackBar.Maximum = _musicPlayer.GetSongLength();
+            timer.Start();
+        }
+        #endregion
+
+        #region Timer control
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
+            {
+                try
+                {
+                    // add lable for showing current time
+                    trackBar.Value = _musicPlayer.GetCurrentMilisecond();
+                }
+                catch (Exception ex)
+                {
+                    _musicPlayer.Stop();
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else if (_musicPlayer.PlayerStatus != MusicPlayer.PlaybackState.Paused)
+            {
+                // Next sound / Stop (set by config -> playback type: single track, list ... )
+            }
         }
         #endregion
     }

@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525" Background="#FF323232" ResizeMode="CanResizeWithGrip" MinWidth="525" MinHeight="350" WindowStyle="None" AllowDrop="True" AllowsTransparency="True">
     <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/StyleTrackBar.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        <!--
         <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -78,6 +84,7 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        -->
     </Window.Resources>
 
     <Grid x:Name="Grid_Background">
@@ -109,7 +116,7 @@
 
         <Grid Height="Auto" VerticalAlignment="Top" Margin="205,0,10,0">
             <Label x:Name="label" Content="Soundtrack" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Margin="88,0,88,25"/>
-            <Slider x:Name="trackBar" Height="25" VerticalAlignment="Top" Margin="0,25,0,0" Style="{DynamicResource StyleTrackBar}"/>
+            <Slider x:Name="trackBar" Height="25" VerticalAlignment="Top" Margin="0,25,0,0" Style="{DynamicResource CustomTrackBar}"/>
         </Grid>
 
         <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
