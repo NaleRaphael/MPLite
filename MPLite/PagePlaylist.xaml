@@ -25,11 +25,11 @@
         <DockPanel>
             <ListBox x:Name="ListBox_Playlist" Width="150" Background="#FF414141" BorderThickness="0">
                 <ListBoxItem Content="Default playlist" Background="#FF414141" BorderThickness="0,0,0,1" BorderBrush="#FF4B4B4B" Height="30" Foreground="#FFC8C8C8" FontFamily="Segoe UI" Padding="5,0,0,0"/>
-
             </ListBox>
 
             <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
-                  lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="LV_Playlist_DragEnter" Drop="LV_Playlist_Drop" MouseDoubleClick="LV_Playlist_MouseDoubleClick">
+                  lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="LV_Playlist_DragEnter" Drop="LV_Playlist_Drop" MouseDoubleClick="LV_Playlist_MouseDoubleClick" KeyDown="LV_Playlist_KeyDown"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}">
                         <GridViewColumn Header=">" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding CurrentPlaying}"/>

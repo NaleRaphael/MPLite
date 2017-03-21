@@ -56,9 +56,6 @@ namespace MPLite
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             string selectedPlaylist = ((ListBoxItem)ListBox_Playlist.SelectedValue).Content.ToString();
 
-            // Update database
-            PlaylistCollection.UpdateByTracks(files, selectedPlaylist);
-
             // Update LV_Playlist
             foreach (string filePath in files)
             {
@@ -69,6 +66,10 @@ namespace MPLite
                 TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
                 LV_Playlist.Items.Add(trackInfo);
             }
+
+            // Update database
+            PlaylistCollection.Update(files, selectedPlaylist);
+            //PlaylistCollection.UpdateDatabase(LV_Playlist.Items.OfType<TrackInfo>().ToList<TrackInfo>(), selectedPlaylist);
         }
 
         private void LV_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -84,6 +85,27 @@ namespace MPLite
             PlayTrackEvent(pl.Soundtracks[selectIdx]);
         }
 
-        // TrackBar
+        private void LV_Playlist_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && LV_Playlist.SelectedItems.Count != 0)
+            {
+                string selectedPlaylist = ((ListBoxItem)ListBox_Playlist.SelectedValue).Content.ToString();
+                List<int> selectedIdx = new List<int>();
+
+                foreach (TrackInfo track in LV_Playlist.SelectedItems)
+                {
+                    selectedIdx.Add(LV_Playlist.Items.IndexOf(track));
+                }
+
+                selectedIdx.Sort((x, y) => { return -x.CompareTo(y); });
+                foreach (int idx in selectedIdx)
+                {
+                    LV_Playlist.Items.RemoveAt(idx);
+                }
+
+                // UPDATE database
+                PlaylistCollection.DeleteTracksByIndices(selectedIdx.ToArray<int>(), selectedPlaylist);
+            }
+        }
     }
 }

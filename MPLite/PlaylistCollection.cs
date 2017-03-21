@@ -15,8 +15,9 @@ namespace MPLite
         }
 
         // TODO: Update by given playlist? (necessary?)
-
-        public static void UpdateByTracks(string[] filePaths, string selectedPlaylist)
+        
+        // TODO: Update listview then update database (according to the order of playlist)
+        public static void Update(string[] filePaths, string selectedPlaylist)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
@@ -33,7 +34,26 @@ namespace MPLite
                 Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
                 pl.UpdateTracks(filePaths);
             }
+            DataControl.SaveData<PlaylistCollection>(configPath, plc);
+        }
 
+        public static void Update(List<TrackInfo> tracks, string selectedPlaylist)
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+
+            if (plc == null)
+            {
+                Playlist pl = new Playlist(selectedPlaylist);
+                pl.UpdateTracks(tracks);
+                plc = new PlaylistCollection();
+                plc.TrackLists.Add(pl);
+            }
+            else
+            {
+                Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
+                pl.UpdateTracks(tracks);
+            }
             DataControl.SaveData<PlaylistCollection>(configPath, plc);
         }
 
@@ -88,14 +108,20 @@ namespace MPLite
             }
         }
 
+        public void UpdateTracks(List<TrackInfo> tracks)
+        {
+            foreach (TrackInfo track in tracks)
+            {
+                this.Soundtracks.Add(track);
+            }
+        }
+
         public void DeleteTracksByIndices(int[] indices)
         {
-            Array.Sort(indices);
-            int cnt = 0;
+            Array.Sort<int>(indices, (x, y) => { return -x.CompareTo(y); });
             foreach (int i in indices)
             {
                 Soundtracks.RemoveAt(i);
-                cnt++;
             }
         }
 

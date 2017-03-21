@@ -38,6 +38,9 @@ namespace MPLite
         // Timer
         DispatcherTimer timer;
 
+        // TrackBar control
+        bool isScrolling = false;
+
         // Try to turn off navigation sound
         private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
         private const int SetFeatureOnProcess = 0x00000002;
@@ -65,10 +68,20 @@ namespace MPLite
             // Music player
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
+            _musicPlayer.PlayerStoppedEvent += _musicPlayer_PlayerStoppedEvent;
+            _musicPlayer.PlayerStartedEvent += _musicPlayer_PlayerStartedEvent;
+            _musicPlayer.PlayerPausedEvent += _musicPlayer_PlayerPausedEvent;
+            _musicPlayer.TrackEndsEvent += _musicPlayer_TrackEndsEvent;
 
             // Timer control
             timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 100);
             timer.Tick += Timer_Tick;
+
+            // Track bar
+            trackBar.IsMoveToPointEnabled = true;
+
+            
         }
 
         #region PageControl
@@ -105,9 +118,13 @@ namespace MPLite
         }
         #endregion
 
+        #region MainWindow control
         private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            DragMove();
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
         }
 
         private void ContentControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -138,6 +155,13 @@ namespace MPLite
         {
             //scheduler;
         }
+        #endregion
+
+        #region Music player control
+        private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
+        {
+            PlayTrack(trackInfo);
+        }
 
         private void Btn_StartPlayback_Click(object sender, RoutedEventArgs e)
         {
@@ -154,18 +178,48 @@ namespace MPLite
             }
         }
 
-        #region Music player control
-        private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
-        {
-            PlayTrack(trackInfo);
-        }
-
         private void PlayTrack(TrackInfo trackInfo)
         {
-            _musicPlayer.Stop();
-            _musicPlayer.Play(trackInfo);
+            try
+            {
+                _musicPlayer.Stop();
+                _musicPlayer.Play(trackInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                _musicPlayer.Stop();
+            }
+        }
+
+        private void _musicPlayer_PlayerStoppedEvent()
+        {
+            timer.Stop();
+            // Reset the posotion of thumb
+            ResetTrackBar();
+
+            // Reset icon of btn_StartPlayback
+        }
+
+        private void _musicPlayer_PlayerStartedEvent()
+        {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
+
+            // Change icon of btn_StartPlayback
+        }
+
+        private void _musicPlayer_PlayerPausedEvent()
+        {
+            timer.Stop();
+        }
+
+        private void _musicPlayer_TrackEndsEvent()
+        {
+            _musicPlayer.Stop();
+            timer.Stop();
+            
+            // Play next track or replay the same track (according to user setting)
         }
         #endregion
 
@@ -174,9 +228,13 @@ namespace MPLite
         {
             if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
             {
+                if (isScrolling)
+                {
+                    return;
+                }
                 try
                 {
-                    // add lable for showing current time
+                    // add label for showing current time
                     trackBar.Value = _musicPlayer.GetCurrentMilisecond();
                 }
                 catch (Exception ex)
@@ -185,11 +243,60 @@ namespace MPLite
                     MessageBox.Show(ex.Message);
                 }
             }
-            else if (_musicPlayer.PlayerStatus != MusicPlayer.PlaybackState.Paused)
+            else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
             {
+                timer.Stop();
                 // Next sound / Stop (set by config -> playback type: single track, list ... )
+            }
+            else if (_musicPlayer.CurrentTrack == null)
+            {
+                timer.Stop();
             }
         }
         #endregion
+
+        #region TrackBar control
+        private void Slider_DragCompleted(object sender, EventArgs e)
+        {
+            //MessageBox.Show(trackBar.Value.ToString());
+            
+        }
+        private void ResetTrackBar()
+        {
+            trackBar.Value = 0;
+        }
+        #endregion
+
+        private void trackBar_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Stopped)
+                return;
+            isScrolling = true;
+            timer.Stop();
+        }
+
+        private void trackBar_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Stopped)
+                return;
+            isScrolling = false;
+            _musicPlayer.SetPosition((int)trackBar.Value);
+            timer.Start();
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Space)
+            {
+                if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
+                {
+                    _musicPlayer.Pause();
+                }
+                else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
+                {
+                    _musicPlayer.Resume();
+                }
+            }
+        }
     }
 }

@@ -26,11 +26,23 @@ namespace MPLite
 
         #region Properties
         public TrackInfo CurrentTrack { get; set; }
+        public int CurrentTrackLength;
         public int CurrentTrackNum { get; set; }
         public enum PlaybackState { Stopped = 0, Paused, Playing };
         public PlaybackState PlayerStatus = PlaybackState.Stopped;
         public bool Loop { get; set; }
         public bool Shuffle { get; set; }
+        #endregion
+
+        #region Event
+        public delegate void PlayerStoppedEventHandler();
+        public event PlayerStoppedEventHandler PlayerStoppedEvent;
+        public delegate void PlayerStartedEventHandker();
+        public event PlayerStartedEventHandker PlayerStartedEvent;
+        public delegate void PlayerPausedEventHandler();
+        public event PlayerPausedEventHandler PlayerPausedEvent;
+        public delegate void TrackEndsEventHandler();
+        public event TrackEndsEventHandler TrackEndsEvent;
         #endregion
 
         #region MCI API calls
@@ -46,6 +58,9 @@ namespace MPLite
         /// </summary>
         [DllImport("winmm.dll")]
         private static extern int mciSendString(string strCommand, StringBuilder strReturn, int ReturnLength, IntPtr hwndCallback);
+
+        [DllImport("winmm.dll")]
+        private static extern int mciSendStringW(string strCommand, StringBuilder strReturn, int ReturnLength, IntPtr hwndCallback);
 
         /// <summary>
         /// errCode: Error code returned by the mciSendCommand or mciSendString function.
@@ -76,13 +91,17 @@ namespace MPLite
         {
             Close();
             string cmd = "open \"" + track.TrackPath + "\" type mpegvideo alias MediaFile";
-            error = mciSendString(cmd, null, 0, IntPtr.Zero);
+            error = mciSendString(cmd, msg, 0, IntPtr.Zero);
+
+            if (error == 277)
+                throw new FailedToOpenFileException("There might be some inacceptable characters " +
+                    "in the path of this file, you can rename it and try again.");
 
             if (error != 0)
             {
                 // Cannot open file in the format ".mpeg", let MCI decide the file extension itself
                 cmd = "open \"" + track.TrackPath + "\"alias Mediafile";
-                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                error = mciSendString(cmd, msg, 0, IntPtr.Zero);
                 return (error == 0) ? true : false;
             }
             else return true;
@@ -90,7 +109,17 @@ namespace MPLite
 
         public bool Play(TrackInfo track)
         {
-            if (Open(track))
+            bool trackIsOpened = false;
+            try
+            {
+                trackIsOpened = Open(track);
+            }
+            catch
+            {
+                throw;
+            }
+
+            if (trackIsOpened)
             {
                 string cmd = "play MediaFile";
                 error = mciSendString(cmd, null, 0, IntPtr.Zero);
@@ -98,6 +127,10 @@ namespace MPLite
                 if (error == 0)
                 {
                     CurrentTrack = track;
+                    PlayerStatus = PlaybackState.Playing;
+
+                    // Fire event to notify subscribers
+                    PlayerStartedEvent();
                     return true;
                 }
                 else
@@ -119,12 +152,16 @@ namespace MPLite
             {
                 Resume();
                 PlayerStatus = PlaybackState.Playing;
+                // Fire event
+                PlayerStartedEvent();
             }
             else if (PlayerStatus == PlaybackState.Playing)
             {
                 string cmd = "pause MediaFile";
                 error = mciSendString(cmd, null, 0, IntPtr.Zero);
                 PlayerStatus = PlaybackState.Paused;
+                // Fire event
+                PlayerPausedEvent();
             }
         }
 
@@ -134,12 +171,19 @@ namespace MPLite
             error = mciSendString(cmd, null, 0, IntPtr.Zero);
             PlayerStatus = PlaybackState.Stopped;
             Close();
+
+            // Fire event to notify subscribers
+            PlayerStoppedEvent();
         }
 
         public void Resume()
         {
             string cmd = "resume MediaFile";
             error = mciSendString(cmd, null, 0, IntPtr.Zero);
+            PlayerStatus = PlaybackState.Playing;
+
+            // Fire event
+            PlayerStartedEvent();
         }
         #endregion
 
@@ -190,6 +234,13 @@ namespace MPLite
         {
             string cmd = "status MediaFile position";
             error = mciSendString(cmd, returnData, returnData.Capacity, IntPtr.Zero);
+            int current = int.Parse(returnData.ToString());
+
+            if (current >= CurrentTrackLength)
+            {
+                TrackEndsEvent();
+                return 0;
+            }
             return int.Parse(returnData.ToString());
         }
 
@@ -213,7 +264,8 @@ namespace MPLite
             {
                 string cmd = "status MediaFile length";
                 error = mciSendString(cmd, returnData, returnData.Capacity, IntPtr.Zero);
-                return int.Parse(returnData.ToString());
+                CurrentTrackLength = int.Parse(returnData.ToString());
+                return CurrentTrackLength;
             }
             else
             {
@@ -300,5 +352,12 @@ namespace MPLite
                 }
             }
         }*/
+    }
+
+    public class FailedToOpenFileException : Exception
+    {
+        public FailedToOpenFileException(string message) : base(message)
+        {
+        }
     }
 }
