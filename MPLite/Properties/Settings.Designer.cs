@@ -25,7 +25,7 @@ namespace MPLite.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\PC29\\AppData\\Local\\MPLite\\playListInfo.json")]
+        [global::System.Configuration.DefaultSettingValueAttribute("MPlitePlaylist.json")]
         public string PlaylistInfoPath {
             get {
                 return ((string)(this["PlaylistInfoPath"]));

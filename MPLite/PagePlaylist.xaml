@@ -30,6 +30,42 @@
             <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
                   lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="LV_Playlist_DragEnter" Drop="LV_Playlist_Drop" MouseDoubleClick="LV_Playlist_MouseDoubleClick" KeyDown="LV_Playlist_KeyDown"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="TextBlock.Foreground" Value="#FFC8C8C8"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                    <Border CornerRadius="0" SnapsToDevicePixels="True" BorderThickness="0" BorderBrush="#dcdbd5" Background="{TemplateBinding Background}">
+                                        <Border Name="InnerBorder" CornerRadius="0" BorderThickness="0">
+                                            <Grid>
+                                                <Rectangle Name="UpperHighlight" Visibility="Collapsed" Fill="Transparent" />
+                                                <GridViewRowPresenter Grid.RowSpan="0" Height="20"
+                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"   
+                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                            </Grid>
+                                        </Border>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Foreground" Value="Black"/>
+                                            <Setter Property="Background" Value="DarkGray"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter TargetName="UpperHighlight" Property="Visibility" Value="Hidden"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Foreground" Value="Black"/>
+                                            <Setter Property="Background" Value="DarkGray"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter TargetName="UpperHighlight" Property="Visibility" Value="Hidden"/>
+                                        </Trigger>
+
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}">
                         <GridViewColumn Header=">" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding CurrentPlaying}"/>

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="PlaylistInfoPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Users\PC29\AppData\Local\MPLite\playListInfo.json</Value>
+      <Value Profile="(Default)">MPlitePlaylist.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

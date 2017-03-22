@@ -41,8 +41,15 @@
         <Setter Property="Foreground" Value="LightGray" />
     </Style>
 
-    <!-- Row style-->
-    <Style x:Key="StyleTrackInfo" TargetType="GridViewRowPresenter">
-        <!-- TODO: Edit this -->
+    <Style x:Key="StylePlaylistItem" TargetType="ListView">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border x:Name="Border">
+                        <GridViewRowPresenter HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Margin="0" Content="{TemplateBinding Content}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

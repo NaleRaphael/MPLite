@@ -52,6 +52,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -165,14 +166,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\icons\backward-disabled.ico" />
-    <Resource Include="images\icons\backward.ico" />
-    <Resource Include="images\icons\forward-disabled.ico" />
-    <Resource Include="images\icons\forward.ico" />
     <Resource Include="images\icons\pause-disabled.ico" />
     <Resource Include="images\icons\pause.ico" />
-    <Resource Include="images\icons\play-disabled.ico" />
-    <Resource Include="images\icons\play.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="styles\" />
@@ -180,6 +175,9 @@
   <ItemGroup>
     <Content Include="dll\Calendar.NET.dll" />
     <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
+    <Resource Include="images\icons\backward.png" />
+    <Resource Include="images\icons\forward.png" />
+    <Resource Include="images\icons\play.png" />
     <Resource Include="images\icons\volw_0.png" />
     <Resource Include="images\icons\volw_100.png" />
     <Resource Include="images\icons\volw_33.png" />

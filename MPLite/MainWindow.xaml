@@ -26,13 +26,13 @@
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <StackPanel x:Name="SPane_PlaybackControl" Width="120" HorizontalAlignment="Left" Margin="20,10,0,10" Orientation="Horizontal">
                     <Button x:Name="Btn_PrevTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                        <Image Source="images/icons/backward.ico"/>
+                        <Image Source="images/icons/backward.png"/>
                     </Button>
                     <Button x:Name="Btn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="Btn_StartPlayback_Click">
-                        <Image Source="images/icons/play.ico"/>
+                        <Image Source="images/icons/play.png"/>
                     </Button>
                     <Button x:Name="Btn_NextTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
-                        <Image Source="images/icons/forward.ico"/>
+                        <Image Source="images/icons/forward.png"/>
                     </Button>
                     <Button x:Name="Btn_VolumeControl" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/volw_100.png"/>
