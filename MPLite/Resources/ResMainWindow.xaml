@@ -6,18 +6,20 @@
     <Image x:Key="PlaybackCtrl_Forward" Source="../images/icons/forward.png"/>
     <Image x:Key="PlaybackCtrl_Backward" Source="../images/icons/backward.png"/>
 
-    <Style x:Key="Style_tBtnStartPlayback" TargetType="ToggleButton">
+    <Style x:Key="Style_tBtnStartPlayback" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
+                <ControlTemplate TargetType="Button">
                     <Border Name="bd" Background="Transparent" BorderThickness="0">
                         <ContentPresenter Name="content">
                             <ContentPresenter.Content>
-                                <Image></Image>
+                                <Image Name="image" Source="../images/icons/play.png"/>
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </Border>
+
                     <ControlTemplate.Triggers>
+                        <!--
                         <Trigger Property="ToggleButton.IsChecked" Value="True">
                             <Setter TargetName="content" Property="ContentPresenter.Content">
                                 <Setter.Value>
@@ -32,7 +34,9 @@
                                 </Setter.Value>
                             </Setter>
                         </Trigger>
+                        -->
                     </ControlTemplate.Triggers>
+                    
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

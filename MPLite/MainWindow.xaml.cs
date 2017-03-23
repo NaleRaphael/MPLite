@@ -218,7 +218,9 @@ namespace MPLite
             ResetTrackBar();
 
             // Reset icon of btn_StartPlayback
-            tBtn_StartPlayback.Content = FindResource("PlaybackCtrl_Play");
+            //btn_StartPlayback.Content = FindResource("PlaybackCtrl_Play");
+            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
 
             // Fire event to notify subscribber that track has been stopped
             // (reset `TrackInfo.playingSign`, ...)
@@ -233,13 +235,17 @@ namespace MPLite
             timer.Start();
 
             // Change icon of btn_StartPlayback to "Pause"
-            tBtn_StartPlayback.Content = FindResource("PlaybackCtrl_Pause");
+            //btn_StartPlayback.Content = FindResource("PlaybackCtrl_Pause");
+            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Pause");
         }
 
         // Subscriber
         private void _musicPlayer_PlayerPausedEvent()
         {
             timer.Stop();
+            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
         }
 
         // Subscriber
@@ -326,6 +332,16 @@ namespace MPLite
                     _musicPlayer.Resume();
                 }
             }
+        }
+
+        bool flag = false;
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            button.Content = flag ? FindResource("PlaybackCtrl_Pause") : FindResource("PlaybackCtrl_Play");
+            btn_StartPlayback.Content = flag ? FindResource("PlaybackCtrl_Pause") : FindResource("PlaybackCtrl_Play");
+            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            ((ContentPresenter)obj).Content = flag ? FindResource("PlaybackCtrl_Pause") : FindResource("PlaybackCtrl_Play");
+            flag = !flag;
         }
     }
 }

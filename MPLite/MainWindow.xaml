@@ -29,9 +29,10 @@
                     <Button x:Name="btn_Backward" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/backward.png"/>
                     </Button>
-                    <ToggleButton x:Name="tBtn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{StaticResource Style_tBtnStartPlayback}"  Click="Btn_StartPlayback_Click">
-                        <DynamicResource ResourceKey="PlaybackCtrl_Play"/>
-                    </ToggleButton>
+                    <Button x:Name="btn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_tBtnStartPlayback}"  Click="Btn_StartPlayback_Click">
+                        <!--<DynamicResource ResourceKey="PlaybackCtrl_Play"/>-->
+                        <Image Source="images/icons/play.png"/>
+                    </Button>
                     <Button x:Name="btn_Forward" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/forward.png"/>
                     </Button>
@@ -64,6 +65,7 @@
             <MenuItem x:Name="MItem_Basic" Header="Basic" Width="110" Background="#FF646464" Click="MItem_Basic_Click"/>
             <MenuItem x:Name="MItem_Scheduler" Header="Scheduler" Width="110" Background="#FF646464" Click="MItem_Scheduler_Click"/>
         </Menu>
+        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="228,69,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
 
 
     </Grid>
