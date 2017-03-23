@@ -25,6 +25,10 @@ namespace MPLite
         public delegate void PlayTrackEventHandler(TrackInfo trackInfo);
         public static event PlayTrackEventHandler PlayTrackEvent;
 
+        // Workaround for avoid playing wrong song when there are duplicates
+        private int prevTrackIdx = -1;
+        private int currTrackIdx = -1;
+
         public PagePlaylist()
         {
             InitializeComponent();
@@ -37,14 +41,16 @@ namespace MPLite
 
         private void MainWindow_TrackIsStoppedEvent(TrackInfo track)
         {
-            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
+            //TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
+            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList()[prevTrackIdx];
             selectedTrack.PlayingSign = "";
         }
 
         private void MainWindow_TrackIsPlayingEvent(TrackInfo track)
         {
             // try to get item according to track
-            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
+            //TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
+            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList()[currTrackIdx];
             selectedTrack.PlayingSign = ">";
         }
 
@@ -92,6 +98,8 @@ namespace MPLite
         {
             int selIdx = LV_Playlist.SelectedIndex;
             if (selIdx < 0) return;
+            prevTrackIdx = currTrackIdx;    // workaround
+            currTrackIdx = selIdx;          // workaround
             PlaySoundtrack(selIdx);
         }
 
@@ -123,6 +131,7 @@ namespace MPLite
             Playlist pl = PlaylistCollection.GetPlaylist(((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString());
             if (pl == null)
                 throw new InvalidPlaylistException("Invalid playlist.");
+            currTrackIdx = selIdx;      // workaround
             return pl.Soundtracks[selIdx];
         }
 

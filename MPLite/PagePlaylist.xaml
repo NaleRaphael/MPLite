@@ -68,7 +68,7 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}">
-                        <GridViewColumn Header=">" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding Path=PlayingSign}"/>
+                        <GridViewColumn Header="" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding Path=PlayingSign}"/>
                         <GridViewColumn Header="Track" lvctrl:ProportionalColumn.Width="15" DisplayMemberBinding="{Binding Path=TrackName}"/>
                         <GridViewColumn Header="Duration" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Duration}"/>
                         <GridViewColumn Header="Artist" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Artist}"/>

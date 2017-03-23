@@ -218,7 +218,6 @@ namespace MPLite
             ResetTrackBar();
 
             // Reset icon of btn_StartPlayback
-            //btn_StartPlayback.Content = FindResource("PlaybackCtrl_Play");
             Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
             ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
 
@@ -235,7 +234,6 @@ namespace MPLite
             timer.Start();
 
             // Change icon of btn_StartPlayback to "Pause"
-            //btn_StartPlayback.Content = FindResource("PlaybackCtrl_Pause");
             Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
             ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Pause");
         }
@@ -332,16 +330,6 @@ namespace MPLite
                     _musicPlayer.Resume();
                 }
             }
-        }
-
-        bool flag = false;
-        private void button_Click(object sender, RoutedEventArgs e)
-        {
-            button.Content = flag ? FindResource("PlaybackCtrl_Pause") : FindResource("PlaybackCtrl_Play");
-            btn_StartPlayback.Content = flag ? FindResource("PlaybackCtrl_Pause") : FindResource("PlaybackCtrl_Play");
-            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
-            ((ContentPresenter)obj).Content = flag ? FindResource("PlaybackCtrl_Pause") : FindResource("PlaybackCtrl_Play");
-            flag = !flag;
         }
     }
 }
