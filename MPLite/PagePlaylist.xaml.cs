@@ -30,6 +30,22 @@ namespace MPLite
             InitializeComponent();
             InitPlaylist();
             ListBox_Playlist.SelectedIndex = 0;  // select default list
+            MainWindow.GetTrackEvent += MainWindow_GetTrackEvent;
+            MainWindow.TrackIsPlayedEvent += MainWindow_TrackIsPlayingEvent;
+            MainWindow.TrackIsStoppedEvent += MainWindow_TrackIsStoppedEvent;
+        }
+
+        private void MainWindow_TrackIsStoppedEvent(TrackInfo track)
+        {
+            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
+            selectedTrack.PlayingSign = "";
+        }
+
+        private void MainWindow_TrackIsPlayingEvent(TrackInfo track)
+        {
+            // try to get item according to track
+            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
+            selectedTrack.PlayingSign = ">";
         }
 
         private void InitPlaylist()
@@ -74,15 +90,9 @@ namespace MPLite
 
         private void LV_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            int selectIdx = LV_Playlist.SelectedIndex;
-            if (selectIdx < 0) return;
-
-            Playlist pl = PlaylistCollection.GetPlaylist(((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString());
-            if (pl == null)
-                throw new InvalidPlaylistException("Invalid playlist.");
-
-            // Fire event to start playing track
-            PlayTrackEvent(pl.Soundtracks[selectIdx]);
+            int selIdx = LV_Playlist.SelectedIndex;
+            if (selIdx < 0) return;
+            PlaySoundtrack(selIdx);
         }
 
         private void LV_Playlist_KeyDown(object sender, KeyEventArgs e)
@@ -107,5 +117,55 @@ namespace MPLite
                 PlaylistCollection.DeleteTracksByIndices(selectedIdx.ToArray<int>(), selectedPlaylist);
             }
         }
+
+        private TrackInfo GetSoundtrack(int selIdx)
+        {
+            Playlist pl = PlaylistCollection.GetPlaylist(((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString());
+            if (pl == null)
+                throw new InvalidPlaylistException("Invalid playlist.");
+            return pl.Soundtracks[selIdx];
+        }
+
+        private void PlaySoundtrack(int selIdx)
+        {
+            // Fire event to start playing track
+            try
+            {
+                PlayTrackEvent(GetSoundtrack(selIdx));
+                // Showing current playing track
+                
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private TrackInfo MainWindow_GetTrackEvent()
+        {
+            TrackInfo track;
+            if (LV_Playlist.Items.Count == 0)
+            {
+                throw new EmptyPlaylistException("No tracks avalible");
+            }
+
+            int selIdx = (LV_Playlist.SelectedIndex > 0) ? LV_Playlist.SelectedIndex : 0;
+
+            try
+            {
+                track = GetSoundtrack(selIdx);
+            }
+            catch
+            {
+                throw;
+            }
+            return track;
+        }
+    }
+
+    public class EmptyPlaylistException : Exception
+    {
+        public EmptyPlaylistException(string message) : base(message)
+        { }
     }
 }

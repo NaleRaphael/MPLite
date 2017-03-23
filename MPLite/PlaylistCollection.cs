@@ -82,7 +82,16 @@ namespace MPLite
         public static Playlist GetPlaylist(string listName)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
-            return DataControl.ReadFromJson<PlaylistCollection>(configPath).TrackLists.Find(x => x.ListName == listName);
+            Playlist pl;
+            try
+            {
+                pl = DataControl.ReadFromJson<PlaylistCollection>(configPath).TrackLists.Find(x => x.ListName == listName);
+            }
+            catch
+            {
+                throw;
+            }
+            return pl;
         }
     }
 

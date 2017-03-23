@@ -32,8 +32,12 @@ namespace MPLite
 
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
-        //public delegate void PlayTrackEventHandler(TrackInfo trackInfo);
-        //public static event PlayTrackEventHandler PlayTrackEvent;
+        public delegate TrackInfo GetTrackEventHandler();
+        public static event GetTrackEventHandler GetTrackEvent;
+        public delegate void TrackIsPalyingEventHandler(TrackInfo track);
+        public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;
+        public delegate void TrackIsStoppedEventHandler(TrackInfo track);
+        public static event TrackIsStoppedEventHandler TrackIsStoppedEvent;
 
         // Timer
         DispatcherTimer timer;
@@ -167,14 +171,25 @@ namespace MPLite
         {
             // TODO: play music
             // TODO: show status of playback
-            if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
+            // If no track is selected, find the first track in "default playlist" (store this info in Property) and play it
+            try
             {
-                _musicPlayer.Pause();
-                timer.Stop();
+                switch (_musicPlayer.PlayerStatus)
+                {
+                    case MusicPlayer.PlaybackState.Stopped:
+                        PlayTrack(GetTrackEvent());
+                        break;
+                    case MusicPlayer.PlaybackState.Playing:
+                        _musicPlayer.Pause();
+                        break;
+                    case MusicPlayer.PlaybackState.Paused:
+                        _musicPlayer.Resume();
+                        break;
+                }
             }
-            else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
+            catch (Exception ex)
             {
-                _musicPlayer.Resume();
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -184,6 +199,9 @@ namespace MPLite
             {
                 _musicPlayer.Stop();
                 _musicPlayer.Play(trackInfo);
+
+                // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
+                TrackIsPlayedEvent(trackInfo);
             }
             catch (Exception ex)
             {
@@ -192,6 +210,7 @@ namespace MPLite
             }
         }
 
+        // Subscriber
         private void _musicPlayer_PlayerStoppedEvent()
         {
             timer.Stop();
@@ -199,21 +218,31 @@ namespace MPLite
             ResetTrackBar();
 
             // Reset icon of btn_StartPlayback
+            tBtn_StartPlayback.Content = FindResource("PlaybackCtrl_Play");
+
+            // Fire event to notify subscribber that track has been stopped
+            // (reset `TrackInfo.playingSign`, ...)
+            if (_musicPlayer.PrevTrack != null)
+                TrackIsStoppedEvent(_musicPlayer.PrevTrack);
         }
 
+        // Subscriber
         private void _musicPlayer_PlayerStartedEvent()
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
 
-            // Change icon of btn_StartPlayback
+            // Change icon of btn_StartPlayback to "Pause"
+            tBtn_StartPlayback.Content = FindResource("PlaybackCtrl_Pause");
         }
 
+        // Subscriber
         private void _musicPlayer_PlayerPausedEvent()
         {
             timer.Stop();
         }
 
+        // Subscriber
         private void _musicPlayer_TrackEndsEvent()
         {
             _musicPlayer.Stop();

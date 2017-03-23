@@ -34,5 +34,17 @@ namespace MPLite.Properties {
                 this["PlaylistInfoPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Default playlist")]
+        public string LastSelectedPlaylist {
+            get {
+                return ((string)(this["LastSelectedPlaylist"]));
+            }
+            set {
+                this["LastSelectedPlaylist"] = value;
+            }
+        }
     }
 }

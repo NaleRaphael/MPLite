@@ -1,11 +1,40 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:MPLite">
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="StyleTrackBar.xaml"/>
-    </ResourceDictionary.MergedDictionaries>
-    <Image x:Key="PlaybackCtrl_Play" Source="../images/icons/play.ico"/>
-    <Image x:Key="PlaybackCtrl_Pause" Source="../images/icons/pause.ico"/>
-    <Image x:Key="PlaybackCtrl_Forward" Source="../images/icons/forward.ico"/>
-    <Image x:Key="PlaybackCtrl_Backward" Source="../images/icons/backward.ico"/>
+    <Image x:Key="PlaybackCtrl_Play" Source="../images/icons/play.png"/>
+    <Image x:Key="PlaybackCtrl_Pause" Source="../images/icons/pause.png"/>
+    <Image x:Key="PlaybackCtrl_Forward" Source="../images/icons/forward.png"/>
+    <Image x:Key="PlaybackCtrl_Backward" Source="../images/icons/backward.png"/>
+
+    <Style x:Key="Style_tBtnStartPlayback" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content">
+                            <ContentPresenter.Content>
+                                <Image></Image>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ToggleButton.IsChecked" Value="True">
+                            <Setter TargetName="content" Property="ContentPresenter.Content">
+                                <Setter.Value>
+                                    <Image Source="../images/icons/pause.png"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="ToggleButton.IsChecked" Value="False">
+                            <Setter TargetName="content" Property="ContentPresenter.Content">
+                                <Setter.Value>
+                                    <Image Source="../images/icons/play.png"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

@@ -25,6 +25,7 @@ namespace MPLite
         #endregion
 
         #region Properties
+        public TrackInfo PrevTrack { get; set; }
         public TrackInfo CurrentTrack { get; set; }
         public int CurrentTrackLength;
         public int CurrentTrackNum { get; set; }
@@ -126,6 +127,7 @@ namespace MPLite
 
                 if (error == 0)
                 {
+                    // Save the trackInfo that is playing currently
                     CurrentTrack = track;
                     PlayerStatus = PlaybackState.Playing;
 
@@ -171,6 +173,10 @@ namespace MPLite
             error = mciSendString(cmd, null, 0, IntPtr.Zero);
             PlayerStatus = PlaybackState.Stopped;
             Close();
+
+            // Reset the info of playing track
+            PrevTrack = CurrentTrack;
+            CurrentTrack = null;
 
             // Fire event to notify subscribers
             PlayerStoppedEvent();

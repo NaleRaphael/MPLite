@@ -9,7 +9,8 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/StyleTrackBar.xaml"/>
+                <ResourceDictionary Source="Resources/StyleTrackbar.xaml"/>
+                <ResourceDictionary Source="Resources/ResMainWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -18,23 +19,23 @@
         <DockPanel x:Name="DPane_Header" Height="50" LastChildFill="False" Width="Auto" Background="#FF4B4B4B" VerticalAlignment="Top" MouseDown="DPane_Header_MouseDown" ClipToBounds="True">
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <StackPanel Height="30" VerticalAlignment="Top" Width="30" Margin="20,10,0,0">
-                    <Button x:Name="Btn_ExitProgram" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="Btn_ExitProgram_Click">
+                    <Button x:Name="btn_ExitProgram" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="Btn_ExitProgram_Click">
                         <Image Source="images/icons/exit.png"/>
                     </Button>
                 </StackPanel>
             </ContentControl>
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <StackPanel x:Name="SPane_PlaybackControl" Width="120" HorizontalAlignment="Left" Margin="20,10,0,10" Orientation="Horizontal">
-                    <Button x:Name="Btn_PrevTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Button x:Name="btn_Backward" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/backward.png"/>
                     </Button>
-                    <Button x:Name="Btn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Click="Btn_StartPlayback_Click">
-                        <Image Source="images/icons/play.png"/>
-                    </Button>
-                    <Button x:Name="Btn_NextTrack" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <ToggleButton x:Name="tBtn_StartPlayback" Width="30" Height="30" BorderThickness="0" Style="{StaticResource Style_tBtnStartPlayback}"  Click="Btn_StartPlayback_Click">
+                        <DynamicResource ResourceKey="PlaybackCtrl_Play"/>
+                    </ToggleButton>
+                    <Button x:Name="btn_Forward" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/forward.png"/>
                     </Button>
-                    <Button x:Name="Btn_VolumeControl" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                    <Button x:Name="btn_VolumeControl" Width="30" Height="30" BorderThickness="0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
                         <Image Source="images/icons/volw_100.png"/>
                     </Button>
                 </StackPanel>
@@ -48,10 +49,10 @@
 
         <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
             <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="100" Margin="10,0,0,0" Orientation="Horizontal">
-                <Button x:Name="Btn_Playlist" BorderThickness="1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
+                <Button x:Name="btn_Playlist" BorderThickness="1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
                     <Image Source="images/icons/playlist.png"/>
                 </Button>
-                <Button x:Name="Btn_Setting" BorderThickness="0,0,1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Setting_Click" BorderBrush="#FF323232">
+                <Button x:Name="btn_Setting" BorderThickness="0,0,1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Setting_Click" BorderBrush="#FF323232">
                     <Image Source="images/icons/gear.png"/>
                 </Button>
             </StackPanel>

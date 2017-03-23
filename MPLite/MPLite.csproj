@@ -166,15 +166,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\icons\pause-disabled.ico" />
-    <Resource Include="images\icons\pause.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="styles\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dll\Calendar.NET.dll" />
     <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
+    <Resource Include="images\icons\pause.png" />
     <Resource Include="images\icons\backward.png" />
     <Resource Include="images\icons\forward.png" />
     <Resource Include="images\icons\play.png" />

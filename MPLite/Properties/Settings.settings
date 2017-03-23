@@ -5,5 +5,8 @@
     <Setting Name="PlaylistInfoPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">MPlitePlaylist.json</Value>
     </Setting>
+    <Setting Name="LastSelectedPlaylist" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Default playlist</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -68,11 +68,11 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}">
-                        <GridViewColumn Header=">" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding CurrentPlaying}"/>
-                        <GridViewColumn Header="Track" lvctrl:ProportionalColumn.Width="15" DisplayMemberBinding="{Binding TrackName}"/>
-                        <GridViewColumn Header="Duration" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Duration}"/>
-                        <GridViewColumn Header="Artist" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Artist}"/>
-                        <GridViewColumn Header="Album" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Album}"/>
+                        <GridViewColumn Header=">" lvctrl:ProportionalColumn.Width="5" DisplayMemberBinding="{Binding Path=PlayingSign}"/>
+                        <GridViewColumn Header="Track" lvctrl:ProportionalColumn.Width="15" DisplayMemberBinding="{Binding Path=TrackName}"/>
+                        <GridViewColumn Header="Duration" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Duration}"/>
+                        <GridViewColumn Header="Artist" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Artist}"/>
+                        <GridViewColumn Header="Album" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Album}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
