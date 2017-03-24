@@ -69,6 +69,7 @@ namespace MPLite
 
             // Menu_Setting
             Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
 
             // Default page
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
@@ -114,7 +115,7 @@ namespace MPLite
 
         private void Btn_Setting_Click(object sender, RoutedEventArgs e)
         {
-            CollapseMenuSetting(false);
+            CollapseMenuSetting(isMenuCollapsed);
         }
 
         private void MItem_Basic_Click(object sender, RoutedEventArgs e)
@@ -152,8 +153,12 @@ namespace MPLite
 
         private void CollapseMenuSetting(bool collapse)
         {
-            Menu_Setting.Visibility = collapse ? Visibility.Collapsed : Visibility.Visible;
-            isMenuCollapsed = collapse;
+            isMenuCollapsed = !collapse;
+            Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            //isMenuCollapsed = collapse;
+
+            SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            
         }
 
         private void CloseProxyWindow()

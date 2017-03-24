@@ -11,11 +11,6 @@ namespace MPLite
     {
     }
 
-    public class MPLiteConstant
-    {
-        public static string[] validFileType = Properties.Settings.Default.ValidFileType.Split('|');
-    }
-
     /// <summary>
     /// Enables or disables a specified Internet Explorer feature control
     /// Minimum availability: Internet Explorer 6.0

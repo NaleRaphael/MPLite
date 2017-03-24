@@ -50,7 +50,7 @@
         </Grid>
 
         <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
-            <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="100" Margin="10,0,0,0" Orientation="Horizontal">
+            <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="70" Margin="10,0,0,0" Orientation="Horizontal">
                 <Button x:Name="btn_Playlist" BorderThickness="1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
                     <Image Source="images/icons/playlist.png"/>
                 </Button>
@@ -58,14 +58,15 @@
                     <Image Source="images/icons/gear.png"/>
                 </Button>
             </StackPanel>
-
+            <StackPanel x:Name="SPane_Setting" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="100" Background="#FF7D7D7D"/>
         </DockPanel>
 
         <Frame x:Name="Frame_PageSwitcher" Content="" Margin="0,50,0,35" NavigationUIVisibility="Hidden"/>
-        <Menu x:Name="Menu_Setting" HorizontalAlignment="Left" Height="42" Margin="84,308,0,0" VerticalAlignment="Top" Width="110" Background="#FF7D7D7D" Foreground="#FFC8C8C8" Panel.ZIndex="1000">
+        <Menu x:Name="Menu_Setting" HorizontalAlignment="Left" Height="42" Margin="374,308,0,0" VerticalAlignment="Top" Width="110" Background="#FF7D7D7D" Foreground="#FFC8C8C8" Panel.ZIndex="1000">
             <MenuItem x:Name="MItem_Basic" Header="Basic" Width="110" Background="#FF646464" Click="MItem_Basic_Click"/>
             <MenuItem x:Name="MItem_Scheduler" Header="Scheduler" Width="110" Background="#FF646464" Click="MItem_Scheduler_Click"/>
         </Menu>
+        
 
 
     </Grid>
