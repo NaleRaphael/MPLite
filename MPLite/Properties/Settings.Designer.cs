@@ -46,5 +46,17 @@ namespace MPLite.Properties {
                 this["LastSelectedPlaylist"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".mp3|.wma|.wmv")]
+        public string ValidFileType {
+            get {
+                return ((string)(this["ValidFileType"]));
+            }
+            set {
+                this["ValidFileType"] = value;
+            }
+        }
     }
 }

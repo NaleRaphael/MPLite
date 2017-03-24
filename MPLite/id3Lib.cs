@@ -5,12 +5,10 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 
-namespace MusicPlayerJune
+namespace MPLite
 {
     class FileCommands
     {
-        
-
         public static void readMP3Tag (ref MP3 paramMP3) {
         // Read the 128 byte ID3 tag into a byte array
         FileStream oFileStream;

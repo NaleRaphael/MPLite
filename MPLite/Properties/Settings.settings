@@ -8,5 +8,8 @@
     <Setting Name="LastSelectedPlaylist" Type="System.String" Scope="User">
       <Value Profile="(Default)">Default playlist</Value>
     </Setting>
+    <Setting Name="ValidFileType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.mp3|.wma|.wmv</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

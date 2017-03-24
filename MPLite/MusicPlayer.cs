@@ -38,7 +38,7 @@ namespace MPLite
         #region Event
         public delegate void PlayerStoppedEventHandler();
         public event PlayerStoppedEventHandler PlayerStoppedEvent;
-        public delegate void PlayerStartedEventHandker();
+        public delegate void PlayerStartedEventHandker(TrackInfo track);
         public event PlayerStartedEventHandker PlayerStartedEvent;
         public delegate void PlayerPausedEventHandler();
         public event PlayerPausedEventHandler PlayerPausedEvent;
@@ -132,7 +132,7 @@ namespace MPLite
                     PlayerStatus = PlaybackState.Playing;
 
                     // Fire event to notify subscribers
-                    PlayerStartedEvent();
+                    PlayerStartedEvent(track);
                     return true;
                 }
                 else
@@ -155,7 +155,7 @@ namespace MPLite
                 Resume();
                 PlayerStatus = PlaybackState.Playing;
                 // Fire event
-                PlayerStartedEvent();
+                PlayerStartedEvent(CurrentTrack);
             }
             else if (PlayerStatus == PlaybackState.Playing)
             {
@@ -184,12 +184,12 @@ namespace MPLite
 
         public void Resume()
         {
-            string cmd = "resume MediaFile";
+            string cmd = "play MediaFile";
             error = mciSendString(cmd, null, 0, IntPtr.Zero);
             PlayerStatus = PlaybackState.Playing;
 
             // Fire event
-            PlayerStartedEvent();
+            PlayerStartedEvent(CurrentTrack);
         }
         #endregion
 
@@ -266,17 +266,10 @@ namespace MPLite
 
         public int GetSongLength()
         {
-            if (IsPlaying())
-            {
-                string cmd = "status MediaFile length";
-                error = mciSendString(cmd, returnData, returnData.Capacity, IntPtr.Zero);
-                CurrentTrackLength = int.Parse(returnData.ToString());
-                return CurrentTrackLength;
-            }
-            else
-            {
-                return 0;
-            }
+            string cmd = "status MediaFile length";
+            error = mciSendString(cmd, returnData, returnData.Capacity, IntPtr.Zero);
+            CurrentTrackLength = int.Parse(returnData.ToString());
+            return CurrentTrackLength;
         }
         #endregion
 

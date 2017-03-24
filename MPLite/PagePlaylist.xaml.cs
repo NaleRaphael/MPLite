@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,9 +12,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Itenso.Windows.Controls.ListViewLayout;
-using CSCore;
-using CSCore.SoundOut;
-using CSCore.Codecs.MP3;
 using System.Threading;
 
 namespace MPLite
@@ -127,21 +123,29 @@ namespace MPLite
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             string selectedPlaylist = ((ListBoxItem)ListBox_Playlist.SelectedValue).Content.ToString();
+            int cnt = 0;    // Counter for preventing unnesaccery update of database
 
             // Update LV_Playlist
             foreach (string filePath in files)
             {
+                if (!MPLiteConstant.validFileType.Contains(System.IO.Path.GetExtension(filePath)))
+                    continue;
+
                 // TODO: rewrite this
                 //       Store data into a dataset (json file)
                 //       Then present those information into listview
-                string trackName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
-                LV_Playlist.Items.Add(trackInfo);
+                
+                
+                //string trackName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+                //TrackInfo track = new TrackInfo { TrackName = trackName, TrackPath = filePath };
+                LV_Playlist.Items.Add(TrackInfo.ParseSource(filePath));
+
+                cnt++;
             }
 
             // Update database
-            PlaylistCollection.Update(files, selectedPlaylist);
-            //PlaylistCollection.UpdateDatabase(LV_Playlist.Items.OfType<TrackInfo>().ToList<TrackInfo>(), selectedPlaylist);
+            if (cnt != 0)
+                PlaylistCollection.Update(files, selectedPlaylist);
         }
 
         private void LV_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -150,7 +154,6 @@ namespace MPLite
             if (selIdx < 0) return;
             prevTrackIdx = currTrackIdx;    // workaround
             currTrackIdx = selIdx;          // workaround
-            //idxOfPlayingTrack = selIdx;
             PlaySoundtrack(currTrackIdx);
         }
 
@@ -160,7 +163,7 @@ namespace MPLite
             {
                 string selectedPlaylist = ((ListBoxItem)ListBox_Playlist.SelectedValue).Content.ToString();
                 List<int> selectedIdx = new List<int>();
-
+                
                 foreach (TrackInfo track in LV_Playlist.SelectedItems)
                 {
                     selectedIdx.Add(LV_Playlist.Items.IndexOf(track));
@@ -183,7 +186,6 @@ namespace MPLite
             if (pl == null)
                 throw new InvalidPlaylistException("Invalid playlist.");
             currTrackIdx = selIdx;      // workaround
-            //idxOfPlayingTrack = selIdx;
             return pl.Soundtracks[currTrackIdx];
         }
 

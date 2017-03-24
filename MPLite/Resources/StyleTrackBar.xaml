@@ -35,7 +35,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Rectangle Height="5" Width="5" Fill="Black"/>
+                    <Rectangle Height="8" Width="5" Fill="Black"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

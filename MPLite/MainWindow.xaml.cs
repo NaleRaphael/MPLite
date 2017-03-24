@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace MPLite
 {
@@ -44,6 +45,9 @@ namespace MPLite
 
         // TrackBar control
         bool isScrolling = false;
+
+        // Track status displayer module
+        private TrackStatusDispModule trackStatusDisplayer;
 
         // Try to turn off navigation sound
         private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
@@ -85,7 +89,12 @@ namespace MPLite
             // Track bar
             trackBar.IsMoveToPointEnabled = true;
 
-            
+            // Track status displayer
+            trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName);
+            _musicPlayer.PlayerStartedEvent += trackStatusDisplayer.SetTrackName;
+            _musicPlayer.PlayerStartedEvent += trackStatusDisplayer.SetTrackLength;
+            _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackName;
+            _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackProgress;
         }
 
         #region PageControl
@@ -123,14 +132,6 @@ namespace MPLite
         #endregion
 
         #region MainWindow control
-        private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragMove();
-            }
-        }
-
         private void ContentControl_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (isWindowMaximized)
@@ -169,8 +170,6 @@ namespace MPLite
 
         private void Btn_StartPlayback_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: play music
-            // TODO: show status of playback
             // If no track is selected, find the first track in "default playlist" (store this info in Property) and play it
             try
             {
@@ -228,7 +227,7 @@ namespace MPLite
         }
 
         // Subscriber
-        private void _musicPlayer_PlayerStartedEvent()
+        private void _musicPlayer_PlayerStartedEvent(TrackInfo track)
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
@@ -251,7 +250,7 @@ namespace MPLite
         {
             _musicPlayer.Stop();
             timer.Stop();
-            
+
             // Play next track or replay the same track (according to user setting)
         }
         #endregion
@@ -259,6 +258,7 @@ namespace MPLite
         #region Timer control
         private void Timer_Tick(object sender, EventArgs e)
         {
+            int temp = 0;
             if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
             {
                 if (isScrolling)
@@ -268,12 +268,15 @@ namespace MPLite
                 try
                 {
                     // add label for showing current time
-                    trackBar.Value = _musicPlayer.GetCurrentMilisecond();
+                    temp = _musicPlayer.GetCurrentMilisecond();
+                    trackBar.Value = temp;
+                    trackStatusDisplayer.SetTrackProgress(temp);
                 }
                 catch (Exception ex)
                 {
                     _musicPlayer.Stop();
                     MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.StackTrace);
                 }
             }
             else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
@@ -292,13 +295,13 @@ namespace MPLite
         private void Slider_DragCompleted(object sender, EventArgs e)
         {
             //MessageBox.Show(trackBar.Value.ToString());
-            
+            // TODO
         }
+
         private void ResetTrackBar()
         {
             trackBar.Value = 0;
         }
-        #endregion
 
         private void trackBar_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -314,11 +317,48 @@ namespace MPLite
                 return;
             isScrolling = false;
             _musicPlayer.SetPosition((int)trackBar.Value);
-            timer.Start();
+
+            // Set track progress
+            trackStatusDisplayer.SetTrackProgress((int)trackBar.Value);
+            if (_musicPlayer.PlayerStatus != MusicPlayer.PlaybackState.Paused)
+                timer.Start();
         }
+        #endregion
+
+        #region Status displayer control
+        #endregion
+
+        #region DragMove
+        private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
+        }
+
+        // Workaround: extend the draggable region of window
+        private void lbl_TrackName_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
+        }
+
+        // Workaround: extend the draggable region of window
+        private void lbl_TrackProgess_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
+            }
+        }
+        #endregion
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            
             if (e.Key == Key.Space)
             {
                 if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
@@ -331,5 +371,7 @@ namespace MPLite
                 }
             }
         }
+
+        
     }
 }

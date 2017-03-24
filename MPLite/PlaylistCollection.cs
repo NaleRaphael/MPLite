@@ -167,8 +167,9 @@ namespace MPLite
             foreach (string filePath in filePaths)
             {
                 string trackName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
-                this.Soundtracks.Add(trackInfo);
+                //TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
+                //this.Soundtracks.Add(trackInfo);
+                this.Soundtracks.Add(TrackInfo.ParseSource(filePath));
             }
         }
 
