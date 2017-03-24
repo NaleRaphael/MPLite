@@ -25,6 +25,9 @@ namespace MPLite
         public delegate void PlayTrackEventHandler(TrackInfo trackInfo);
         public static event PlayTrackEventHandler PlayTrackEvent;
 
+        private int idxOfPlayingTrack = -1;
+        private string listHostingPlayingTrack = "";
+
         // Workaround for avoid playing wrong song when there are duplicates
         private int prevTrackIdx = -1;
         private int currTrackIdx = -1;
@@ -41,27 +44,74 @@ namespace MPLite
 
         private void MainWindow_TrackIsStoppedEvent(TrackInfo track)
         {
-            //TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
-            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList()[prevTrackIdx];
-            selectedTrack.PlayingSign = "";
+            string listName = ((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString();
+            
+            // Check whether selected list is the one hosting the playing track.
+            // If not, just reset idxOfPlayingTrack and listHostingPlayingTrack
+            if (listName == listHostingPlayingTrack)
+            {
+                SetPlayingStateOfTrack(prevTrackIdx, "");
+            }
+            listHostingPlayingTrack = "";
+            idxOfPlayingTrack = -1;
         }
 
         private void MainWindow_TrackIsPlayingEvent(TrackInfo track)
         {
-            // try to get item according to track
-            //TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList().Find(x => x.TrackName == track.TrackName);
-            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList()[currTrackIdx];
-            selectedTrack.PlayingSign = ">";
+            SetPlayingStateOfTrack(currTrackIdx, ">");
+        }
+
+        private void SetPlayingStateOfTrack(int trackIdx, string status)
+        {
+            TrackInfo selectedTrack = LV_Playlist.Items.OfType<TrackInfo>().ToList()[trackIdx];
+            selectedTrack.PlayingSign = status;
         }
 
         private void InitPlaylist()
         {
+            RefreshPlaylist();
+            RefreshPlaylistContent(Properties.Settings.Default.LastSelectedPlaylist);
+        }
+
+        private void RefreshPlaylist()
+        {
             PlaylistCollection plc = PlaylistCollection.GetDatabase();
             if (plc == null) return;
 
-            foreach (TrackInfo track in plc.TrackLists[0].Soundtracks)
+            foreach (Playlist pl in plc.TrackLists)
             {
-                LV_Playlist.Items.Add(track);
+                ListBoxItem lvi = new ListBoxItem();
+                lvi.Content = pl.ListName;
+                ListBox_Playlist.Items.Add(lvi);
+            }
+        }
+
+        private void RefreshPlaylistContent(string selectedPlaylist)
+        {
+            PlaylistCollection plc = PlaylistCollection.GetDatabase();
+            if (plc == null) return;
+            Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
+
+            LV_Playlist.Items.Clear();
+            if (pl != null)
+            {
+                foreach (TrackInfo track in pl.Soundtracks)
+                {
+                    LV_Playlist.Items.Add(track);
+                }
+            }
+            
+            // Update info
+            Properties.Settings.Default.LastSelectedPlaylist = selectedPlaylist;
+
+            // Show playing track
+            if ((ListBoxItem)ListBox_Playlist.SelectedItem != null)
+            {
+                string listName = ((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString();
+                if (listName == listHostingPlayingTrack)
+                {
+                    SetPlayingStateOfTrack(currTrackIdx, ">");
+                }
             }
         }
 
@@ -100,7 +150,8 @@ namespace MPLite
             if (selIdx < 0) return;
             prevTrackIdx = currTrackIdx;    // workaround
             currTrackIdx = selIdx;          // workaround
-            PlaySoundtrack(selIdx);
+            //idxOfPlayingTrack = selIdx;
+            PlaySoundtrack(currTrackIdx);
         }
 
         private void LV_Playlist_KeyDown(object sender, KeyEventArgs e)
@@ -132,7 +183,8 @@ namespace MPLite
             if (pl == null)
                 throw new InvalidPlaylistException("Invalid playlist.");
             currTrackIdx = selIdx;      // workaround
-            return pl.Soundtracks[selIdx];
+            //idxOfPlayingTrack = selIdx;
+            return pl.Soundtracks[currTrackIdx];
         }
 
         private void PlaySoundtrack(int selIdx)
@@ -141,8 +193,14 @@ namespace MPLite
             try
             {
                 PlayTrackEvent(GetSoundtrack(selIdx));
-                // Showing current playing track
-                
+
+                // Showing current playing track in status bar
+
+
+                // Remember which track is playing
+                prevTrackIdx = currTrackIdx;
+                currTrackIdx = selIdx;
+                listHostingPlayingTrack = ((ListBoxItem)(ListBox_Playlist.SelectedItem)).Content.ToString();
             }
             catch
             {
@@ -158,17 +216,49 @@ namespace MPLite
                 throw new EmptyPlaylistException("No tracks avalible");
             }
 
-            int selIdx = (LV_Playlist.SelectedIndex > 0) ? LV_Playlist.SelectedIndex : 0;
+            idxOfPlayingTrack = (LV_Playlist.SelectedIndex > 0) ? LV_Playlist.SelectedIndex : 0;
 
             try
             {
-                track = GetSoundtrack(selIdx);
+                track = GetSoundtrack(idxOfPlayingTrack);
             }
             catch
             {
                 throw;
             }
             return track;
+        }
+
+        private void btn_AddPlaylist_Click(object sender, RoutedEventArgs e)
+        {
+            ListBoxItem lbi = new ListBoxItem();
+            string newListName = "New Playlist";  // TODO: add serial number
+
+            // Add to database
+            string listNameWithSerialNum = PlaylistCollection.AddPlaylist(newListName);
+
+            // Add to ListBox
+            lbi.Content = listNameWithSerialNum;
+            ListBox_Playlist.Items.Add(lbi);
+        }
+
+        private void ListBox_Playlist_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (ListBox_Playlist.SelectedItems.Count == 1)
+            {
+                RefreshPlaylistContent(((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString());
+            }
+        }
+
+        private void ListBox_Playlist_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete && ListBox_Playlist.SelectedItems.Count == 1)
+            {
+                // Remove playlist from database
+                PlaylistCollection.RemovePlaylist(((ListBoxItem)ListBox_Playlist.SelectedItem).Content.ToString());
+                // Remove ListBoxItem
+                ListBox_Playlist.Items.Remove(ListBox_Playlist.SelectedItem);
+            }
         }
     }
 

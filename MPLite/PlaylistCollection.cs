@@ -93,6 +93,61 @@ namespace MPLite
             }
             return pl;
         }
+
+        public static string AddPlaylist(string listName)
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            try
+            {
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+                string newlistName = AddSerialNum(plc.TrackLists, listName);
+                Playlist pl = new Playlist(newlistName);
+                plc.TrackLists.Add(pl);
+                DataControl.SaveData<PlaylistCollection>(configPath, plc);
+
+                return newlistName;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public static void RemovePlaylist(string listName)
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            try
+            {
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+                plc.TrackLists.Remove(plc.TrackLists.Find(x => x.ListName == listName));
+                DataControl.SaveData<PlaylistCollection>(configPath, plc);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        private static string AddSerialNum(List<Playlist> collection, string target)
+        {
+            int serialNum = 0;
+            string temp = target;
+
+            while(collection.Find(x => x.ListName == temp) != null)
+            {
+                serialNum++;
+                temp = target + serialNum.ToString();
+            }
+
+            if (serialNum == 0)
+            {
+                return target;
+            }
+            else
+            {
+                return target + serialNum.ToString();
+            }
+        }
     }
 
     public class Playlist

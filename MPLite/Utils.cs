@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace MPLite
 {
-    class Utils
+    public class Utils
     {
     }
 
@@ -18,7 +18,6 @@ namespace MPLite
     /// </summary>
     internal class URLSecurityZoneAPI
     {
-
         /// <summary>
         /// Specifies where to set the feature control value
         /// http://msdn.microsoft.com/en-us/library/ms537168%28VS.85%29.aspx

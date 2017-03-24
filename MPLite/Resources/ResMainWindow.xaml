@@ -36,7 +36,6 @@
                         </Trigger>
                         -->
                     </ControlTemplate.Triggers>
-                    
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

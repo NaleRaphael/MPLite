@@ -52,4 +52,14 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="StyleListBoxItem" TargetType="ListBoxItem">
+        <Setter Property="Background" Value="#FF414141"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush" Value="#FF4B4B4B"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Foreground" Value="#FFC8C8C8"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="Padding" Value="5,0,0,0"/>
+    </Style>
 </ResourceDictionary>

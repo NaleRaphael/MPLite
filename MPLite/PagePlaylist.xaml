@@ -23,9 +23,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <ListBox x:Name="ListBox_Playlist" Width="150" Background="#FF414141" BorderThickness="0">
-                <ListBoxItem Content="Default playlist" Background="#FF414141" BorderThickness="0,0,0,1" BorderBrush="#FF4B4B4B" Height="30" Foreground="#FFC8C8C8" FontFamily="Segoe UI" Padding="5,0,0,0"/>
-            </ListBox>
+            <ListBox x:Name="ListBox_Playlist" Width="150" Background="#FF414141" BorderThickness="0" PreviewMouseUp="ListBox_Playlist_PreviewMouseUp" KeyDown="ListBox_Playlist_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}"/>
 
             <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
                   lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="LV_Playlist_DragEnter" Drop="LV_Playlist_Drop" MouseDoubleClick="LV_Playlist_MouseDoubleClick" KeyDown="LV_Playlist_KeyDown"
@@ -77,5 +75,6 @@
                 </ListView.View>
             </ListView>
         </DockPanel>
+        <Button x:Name="btn_AddPlaylist" Content="+" Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="30" Height="30" Click="btn_AddPlaylist_Click"/>
     </Grid>
 </Page>
