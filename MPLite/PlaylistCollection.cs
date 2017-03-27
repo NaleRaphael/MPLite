@@ -15,7 +15,7 @@ namespace MPLite
         }
 
         // TODO: Update by given playlist? (necessary?)
-        
+
         // TODO: Update listview then update database (according to the order of playlist)
         public static void Update(string[] filePaths, string selectedPlaylist)
         {
@@ -100,6 +100,8 @@ namespace MPLite
             try
             {
                 PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+                plc = (plc == null) ? new PlaylistCollection() : plc;
+
                 string newlistName = AddSerialNum(plc.TrackLists, listName);
                 Playlist pl = new Playlist(newlistName);
                 plc.TrackLists.Add(pl);
@@ -133,7 +135,7 @@ namespace MPLite
             int serialNum = 0;
             string temp = target;
 
-            while(collection.Find(x => x.ListName == temp) != null)
+            while (collection.Find(x => x.ListName == temp) != null)
             {
                 serialNum++;
                 temp = target + serialNum.ToString();
@@ -154,7 +156,7 @@ namespace MPLite
     {
         public string ListName { get; set; }
         public List<TrackInfo> Soundtracks { get; set; }
-        public int TotalTracks { get { return Soundtracks.Count; } }
+        public int TrackAmount { get { return Soundtracks.Count; } }
 
         public Playlist(string listName)
         {

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6FB18056-0A0E-44B0-BED6-7AFB05B9ABC4}</ProjectGuid>
+    <ProjectGuid>{B855F4E8-2A27-4F4F-9F66-9234717F6682}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MPLite</RootNamespace>
@@ -36,19 +36,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Calendar.NET">
+    <Reference Include="Calendar.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>dll\Calendar.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="CSCore, Version=1.1.6245.30570, Culture=neutral, PublicKeyToken=5a08f2b6f4415dea, processorArchitecture=MSIL">
-      <HintPath>..\packages\CSCore.1.2.0\lib\net35-client\CSCore.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Itenso.Windows.Controls.ListViewLayout, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dll\Itenso.Windows.Controls.ListViewLayout.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
@@ -56,9 +53,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -82,20 +77,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DataControl.cs" />
-    <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="id3Lib.cs" />
-    <Compile Include="MPLiteConstant.cs" />
-    <Compile Include="MusicPlayer.cs" />
-    <Compile Include="PageCalendar.xaml.cs">
-      <DependentUpon>PageCalendar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PlaybackControl.cs" />
-    <Compile Include="PlaylistCollection.cs" />
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Settings.cs" />
     <Compile Include="TrackInfo.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />
@@ -107,6 +91,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="DataControl.cs" />
+    <Compile Include="ExtensionMethod.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -128,19 +114,24 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\ResMainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\StylePlaylist.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\StyleTrackBar.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MPLiteConstant.cs" />
+    <Compile Include="MusicPlayer.cs" />
+    <Compile Include="PageCalendar.xaml.cs">
+      <DependentUpon>PageCalendar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PagePlaylist.xaml.cs">
       <DependentUpon>PagePlaylist.xaml</DependentUpon>
     </Compile>
@@ -148,6 +139,8 @@
       <DependentUpon>PageSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageSwitcher.cs" />
+    <Compile Include="PlaybackControl.cs" />
+    <Compile Include="PlaylistCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -176,25 +169,25 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="styles\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="dll\Calendar.NET.dll" />
-    <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
-    <Resource Include="images\icons\pause.png" />
     <Resource Include="images\icons\backward.png" />
+    <Resource Include="images\icons\exit.png" />
     <Resource Include="images\icons\forward.png" />
+    <Resource Include="images\icons\gear-clicked.png" />
+    <Resource Include="images\icons\gear.png" />
+    <Resource Include="images\icons\pause.png" />
     <Resource Include="images\icons\play.png" />
+    <Resource Include="images\icons\playlist-clicked.png" />
+    <Resource Include="images\icons\playlist.png" />
     <Resource Include="images\icons\volw_0.png" />
     <Resource Include="images\icons\volw_100.png" />
     <Resource Include="images\icons\volw_33.png" />
     <Resource Include="images\icons\volw_66.png" />
-    <Resource Include="images\icons\exit.png" />
-    <Resource Include="images\icons\playlist-clicked.png" />
-    <Resource Include="images\icons\playlist.png" />
-    <Resource Include="images\icons\gear-clicked.png" />
-    <Resource Include="images\icons\gear.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="dll\Calendar.NET.dll" />
+    <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

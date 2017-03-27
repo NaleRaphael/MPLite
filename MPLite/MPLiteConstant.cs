@@ -9,11 +9,12 @@ namespace MPLite
     {
         public static string[] validFileType = Properties.Settings.Default.ValidFileType.Split('|');
 
-        public enum PlaybackMode {
+        public enum PlaybackMode
+        {
             /// <summary>
-            /// Once a track ends, player stops.
+            /// Play entire playlist once.
             /// </summary>
-            None = 0,
+            Default = 0,
             /// <summary>
             /// Play single track repeatedly.
             /// </summary>
@@ -29,6 +30,11 @@ namespace MPLite
             /// <summary>
             /// Randomly play track inside a list.
             /// </summary>
-            Shuffle }
+            Shuffle,
+            /// <summary>
+            /// Once a track ends, player stops.
+            /// </summary>
+            PlaySingle
+        }
     }
 }

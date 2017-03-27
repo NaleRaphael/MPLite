@@ -61,5 +61,16 @@
         <Setter Property="Foreground" Value="#FFC8C8C8"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
         <Setter Property="Padding" Value="5,0,0,0"/>
+        <!--
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border Background="#FF414141" BorderThickness="0,0,0,1" Height="30">
+                        <TextBlock Foreground="#FFC8C8C8" FontFamily="Segoe UI" Padding="5,0,0,0"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        -->
     </Style>
 </ResourceDictionary>

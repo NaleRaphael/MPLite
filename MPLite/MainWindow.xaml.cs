@@ -33,12 +33,12 @@ namespace MPLite
 
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
-        public delegate TrackInfo GetTrackEventHandler();
-        public static event GetTrackEventHandler GetTrackEvent;
+        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player);
+        public static event GetTrackEventHandler GetTrackEvent; // subscriber: MainWindow_GetTrackEvent @ PagePlaylist.xaml.cs
         public delegate void TrackIsPalyingEventHandler(TrackInfo track);
-        public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;
+        public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;  // subscriber: MainWindow_TrackIsPlayedEvent @ PagePlaylist.xaml.cs
         public delegate void TrackIsStoppedEventHandler(TrackInfo track);
-        public static event TrackIsStoppedEventHandler TrackIsStoppedEvent;
+        public static event TrackIsStoppedEventHandler TrackIsStoppedEvent; // subscriber: MainWindow_TrackIsStoppedEvent @ PagePlaylist.xaml.cs
 
         // Timer
         DispatcherTimer timer;
@@ -77,10 +77,16 @@ namespace MPLite
             // Music player
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
-            _musicPlayer.PlayerStoppedEvent += _musicPlayer_PlayerStoppedEvent;
-            _musicPlayer.PlayerStartedEvent += _musicPlayer_PlayerStartedEvent;
-            _musicPlayer.PlayerPausedEvent += _musicPlayer_PlayerPausedEvent;
-            _musicPlayer.TrackEndsEvent += _musicPlayer_TrackEndsEvent;
+            PagePlaylist.NewSelectionEvent += _musicPlayer.ResetQueue;
+
+            _musicPlayer.PlayerStartedEvent += SetTimerAndTrackBar;
+            //_musicPlayer.PlayerStartedEvent += pagePlaylist.SetTrackStatus;
+
+            _musicPlayer.PlayerStoppedEvent += ResetTimerAndTrackBar;
+            //_musicPlayer.PlayerStoppedEvent += pagePlaylist.ResetTrackStatus;
+
+            _musicPlayer.PlayerPausedEvent += Set_btn_StartPlayback_Icon_Play;
+            _musicPlayer.TrackEndsEvent += StopPlayerOrPlayNextTrack;
 
             // Timer control
             timer = new DispatcherTimer();
@@ -140,12 +146,13 @@ namespace MPLite
                 isWindowMaximized = !isWindowMaximized;
                 Application.Current.MainWindow.WindowState = WindowState.Maximized;
             }
-            else {
+            else
+            {
                 isWindowMaximized = false;
                 Application.Current.MainWindow.WindowState = WindowState.Normal;
             }
         }
-        
+
         private void Btn_ExitProgram_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -158,7 +165,7 @@ namespace MPLite
             //isMenuCollapsed = collapse;
 
             SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
-            
+
         }
 
         private void CloseProxyWindow()
@@ -168,10 +175,16 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
+        private void MainWindow_PlayTrackEvent()
         {
-            PlayTrack(trackInfo);
+            PlayTrack(GetTrackEvent(_musicPlayer));
         }
+
+        /*private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
+        {
+            //PlayTrack(trackInfo);
+            PlayTrack(GetTrackEvent(_musicPlayer));
+        }*/
 
         private void Btn_StartPlayback_Click(object sender, RoutedEventArgs e)
         {
@@ -181,7 +194,7 @@ namespace MPLite
                 switch (_musicPlayer.PlayerStatus)
                 {
                     case MusicPlayer.PlaybackState.Stopped:
-                        PlayTrack(GetTrackEvent());
+                        PlayTrack(GetTrackEvent(_musicPlayer));
                         break;
                     case MusicPlayer.PlaybackState.Playing:
                         _musicPlayer.Pause();
@@ -202,6 +215,9 @@ namespace MPLite
             try
             {
                 _musicPlayer.Stop();
+
+                if (trackInfo == null)
+                    return;
                 _musicPlayer.Play(trackInfo);
 
                 // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
@@ -215,7 +231,7 @@ namespace MPLite
         }
 
         // Subscriber
-        private void _musicPlayer_PlayerStoppedEvent()
+        public void ResetTimerAndTrackBar(TrackInfo track)
         {
             timer.Stop();
             // Reset the posotion of thumb
@@ -227,12 +243,13 @@ namespace MPLite
 
             // Fire event to notify subscribber that track has been stopped
             // (reset `TrackInfo.playingSign`, ...)
-            if (_musicPlayer.PrevTrack != null)
-                TrackIsStoppedEvent(_musicPlayer.PrevTrack);
+            /*if (_musicPlayer.PrevTrack != null)
+                TrackIsStoppedEvent(_musicPlayer.PrevTrack);*/
+            TrackIsStoppedEvent(_musicPlayer.PrevTrack);
         }
 
         // Subscriber
-        private void _musicPlayer_PlayerStartedEvent(TrackInfo track)
+        private void SetTimerAndTrackBar(TrackInfo track)
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
@@ -243,7 +260,7 @@ namespace MPLite
         }
 
         // Subscriber
-        private void _musicPlayer_PlayerPausedEvent()
+        private void Set_btn_StartPlayback_Icon_Play()
         {
             timer.Stop();
             Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
@@ -251,12 +268,13 @@ namespace MPLite
         }
 
         // Subscriber
-        private void _musicPlayer_TrackEndsEvent()
+        private void StopPlayerOrPlayNextTrack()
         {
             _musicPlayer.Stop();
             timer.Stop();
 
             // Play next track or replay the same track (according to user setting)
+            PlayTrack(GetTrackEvent(_musicPlayer));
         }
         #endregion
 
@@ -272,7 +290,6 @@ namespace MPLite
                 }
                 try
                 {
-                    // add label for showing current time
                     temp = _musicPlayer.GetCurrentMilisecond();
                     trackBar.Value = temp;
                     trackStatusDisplayer.SetTrackProgress(temp);
@@ -363,7 +380,7 @@ namespace MPLite
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            
+
             if (e.Key == Key.Space)
             {
                 if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
@@ -376,7 +393,5 @@ namespace MPLite
                 }
             }
         }
-
-        
     }
 }

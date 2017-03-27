@@ -37,7 +37,7 @@ namespace MPLite.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Default playlist")]
+        [global::System.Configuration.DefaultSettingValueAttribute("New Playlist")]
         public string LastSelectedPlaylist {
             get {
                 return ((string)(this["LastSelectedPlaylist"]));

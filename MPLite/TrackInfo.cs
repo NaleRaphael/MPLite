@@ -19,9 +19,10 @@ namespace MPLite
         [JsonIgnore]
         private string _playingSign;
         [JsonIgnore]
-        public string PlayingSign {
+        public string PlayingSign
+        {
             get { return _playingSign; }
-            set { _playingSign = value; NotifyPropertyChanged("PlayingSign");  }
+            set { _playingSign = value; NotifyPropertyChanged("PlayingSign"); }
         }
 
         public string TrackName { get; set; }
@@ -48,8 +49,9 @@ namespace MPLite
             int sec = ((int)f.Properties.Duration.TotalSeconds) % 60;
             string duration = string.Format("{0}:{1}", min, sec);
 
-            TrackInfo track = new TrackInfo {
-                TrackName = (f.Tag.Title != null) ? f.Tag.Title: Path.GetFileNameWithoutExtension(filePath),
+            TrackInfo track = new TrackInfo
+            {
+                TrackName = (f.Tag.Title != null) ? f.Tag.Title : Path.GetFileNameWithoutExtension(filePath),
                 TrackPath = filePath,
                 Artist = (f.Tag.Performers.Length > 0) ? f.Tag.Performers[0] : "Unknown",
                 Album = (f.Tag.Album != null) ? f.Tag.Album : "Unknown",

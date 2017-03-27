@@ -30,17 +30,17 @@ namespace MPLite
             TrackName.Content = track.TrackName;
         }
 
-        public void ResetTrackName()
+        public void ResetTrackName(TrackInfo track)
         {
             TrackName.Content = "";
         }
 
         public void SetTrackProgress(int miliSecond)
         {
-            TrackProgress.Content = string.Format("{0:00}", miliSecond/60000) + ":" + string.Format("{0:00}", miliSecond/1000%60) + "/" + trackDuration;
+            TrackProgress.Content = string.Format("{0:00}", miliSecond / 60000) + ":" + string.Format("{0:00}", miliSecond / 1000 % 60) + "/" + trackDuration;
         }
 
-        public void ResetTrackProgress()
+        public void ResetTrackProgress(TrackInfo track)
         {
             TrackProgress.Content = null;
         }

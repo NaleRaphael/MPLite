@@ -19,7 +19,7 @@ namespace MPLite
     {
         // ref: https://social.msdn.microsoft.com/Forums/vstudio/en-US/1f99c3c1-aeea-45aa-a501-a5b54b262799/winformhost-control-does-not-shown-when-windows-allowtransparency-true?forum=wpf
         private ProxyWindow proxyWin = null;
-        
+
         public PageCalendar()
         {
             InitializeComponent();

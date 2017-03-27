@@ -23,9 +23,9 @@
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <ListBox x:Name="ListBox_Playlist" Width="150" Background="#FF414141" BorderThickness="0" PreviewMouseUp="ListBox_Playlist_PreviewMouseUp" KeyDown="ListBox_Playlist_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}"/>
+            <ListBox x:Name="lb_PlayistMenu" Width="150" Background="#FF414141" BorderThickness="0" PreviewMouseUp="ListBox_Playlist_PreviewMouseUp" KeyDown="ListBox_Playlist_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}"/>
 
-            <ListView Grid.Row="0" x:Name="LV_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
+            <ListView Grid.Row="0" x:Name="lv_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
                   lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="LV_Playlist_DragEnter" Drop="LV_Playlist_Drop" MouseDoubleClick="LV_Playlist_MouseDoubleClick" KeyDown="LV_Playlist_KeyDown"
                       ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.ItemContainerStyle>
@@ -44,6 +44,7 @@
                                             </Grid>
                                         </Border>
                                     </Border>
+
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="Foreground" Value="Black"/>
@@ -59,6 +60,7 @@
                                         </Trigger>
 
                                     </ControlTemplate.Triggers>
+
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

@@ -6,7 +6,7 @@
       <Value Profile="(Default)">MPlitePlaylist.json</Value>
     </Setting>
     <Setting Name="LastSelectedPlaylist" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Default playlist</Value>
+      <Value Profile="(Default)">New Playlist</Value>
     </Setting>
     <Setting Name="ValidFileType" Type="System.String" Scope="User">
       <Value Profile="(Default)">.mp3|.wma|.wmv</Value>
