@@ -19,6 +19,32 @@ namespace MPLite
         public PageSetting()
         {
             InitializeComponent();
+            Init_cmb_PlaybackSetting();
+        }
+
+        private void Init_cmb_PlaybackSetting()
+        {
+            foreach (string mode in Enum.GetNames(typeof(MPLiteConstant.PlaybackMode)))
+            {
+                cmb_PlaybackSetting.Items.Add(mode);
+            }
+
+            cmb_PlaybackSetting.SelectedIndex = Properties.Settings.Default.PlaybackMode;
+        }
+
+        private void cmb_PlaybackSetting_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedMode = cmb_PlaybackSetting.SelectedItem.ToString();
+            MPLiteConstant.PlaybackMode mode;
+
+            if (Enum.TryParse<MPLiteConstant.PlaybackMode>(selectedMode, out mode))
+            {
+                if ((int)mode != Properties.Settings.Default.PlaybackMode)
+                {
+                    Properties.Settings.Default.PlaybackMode = (int)mode;
+                    Properties.Settings.Default.Save();
+                }
+            }
         }
     }
 }

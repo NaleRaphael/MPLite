@@ -68,7 +68,6 @@ namespace MPLite
             PageSwitcher.pageSwitcher = this.Frame_PageSwitcher;
 
             // Menu_Setting
-            Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
             SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
 
             // Default page
@@ -122,30 +121,18 @@ namespace MPLite
             CollapseMenuSetting(isMenuCollapsed);
         }
 
-        private void MItem_Basic_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO: navigate to desired page
-            PageSwitchControl<PageSetting>(ref pageSetting);
-            CollapseMenuSetting(true);
-        }
-
-        private void MItem_Scheduler_Click(object sender, RoutedEventArgs e)
-        {
-            PageSwitchControl<PageCalendar>(ref pageCalendar);
-            CollapseMenuSetting(true);
-        }
-
         private void btn_Setting_Basic_Click(object sender, RoutedEventArgs e)
         {
             // TODO: navigate to desired page
             PageSwitchControl<PageSetting>(ref pageSetting);
-            CollapseMenuSetting(true);
+            CollapseMenuSetting(false);
+
         }
 
         private void btn_Setting_Scheduler_Click(object sender, RoutedEventArgs e)
         {
             PageSwitchControl<PageCalendar>(ref pageCalendar);
-            CollapseMenuSetting(true);
+            CollapseMenuSetting(false);
         }
         #endregion
 
@@ -169,10 +156,9 @@ namespace MPLite
             Application.Current.Shutdown();
         }
 
-        private void CollapseMenuSetting(bool collapse)
+        private void CollapseMenuSetting(bool isCollapsed)
         {
-            isMenuCollapsed = !collapse;
-            Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            isMenuCollapsed = !isCollapsed;
             SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
         }
 

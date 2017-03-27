@@ -350,36 +350,32 @@ namespace MPLite
             {
                 CurrPlaylist = playlist;
                 InitTrackQueue(playlist.TrackAmount, beginningIdx, mode);
-                trackIdx = trackQueue.Dequeue();
+                //trackIdx = trackQueue.Dequeue();
             }
-            else
+            switch (mode)
             {
-                switch (mode)
-                {
-                    case MPLiteConstant.PlaybackMode.Default:
-                    case MPLiteConstant.PlaybackMode.ShuffleOnce:
-                        if (trackQueue.Count > 0)
-                        {
-                            trackIdx = trackQueue.Dequeue();
-                        }
-                        else
-                        {
-                            trackIdx = -1;
-                            trackQueue = null;
-                        }
-                        break;
-                    case MPLiteConstant.PlaybackMode.PlaySingle:
-                        // No need to enqueue again
-                        trackQueue = null;
-                        trackIdx = -1;
-                        break;
-                    case MPLiteConstant.PlaybackMode.RepeatTrack:
-                    case MPLiteConstant.PlaybackMode.RepeatList:
-                    case MPLiteConstant.PlaybackMode.Shuffle:
+                case MPLiteConstant.PlaybackMode.Default:
+                case MPLiteConstant.PlaybackMode.ShuffleOnce:
+                    if (trackQueue.Count > 0)
+                    {
                         trackIdx = trackQueue.Dequeue();
-                        trackQueue.Enqueue(trackIdx);
-                        break;
-                }
+                    }
+                    else
+                    {
+                        trackIdx = -1;
+                        trackQueue = null;
+                    }
+                    break;
+                case MPLiteConstant.PlaybackMode.PlaySingle:
+                    // No need to enqueue again
+                    trackIdx = (trackQueue.Count > 0) ? trackQueue.Dequeue() : -1;
+                    break;
+                case MPLiteConstant.PlaybackMode.RepeatTrack:
+                case MPLiteConstant.PlaybackMode.RepeatList:
+                case MPLiteConstant.PlaybackMode.Shuffle:
+                    trackIdx = trackQueue.Dequeue();
+                    trackQueue.Enqueue(trackIdx);
+                    break;
             }
             return trackIdx;
         }
@@ -409,19 +405,29 @@ namespace MPLite
                     // TODO: improve this
                     Random rand = new Random();
                     trackQueue = new Queue<int>(trackAmount);
-                    int[] ary = new int[trackAmount];
-                    for (int i = 0; i < trackAmount; i++)
+                    int[] ary = new int[trackAmount-1];
+
+                    // Initialize array
+                    for (int i = 0; i < beginningIdx; i++)
                     {
                         ary[i] = i;
                     }
-                    for (int i = 0; i < trackAmount; i++)
+                    for (int i = beginningIdx + 1; i < trackAmount; i++)
                     {
-                        int tempIdx = rand.Next(trackAmount);
-                        int temp = ary[rand.Next(trackAmount)];
+                        ary[i-1] = i;
+                    }
+
+                    // Swap randomly
+                    for (int i = 0; i < trackAmount - 1; i++)
+                    {
+                        int tempIdx = rand.Next(trackAmount - 1);
+                        int temp = ary[tempIdx];
                         ary[tempIdx] = ary[i];
                         ary[i] = temp;
                     }
-                    for (int i = 0; i < trackAmount; i++)
+
+                    trackQueue.Enqueue(beginningIdx);
+                    for (int i = 0; i < trackAmount-1; i++)
                     {
                         trackQueue.Enqueue(ary[i]);
                     }

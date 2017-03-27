@@ -9,9 +9,14 @@
       Title="PageSetting">
 
     <Grid Background="#FF323232">
-        <StackPanel Height="50" VerticalAlignment="Top" Background="#FF2D2D2D">
-            <Label x:Name="lbl_BasicSetting" Content="Basic" Height="24" Margin="0,13,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FFC8C8C8" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe UI" FontWeight="Bold"/>
+        <StackPanel x:Name="sPane_SettingHeader" Height="50" VerticalAlignment="Top" Background="#FF323232">
+            <Label x:Name="lbl_BasicSetting" Content="Basic" Height="50" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FFC8C8C8" Width="60" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontFamily="Segoe UI" FontWeight="Bold" FontSize="20"/>
         </StackPanel>
-        <Grid Margin="0,50,0,0" Background="Black"/>
+        <Grid x:Name="grid_SettingContent" Margin="0,50,0,0" Background="#FF282828">
+            <Grid x:Name="grid_PlaybackSetting" HorizontalAlignment="Left" Height="50" Margin="10,10,0,0" VerticalAlignment="Top" Width="150">
+                <ComboBox x:Name="cmb_PlaybackSetting" HorizontalAlignment="Left" Margin="5,23,0,0" VerticalAlignment="Top" Width="140" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Foreground="#FFC8C8C8" SelectionChanged="cmb_PlaybackSetting_SelectionChanged"/>
+                <Label x:Name="lbl_PlaybackSetting" Content="Playback mode" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFC8C8C8" FontFamily="Segoe UI"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Page>
