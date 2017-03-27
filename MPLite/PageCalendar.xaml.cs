@@ -20,6 +20,11 @@ namespace MPLite
         // ref: https://social.msdn.microsoft.com/Forums/vstudio/en-US/1f99c3c1-aeea-45aa-a501-a5b54b262799/winformhost-control-does-not-shown-when-windows-allowtransparency-true?forum=wpf
         private ProxyWindow proxyWin = null;
 
+        #region Event
+        public delegate void SchedulerIsTriggeredEventHandler(string playlistName, int selectedIdx);
+        public static event SchedulerIsTriggeredEventHandler SchedulerIsTriggeredEvent;
+        #endregion
+
         public PageCalendar()
         {
             InitializeComponent();
@@ -38,6 +43,13 @@ namespace MPLite
                 proxyWin.Close();
                 proxyWin = null;
             }
+        }
+
+        private void btn_AddEvent_Click(object sender, RoutedEventArgs e)
+        {
+            string playlistName = "New Playlist";
+            int selectedIdx = -1;
+            SchedulerIsTriggeredEvent(playlistName, selectedIdx);
         }
     }
 }

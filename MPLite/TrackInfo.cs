@@ -47,7 +47,7 @@ namespace MPLite
 
             int min = ((int)f.Properties.Duration.TotalSeconds) / 60;
             int sec = ((int)f.Properties.Duration.TotalSeconds) % 60;
-            string duration = string.Format("{0}:{1}", min, sec);
+            string duration = string.Format("{0:0}:{1:00}", min, sec);
 
             TrackInfo track = new TrackInfo
             {

@@ -33,7 +33,7 @@ namespace MPLite
 
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
-        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player);
+        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player, string playlistName, int selectedIdx);
         public static event GetTrackEventHandler GetTrackEvent; // subscriber: MainWindow_GetTrackEvent @ PagePlaylist.xaml.cs
         public delegate void TrackIsPalyingEventHandler(TrackInfo track);
         public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;  // subscriber: MainWindow_TrackIsPlayedEvent @ PagePlaylist.xaml.cs
@@ -78,13 +78,8 @@ namespace MPLite
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
             PagePlaylist.NewSelectionEvent += _musicPlayer.ResetQueue;
-
             _musicPlayer.PlayerStartedEvent += SetTimerAndTrackBar;
-            //_musicPlayer.PlayerStartedEvent += pagePlaylist.SetTrackStatus;
-
             _musicPlayer.PlayerStoppedEvent += ResetTimerAndTrackBar;
-            //_musicPlayer.PlayerStoppedEvent += pagePlaylist.ResetTrackStatus;
-
             _musicPlayer.PlayerPausedEvent += Set_btn_StartPlayback_Icon_Play;
             _musicPlayer.TrackEndsEvent += StopPlayerOrPlayNextTrack;
 
@@ -102,6 +97,9 @@ namespace MPLite
             _musicPlayer.PlayerStartedEvent += trackStatusDisplayer.SetTrackLength;
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackName;
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackProgress;
+
+            // Scheduler
+            PageCalendar.SchedulerIsTriggeredEvent += pagePlaylist.RunPlaylist;
         }
 
         #region PageControl
@@ -136,6 +134,19 @@ namespace MPLite
             PageSwitchControl<PageCalendar>(ref pageCalendar);
             CollapseMenuSetting(true);
         }
+
+        private void btn_Setting_Basic_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: navigate to desired page
+            PageSwitchControl<PageSetting>(ref pageSetting);
+            CollapseMenuSetting(true);
+        }
+
+        private void btn_Setting_Scheduler_Click(object sender, RoutedEventArgs e)
+        {
+            PageSwitchControl<PageCalendar>(ref pageCalendar);
+            CollapseMenuSetting(true);
+        }
         #endregion
 
         #region MainWindow control
@@ -162,10 +173,7 @@ namespace MPLite
         {
             isMenuCollapsed = !collapse;
             Menu_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
-            //isMenuCollapsed = collapse;
-
             SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
-
         }
 
         private void CloseProxyWindow()
@@ -175,16 +183,11 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        private void MainWindow_PlayTrackEvent()
+        // Called from `PagePlaylist`, so that `selectedIdx` is avaliable.
+        private void MainWindow_PlayTrackEvent(string playlistName, int selectedIdx)
         {
-            PlayTrack(GetTrackEvent(_musicPlayer));
+            PlayTrack(GetTrackEvent(_musicPlayer, playlistName, selectedIdx));
         }
-
-        /*private void MainWindow_PlayTrackEvent(TrackInfo trackInfo)
-        {
-            //PlayTrack(trackInfo);
-            PlayTrack(GetTrackEvent(_musicPlayer));
-        }*/
 
         private void Btn_StartPlayback_Click(object sender, RoutedEventArgs e)
         {
@@ -194,7 +197,8 @@ namespace MPLite
                 switch (_musicPlayer.PlayerStatus)
                 {
                     case MusicPlayer.PlaybackState.Stopped:
-                        PlayTrack(GetTrackEvent(_musicPlayer));
+                        // Call from MainWindow, so that player will start from the beginning of a list. (-1)
+                        PlayTrack(GetTrackEvent(_musicPlayer, null, -1));
                         break;
                     case MusicPlayer.PlaybackState.Playing:
                         _musicPlayer.Pause();
@@ -210,6 +214,7 @@ namespace MPLite
             }
         }
 
+        // Beginning function to fire all events of playing track
         private void PlayTrack(TrackInfo trackInfo)
         {
             try
@@ -274,7 +279,7 @@ namespace MPLite
             timer.Stop();
 
             // Play next track or replay the same track (according to user setting)
-            PlayTrack(GetTrackEvent(_musicPlayer));
+            PlayTrack(GetTrackEvent(_musicPlayer, null, -1));
         }
         #endregion
 

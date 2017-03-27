@@ -42,7 +42,7 @@ namespace MPLite
 
         public void ResetTrackProgress(TrackInfo track)
         {
-            TrackProgress.Content = null;
+            TrackProgress.Content = "";
         }
     }
 }

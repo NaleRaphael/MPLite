@@ -7,12 +7,13 @@
       xmlns:calendar="clr-namespace:Calendar.NET;assembly=Calendar.NET"
       xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="350" d:DesignWidth="525"
       Title="PageCalendar" Loaded="Page_Loaded" Unloaded="Page_Unloaded" Background="#FF323232">
 
     <Grid x:Name="GridContainer">
-        <WindowsFormsHost Name="wfh">
+        <WindowsFormsHost Name="wfh" Margin="150,0,0,0">
             <calendar:Calendar/>
         </WindowsFormsHost>
+        <Button x:Name="btn_AddEvent" Content="Add Events" HorizontalAlignment="Left" Margin="30,311,0,0" VerticalAlignment="Top" Width="75" Click="btn_AddEvent_Click"/>
     </Grid>
 </Page>
