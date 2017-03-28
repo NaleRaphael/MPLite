@@ -18,6 +18,7 @@ namespace MPLite
     {
         [JsonIgnore]
         private string _playingSign;
+
         [JsonIgnore]
         public string PlayingSign
         {

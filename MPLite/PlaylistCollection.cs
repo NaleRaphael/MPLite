@@ -169,8 +169,6 @@ namespace MPLite
             foreach (string filePath in filePaths)
             {
                 string trackName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                //TrackInfo trackInfo = new TrackInfo { TrackName = trackName, TrackPath = filePath };
-                //this.Soundtracks.Add(trackInfo);
                 this.Soundtracks.Add(TrackInfo.ParseSource(filePath));
             }
         }
@@ -199,13 +197,35 @@ namespace MPLite
             Soundtracks.Insert(newIdx, track);
         }
 
-        // TODO: move multiple tracks
+        // TODO: move multiple tracks (dragging items in lv_Playlist)
     }
 
     public class InvalidPlaylistException : Exception
     {
         public InvalidPlaylistException(string message) : base(message)
         {
+        }
+    }
+
+    public class PlayTrackEventArgs : EventArgs
+    {
+        public string PlaylistName { get; set; }
+        public int TrackIndex { get; set; }
+        public MPLiteConstant.PlaybackMode PlaybackMode { get; set; }
+
+        // Default value of playlistName should be `null` so that music play can selected playlist automatically.
+        public PlayTrackEventArgs(string playlistName = null, int trackIdx = -1, 
+            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+        {
+            PlaylistName = (playlistName == null) ? Properties.Settings.Default.LastSelectedPlaylist : playlistName;
+            TrackIndex = trackIdx;
+            PlaybackMode = (mode == MPLiteConstant.PlaybackMode.None) ? 
+                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode : mode;
+
+            // Use TaskPlaybackMode as a global variable to handle PlayTrackEvent whether it comes from user-clicked or scheduler-triggered.
+            Properties.Settings.Default.TaskPlaybackMode = (int)PlaybackMode;
+            Properties.Settings.Default.TaskPlaylist = PlaylistName;
+            Properties.Settings.Default.Save();
         }
     }
 }

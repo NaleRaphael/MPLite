@@ -70,5 +70,29 @@ namespace MPLite.Properties {
                 this["PlaybackMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TaskPlaybackMode {
+            get {
+                return ((int)(this["TaskPlaybackMode"]));
+            }
+            set {
+                this["TaskPlaybackMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("New Playlist")]
+        public string TaskPlaylist {
+            get {
+                return ((string)(this["TaskPlaylist"]));
+            }
+            set {
+                this["TaskPlaylist"] = value;
+            }
+        }
     }
 }

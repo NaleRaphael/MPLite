@@ -18,16 +18,16 @@ namespace MPLite
 {
     public partial class PagePlaylist : Page
     {
-        public delegate void PlayTrackEventHandler(string playlistName, int selectedIdx);
+        public delegate void PlayTrackEventHandler(PlayTrackEventArgs e);
         public static event PlayTrackEventHandler PlayTrackEvent;
         public delegate void NewSelectionEventHandler();    // User selected a track as a new entry of trackQueue
         public static event NewSelectionEventHandler NewSelectionEvent;
 
         private int idxOfPlayingTrack = -1;
-        private string prevPlaylist;
-        private string currPlaylist;
+        private string prevShowingPlaylist;
+        private string currShowingPlaylist;
 
-        // Workaround for avoid playing wrong song when there are duplicates
+        // Workaround of avoid playing wrong song when there are duplicates
         private int prevTrackIdx = -1;
         private int currTrackIdx = -1;
 
@@ -35,23 +35,28 @@ namespace MPLite
         {
             InitializeComponent();
             InitPlaylist();
-            lb_PlayistMenu.SelectedIndex = 0;  // select default list
+
+            //lb_PlayistMenu.SelectedIndex = 0;  // select default list
+            //lb_PlayistMenu.
+
             MainWindow.GetTrackEvent += MainWindow_GetTrackEvent;
             MainWindow.TrackIsPlayedEvent += SetTrackStatus;
             MainWindow.TrackIsStoppedEvent += ResetTrackStatus;
-            //PageCalendar.SchedulerIsTriggeredEvent;
+
+            // TODO: select first playlist or last selected playlist
+            currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
         }
 
         public void ResetTrackStatus(TrackInfo track)
         {
-            string listName = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
+            string listName = Properties.Settings.Default.TaskPlaylist;
 
             // Check whether selected list is the one hosting the playing track.
             // (NOTE: we don't need to worry about those status wasn't cleared before switch to another playlist.
             // Because the content of `lv_playlist` will be reloaded from `MPlitePlaylist.json` when selected playlist is changed, 
             // and `trackInfo.PlayingSign` won't be store into it. 
             // So we just only have to set `PlayingSign` when the selected playlist is the one hosting playing track.)
-            if (listName == prevPlaylist)
+            if (listName == currShowingPlaylist)
             {
                 SetPlayingStateOfTrack(prevTrackIdx, "");
             }
@@ -59,10 +64,8 @@ namespace MPLite
 
         public void SetTrackStatus(TrackInfo track)
         {
-            //listHostingPlayingTrack = Properties.Settings.Default.LastSelectedPlaylist;
-
-            string listName = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
-            if (listName == currPlaylist)
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            if (listName == currShowingPlaylist)
             {
                 SetPlayingStateOfTrack(currTrackIdx, ">");
             }
@@ -124,7 +127,8 @@ namespace MPLite
             if ((ListBoxItem)lb_PlayistMenu.SelectedItem != null)
             {
                 string listName = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
-                if (listName == currPlaylist)
+
+                if (Properties.Settings.Default.TaskPlaylist == currShowingPlaylist)
                 {
                     SetPlayingStateOfTrack(currTrackIdx, ">");
                 }
@@ -151,11 +155,7 @@ namespace MPLite
                 if (!MPLiteConstant.validFileType.Contains(System.IO.Path.GetExtension(filePath)))
                     continue;
 
-                // TODO: rewrite this
-                //       Store data into a dataset (json file)
-                //       Then present those information into listview
                 lv_Playlist.Items.Add(TrackInfo.ParseSource(filePath));
-
                 cnt++;
             }
 
@@ -170,16 +170,17 @@ namespace MPLite
             if (selIdx < 0) return;
 
             string playlistName = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
-            //SetPrevAndCurrPlaylist(((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString());
+            SetPrevAndCurrShowingPlaylist(((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString());
 
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
-            PlaySoundtrack(playlistName, selIdx);
+
+            PlaySoundtrack(new PlayTrackEventArgs(playlistName, selIdx));
         }
 
-        private void SetPrevAndCurrPlaylist(string newPlaylist)
+        private void SetPrevAndCurrShowingPlaylist(string newPlaylist)
         {
-            prevPlaylist = currPlaylist;
-            currPlaylist = newPlaylist;
+            prevShowingPlaylist = currShowingPlaylist;
+            currShowingPlaylist = newPlaylist;
         }
 
         private void lv_Playlist_KeyDown(object sender, KeyEventArgs e)
@@ -205,12 +206,13 @@ namespace MPLite
             }
         }
 
-        private void PlaySoundtrack(string playlistName, int selectedIdx)
+        //private void PlaySoundtrack(string playlistName, int selectedIdx)
+        private void PlaySoundtrack(PlayTrackEventArgs e)
         {
             try
             {
                 // Fire event to notify MainWindow that a track is selected and waiting to be played
-                PlayTrackEvent(playlistName, selectedIdx);   
+                PlayTrackEvent(e);
             }
             catch
             {
@@ -218,7 +220,7 @@ namespace MPLite
             }
         }
 
-        private TrackInfo MainWindow_GetTrackEvent(MusicPlayer player, string playlistName, int selectedIdx)
+        private TrackInfo MainWindow_GetTrackEvent(MusicPlayer player, PlayTrackEventArgs e)
         {
             if (lb_PlayistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
             {
@@ -228,9 +230,8 @@ namespace MPLite
             TrackInfo track;
             try
             {
-                playlistName = (playlistName == null) ? currPlaylist : playlistName;
-                track = GetTrack(player, playlistName, lv_Playlist.SelectedIndex);
-                SetPrevAndCurrPlaylist(playlistName);
+                e.PlaylistName = (e.PlaylistName == null) ? currShowingPlaylist : e.PlaylistName;
+                track = GetTrack(player, e);
             }
             catch
             {
@@ -239,13 +240,13 @@ namespace MPLite
             return track;
         }
 
-        private TrackInfo GetTrack(MusicPlayer player, string playlistName, int selectedIdx)
+        private TrackInfo GetTrack(MusicPlayer player, PlayTrackEventArgs e)
         {
             TrackInfo track;
             try
             {
                 prevTrackIdx = currTrackIdx;    // workaround
-                track = player.GetNextTrack(playlistName, selectedIdx, out currTrackIdx);
+                track = player.GetNextTrack(e, out currTrackIdx);
                 idxOfPlayingTrack = currTrackIdx;
             }
             catch
@@ -281,6 +282,7 @@ namespace MPLite
             if (lb_PlayistMenu.SelectedItems.Count == 1)
             {
                 string selectedPlaylist = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
+                SetPrevAndCurrShowingPlaylist(selectedPlaylist);
                 RefreshPlaylistContent(selectedPlaylist);
                 Properties.Settings.Default.LastSelectedPlaylist = selectedPlaylist;
                 Properties.Settings.Default.Save();
@@ -305,8 +307,8 @@ namespace MPLite
                 // Switch content of lv_playlist to previous one, or hide lv_playlist if there is no remaining items in lb_PlaylistMenu
                 if (lb_PlayistMenu.Items.Count != 0)
                 {
-                    string prevPlaylist = ((ListBoxItem)(lb_PlayistMenu.Items[lb_PlayistMenu.Items.Count - 1])).Content.ToString();
-                    RefreshPlaylistContent(prevPlaylist);
+                    string prevShowingPlaylist = ((ListBoxItem)(lb_PlayistMenu.Items[lb_PlayistMenu.Items.Count - 1])).Content.ToString();
+                    RefreshPlaylistContent(prevShowingPlaylist);
                 }
                 else
                 {
@@ -316,26 +318,10 @@ namespace MPLite
         }
 
         #region Handle events fired from scheduler
-        public void RunPlaylist(string playlistName, int selectedIdx)
+        public void RunPlaylist(PlayTrackEventArgs e)
         {
-            SetPrevAndCurrPlaylist(playlistName);
-
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
-
-            PlaySoundtrack(playlistName, selectedIdx);
-
-            /*TrackInfo track;
-            try
-            {
-                prevTrackIdx = currTrackIdx;    // workaround
-                track = player.GetNextTrack(currPlaylist, lv_Playlist.SelectedIndex, out currTrackIdx);
-                idxOfPlayingTrack = currTrackIdx;
-            }
-            catch
-            {
-                throw;
-            }
-            return track;*/
+            PlaySoundtrack(e);
         }
         #endregion
     }

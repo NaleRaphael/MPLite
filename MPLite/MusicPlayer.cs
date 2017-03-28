@@ -17,7 +17,6 @@ namespace MPLite
         private int error;
 
         private Queue<int> trackQueue;
-        //private TrackQueue<int> trackQueue;
 
         // String that holds the MCI command
         // format: "s1 s2 s3 s4"
@@ -35,8 +34,6 @@ namespace MPLite
         public int CurrentTrackNum { get; set; }
         public enum PlaybackState { Stopped = 0, Paused, Playing };
         public PlaybackState PlayerStatus = PlaybackState.Stopped;
-        //public bool Loop { get; set; }
-        //public bool Shuffle { get; set; }
         public MPLiteConstant.PlaybackMode PlaybackMode = (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode;
         #endregion
 
@@ -309,13 +306,13 @@ namespace MPLite
             return false;
         }
         #endregion
+
         public TrackInfo GetNextTrack(out int trackIdx)
         {
             if (CurrPlaylist == null)
                 throw new InvalidPlaylistException("No selected playlist");
 
-            trackIdx = GetTrackIdxFromQueue(CurrPlaylist, 0,
-                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode);
+            trackIdx = GetTrackIdxFromQueue(CurrPlaylist, 0, this.PlaybackMode);
 
             return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
         }
@@ -326,19 +323,29 @@ namespace MPLite
                 throw new EmptyPlaylistException("Playlist is empty");
 
             trackIdx = GetTrackIdxFromQueue(playlist, selectedIdx,
-                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode);
+                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
 
             return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
         }
 
-        public TrackInfo GetNextTrack(string playlistName, int selectedIdx, out int trackIdx)
+        public TrackInfo GetNextTrack(PlayTrackEventArgs e,  out int trackIdx)
+        {
+            Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == e.PlaylistName);
+            if (pl == null || pl.TrackAmount == 0)
+                throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", e.PlaylistName));
+
+            trackIdx = GetTrackIdxFromQueue(pl, e.TrackIndex, e.PlaybackMode);
+
+            return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
+        }
+
+        public TrackInfo GetNextTrack(string playlistName, int selectedIdx, out int trackIdx, MPLiteConstant.PlaybackMode mode)
         {
             Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
             if (pl == null || pl.TrackAmount == 0)
                 throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", playlistName));
 
-            trackIdx = GetTrackIdxFromQueue(pl, selectedIdx, 
-                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode);
+            trackIdx = GetTrackIdxFromQueue(pl, selectedIdx, mode);
 
             return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
         }
@@ -350,7 +357,6 @@ namespace MPLite
             {
                 CurrPlaylist = playlist;
                 InitTrackQueue(playlist.TrackAmount, beginningIdx, mode);
-                //trackIdx = trackQueue.Dequeue();
             }
             switch (mode)
             {

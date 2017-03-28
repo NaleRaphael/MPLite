@@ -12,6 +12,10 @@ namespace MPLite
         public enum PlaybackMode
         {
             /// <summary>
+            /// No specific playback mode.
+            /// </summary>
+            None = -1,
+            /// <summary>
             /// Play entire playlist once.
             /// </summary>
             Default = 0,
