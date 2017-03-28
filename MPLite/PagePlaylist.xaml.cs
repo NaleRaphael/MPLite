@@ -47,39 +47,7 @@ namespace MPLite
             currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
         }
 
-        public void ResetTrackStatus(TrackInfo track)
-        {
-            string listName = Properties.Settings.Default.TaskPlaylist;
-
-            // Check whether selected list is the one hosting the playing track.
-            // (NOTE: we don't need to worry about those status wasn't cleared before switch to another playlist.
-            // Because the content of `lv_playlist` will be reloaded from `MPlitePlaylist.json` when selected playlist is changed, 
-            // and `trackInfo.PlayingSign` won't be store into it. 
-            // So we just only have to set `PlayingSign` when the selected playlist is the one hosting playing track.)
-            if (listName == currShowingPlaylist)
-            {
-                SetPlayingStateOfTrack(prevTrackIdx, "");
-            }
-        }
-
-        public void SetTrackStatus(TrackInfo track)
-        {
-            string listName = Properties.Settings.Default.TaskPlaylist;
-            if (listName == currShowingPlaylist)
-            {
-                SetPlayingStateOfTrack(currTrackIdx, ">");
-            }
-        }
-
-        private void SetPlayingStateOfTrack(int trackIdx, string status)
-        {
-            if (trackIdx == -1)
-                return;
-            TrackInfo selectedTrack = lv_Playlist.Items.OfType<TrackInfo>().ToList()[trackIdx];
-            selectedTrack.PlayingSign = status;
-            lv_Playlist.UpdateLayout();
-        }
-
+        #region Initialization
         private void InitPlaylist()
         {
             RefreshPlaylist();
@@ -101,8 +69,7 @@ namespace MPLite
 
         private void RefreshPlaylistContent(string selectedPlaylist, int selectedPlaylistIndex)
         {
-            // Check whether there has been some playlist in lb_PlayistMenu.
-            // If not, lv_Playlist show be hidden.
+            // Check whether there has been some playlist in lb_PlayistMenu. If not, lv_Playlist show be hidden.
             if (lb_PlaylistMenu.Items.Count == 0)
                 lv_Playlist.Visibility = Visibility.Hidden;
 
@@ -121,6 +88,7 @@ namespace MPLite
 
             // Update info
             Properties.Settings.Default.LastSelectedPlaylist = selectedPlaylist;
+            // ... workaround: to select playlist in the stage of initialization
             Properties.Settings.Default.LastSelectedPlaylistIndex = selectedPlaylistIndex;
             Properties.Settings.Default.Save();
 
@@ -135,7 +103,46 @@ namespace MPLite
                 }
             }
         }
+        #endregion
 
+        #region Track status control
+        public void ResetTrackStatus(PlayTrackEventArgs e)
+        {
+            // TODO:
+            string listName = Properties.Settings.Default.TaskPlaylist;
+
+            // Check whether selected list is the one hosting the playing track.
+            // (NOTE: we don't need to worry about those status wasn't cleared before switch to another playlist.
+            // Because the content of `lv_playlist` will be reloaded from `MPlitePlaylist.json` when selected playlist is changed, 
+            // and `trackInfo.PlayingSign` won't be store into it. 
+            // So we just only have to set `PlayingSign` when the selected playlist is the one hosting playing track.)
+            if (listName == currShowingPlaylist)
+            {
+                SetPlayingStateOfTrack(prevTrackIdx, "");
+            }
+        }
+
+        public void SetTrackStatus(PlayTrackEventArgs e)
+        {
+            // TODO:
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            if (listName == currShowingPlaylist)
+            {
+                SetPlayingStateOfTrack(currTrackIdx, ">");
+            }
+        }
+
+        private void SetPlayingStateOfTrack(int trackIdx, string status)
+        {
+            if (trackIdx == -1)
+                return;
+            TrackInfo selectedTrack = lv_Playlist.Items.OfType<TrackInfo>().ToList()[trackIdx];
+            selectedTrack.PlayingSign = status;
+            lv_Playlist.UpdateLayout();
+        }
+        #endregion
+
+        #region lb_Playlist controls
         private void lv_Playlist_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -178,12 +185,6 @@ namespace MPLite
             PlaySoundtrack(new PlayTrackEventArgs(playlistName, selIdx));
         }
 
-        private void SetPrevAndCurrShowingPlaylist(string newPlaylist)
-        {
-            prevShowingPlaylist = currShowingPlaylist;
-            currShowingPlaylist = newPlaylist;
-        }
-
         private void lv_Playlist_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Delete && lv_Playlist.SelectedItems.Count != 0)
@@ -206,8 +207,14 @@ namespace MPLite
                 PlaylistCollection.DeleteTracksByIndices(selectedIdx.ToArray<int>(), selectedPlaylist);
             }
         }
+        #endregion
 
-        //private void PlaySoundtrack(string playlistName, int selectedIdx)
+        private void SetPrevAndCurrShowingPlaylist(string newPlaylist)
+        {
+            prevShowingPlaylist = currShowingPlaylist;
+            currShowingPlaylist = newPlaylist;
+        }
+
         private void PlaySoundtrack(PlayTrackEventArgs e)
         {
             try
@@ -221,24 +228,23 @@ namespace MPLite
             }
         }
 
-        private TrackInfo MainWindow_GetTrackEvent(MusicPlayer player, PlayTrackEventArgs e)
+        private PlayTrackEventArgs MainWindow_GetTrackEvent(MusicPlayer player, PlayTrackEventArgs e)
         {
             if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
             {
                 throw new EmptyPlaylistException("No tracks avalible");
             }
 
-            TrackInfo track;
             try
             {
                 e.PlaylistName = (e.PlaylistName == null) ? currShowingPlaylist : e.PlaylistName;
-                track = GetTrack(player, e);
+                e.Track = GetTrack(player, e);
             }
             catch
             {
                 throw;
             }
-            return track;
+            return e;
         }
 
         private TrackInfo GetTrack(MusicPlayer player, PlayTrackEventArgs e)

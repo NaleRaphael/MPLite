@@ -33,11 +33,11 @@ namespace MPLite
 
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
-        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player, PlayTrackEventArgs e);
+        public delegate PlayTrackEventArgs GetTrackEventHandler(MusicPlayer player, PlayTrackEventArgs e);
         public static event GetTrackEventHandler GetTrackEvent; // subscriber: MainWindow_GetTrackEvent @ PagePlaylist.xaml.cs
-        public delegate void TrackIsPalyingEventHandler(TrackInfo track);
+        public delegate void TrackIsPalyingEventHandler(PlayTrackEventArgs e);
         public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;  // subscriber: MainWindow_TrackIsPlayedEvent @ PagePlaylist.xaml.cs
-        public delegate void TrackIsStoppedEventHandler(TrackInfo track);
+        public delegate void TrackIsStoppedEventHandler(PlayTrackEventArgs e);
         public static event TrackIsStoppedEventHandler TrackIsStoppedEvent; // subscriber: MainWindow_TrackIsStoppedEvent @ PagePlaylist.xaml.cs
 
         // Timer
@@ -76,7 +76,7 @@ namespace MPLite
             // Music player
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
-            PagePlaylist.NewSelectionEvent += _musicPlayer.ResetQueue;
+            PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             _musicPlayer.PlayerStartedEvent += SetTimerAndTrackBar;
             _musicPlayer.PlayerStoppedEvent += ResetTimerAndTrackBar;
             _musicPlayer.PlayerPausedEvent += Set_btn_StartPlayback_Icon_Play;
@@ -202,18 +202,18 @@ namespace MPLite
         }
 
         // Beginning function to fire all events of playing track
-        private void PlayTrack(TrackInfo trackInfo)
+        private void PlayTrack(PlayTrackEventArgs e)
         {
             try
             {
                 _musicPlayer.Stop();
 
-                if (trackInfo == null)
+                if (e.Track == null)
                     return;
-                _musicPlayer.Play(trackInfo);
+                _musicPlayer.Play(e);
 
                 // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
-                TrackIsPlayedEvent(trackInfo);
+                TrackIsPlayedEvent(e);
             }
             catch (Exception ex)
             {
@@ -223,7 +223,7 @@ namespace MPLite
         }
 
         // Subscriber
-        public void ResetTimerAndTrackBar(TrackInfo track)
+        public void ResetTimerAndTrackBar(PlayTrackEventArgs e)
         {
             timer.Stop();
             // Reset the posotion of thumb
@@ -235,11 +235,11 @@ namespace MPLite
 
             // Fire event to notify subscribber that track has been stopped
             // (reset `TrackInfo.playingSign`, ... etc)
-            TrackIsStoppedEvent(_musicPlayer.PrevTrack);
+            TrackIsStoppedEvent(e);
         }
 
         // Subscriber
-        private void SetTimerAndTrackBar(TrackInfo track)
+        private void SetTimerAndTrackBar(PlayTrackEventArgs e)
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();

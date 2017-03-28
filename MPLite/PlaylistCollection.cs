@@ -211,6 +211,7 @@ namespace MPLite
     {
         public string PlaylistName { get; set; }
         public int TrackIndex { get; set; }
+        public TrackInfo Track { get; set; }
         public MPLiteConstant.PlaybackMode PlaybackMode { get; set; }
 
         // Default value of playlistName should be `null` so that music play can selected playlist automatically.
@@ -224,7 +225,7 @@ namespace MPLite
 
             // Use TaskPlaybackMode as a global variable to handle PlayTrackEvent whether it comes from user-clicked or scheduler-triggered.
             Properties.Settings.Default.TaskPlaybackMode = (int)PlaybackMode;
-            Properties.Settings.Default.TaskPlaylist = PlaylistName;
+            //Properties.Settings.Default.TaskPlaylist = PlaylistName;
             Properties.Settings.Default.Save();
         }
     }

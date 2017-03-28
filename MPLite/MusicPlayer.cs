@@ -38,9 +38,9 @@ namespace MPLite
         #endregion
 
         #region Event
-        public delegate void PlayerStoppedEventHandler(TrackInfo track);
+        public delegate void PlayerStoppedEventHandler(PlayTrackEventArgs e);
         public event PlayerStoppedEventHandler PlayerStoppedEvent;
-        public delegate void PlayerStartedEventHandker(TrackInfo track);
+        public delegate void PlayerStartedEventHandker(PlayTrackEventArgs e);
         public event PlayerStartedEventHandker PlayerStartedEvent;
         public delegate void PlayerPausedEventHandler();
         public event PlayerPausedEventHandler PlayerPausedEvent;
@@ -108,12 +108,12 @@ namespace MPLite
             else return true;
         }
 
-        public bool Play(TrackInfo track)
+        public bool Play(PlayTrackEventArgs e)
         {
             bool trackIsOpened = false;
             try
             {
-                trackIsOpened = Open(track);
+                trackIsOpened = Open(e.Track);
             }
             catch
             {
@@ -128,11 +128,13 @@ namespace MPLite
                 if (error == 0)
                 {
                     // Save the trackInfo that is playing currently
-                    CurrentTrack = track;
+                    CurrentTrack = e.Track;
                     PlayerStatus = PlaybackState.Playing;
+                    Properties.Settings.Default.TaskPlaylist = e.PlaylistName;
+                    Properties.Settings.Default.Save();
 
                     // Fire event to notify subscribers
-                    PlayerStartedEvent(track);
+                    PlayerStartedEvent(e);
                     return true;
                 }
                 else
@@ -155,7 +157,10 @@ namespace MPLite
                 Resume();
                 PlayerStatus = PlaybackState.Playing;
                 // Fire event
-                PlayerStartedEvent(CurrentTrack);
+                PlayTrackEventArgs e = new PlayTrackEventArgs(Properties.Settings.Default.TaskPlaylist, -1,
+                    (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
+                e.Track = CurrentTrack;
+                PlayerStartedEvent(e);
             }
             else if (PlayerStatus == PlaybackState.Playing)
             {
@@ -179,7 +184,9 @@ namespace MPLite
             CurrentTrack = null;
 
             // Fire event to notify subscribers
-            PlayerStoppedEvent(PrevTrack);
+            PlayTrackEventArgs e = new PlayTrackEventArgs(Properties.Settings.Default.TaskPlaylist, -1);
+            e.Track = PrevTrack;
+            PlayerStoppedEvent(e);
         }
 
         public void Resume()
@@ -189,7 +196,10 @@ namespace MPLite
             PlayerStatus = PlaybackState.Playing;
 
             // Fire event
-            PlayerStartedEvent(CurrentTrack);
+            PlayTrackEventArgs e = new PlayTrackEventArgs(Properties.Settings.Default.TaskPlaylist, -1,
+                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
+            e.Track = CurrentTrack;
+            PlayerStartedEvent(e);
         }
         #endregion
 
@@ -356,7 +366,7 @@ namespace MPLite
             if (trackQueue == null || playlist.ListName != CurrPlaylist.ListName)
             {
                 CurrPlaylist = playlist;
-                InitTrackQueue(playlist.TrackAmount, beginningIdx, mode);
+                SetTrackQueue(playlist.TrackAmount, beginningIdx, mode);
             }
             switch (mode)
             {
@@ -386,71 +396,131 @@ namespace MPLite
             return trackIdx;
         }
 
-        private void InitTrackQueue(int trackAmount, int beginningIdx, MPLiteConstant.PlaybackMode mode)
+        private void SetTrackQueue(int trackAmount, int beginningIdx, MPLiteConstant.PlaybackMode mode)
         {
-            if (trackQueue != null)
-            {
-                trackQueue.Clear();
-                trackQueue = null;
-            }
+            ClearQueue();
 
             // Reset beginningIdx if no track is selected
             beginningIdx = (beginningIdx == -1) ? 0 : beginningIdx;
             switch (mode)
             {
                 case MPLiteConstant.PlaybackMode.Default:
+                    _SetTrackQueue_Default(trackAmount, beginningIdx);
+                    break;
                 case MPLiteConstant.PlaybackMode.RepeatList:
-                    trackQueue = new Queue<int>(trackAmount);
-                    for (int i = beginningIdx; i < trackAmount; i++)
-                    {
-                        trackQueue.Enqueue(i);
-                    }
+                    _SetTrackQueue_RepeatList(trackAmount, beginningIdx);
                     break;
                 case MPLiteConstant.PlaybackMode.Shuffle:
                 case MPLiteConstant.PlaybackMode.ShuffleOnce:
-                    // TODO: improve this
-                    Random rand = new Random();
-                    trackQueue = new Queue<int>(trackAmount);
-                    int[] ary = new int[trackAmount-1];
-
-                    // Initialize array
-                    for (int i = 0; i < beginningIdx; i++)
-                    {
-                        ary[i] = i;
-                    }
-                    for (int i = beginningIdx + 1; i < trackAmount; i++)
-                    {
-                        ary[i-1] = i;
-                    }
-
-                    // Swap randomly
-                    for (int i = 0; i < trackAmount - 1; i++)
-                    {
-                        int tempIdx = rand.Next(trackAmount - 1);
-                        int temp = ary[tempIdx];
-                        ary[tempIdx] = ary[i];
-                        ary[i] = temp;
-                    }
-
-                    trackQueue.Enqueue(beginningIdx);
-                    for (int i = 0; i < trackAmount-1; i++)
-                    {
-                        trackQueue.Enqueue(ary[i]);
-                    }
+                    _SetTrackQueue_Shuffle(trackAmount, beginningIdx);
                     break;
                 case MPLiteConstant.PlaybackMode.PlaySingle:
                 case MPLiteConstant.PlaybackMode.RepeatTrack:
-                    trackQueue = new Queue<int>(1);
-                    trackQueue.Enqueue(beginningIdx);
+                    _SetTrackQueue_Single(trackAmount, beginningIdx);
                     break;
                 default:
                     break;
             }
         }
 
-        public void ResetQueue()
+        private void _SetTrackQueue_Default(int trackAmount, int beginningIdx)
         {
-            trackQueue = null;
+            trackQueue = new Queue<int>(trackAmount);
+            for (int i = beginningIdx; i < trackAmount; i++)
+            {
+                trackQueue.Enqueue(i);
+            }
+        }
+
+        private void _SetTrackQueue_RepeatList(int trackAmount, int beginningIdx)
+        {
+            trackQueue = new Queue<int>(trackAmount);
+            for (int i = beginningIdx; i < trackAmount; i++)
+            {
+                trackQueue.Enqueue(i);
+            }
+            for (int i = 0; i < beginningIdx; i++)
+            {
+                trackQueue.Enqueue(i);
+            }
+        }
+
+        private void _SetTrackQueue_Shuffle(int trackAmount, int beginningIdx)
+        {
+            // TODO: improve this
+            Random rand = new Random();
+            trackQueue = new Queue<int>(trackAmount);
+            int[] ary = new int[trackAmount - 1];
+
+            // Initialize array
+            for (int i = 0; i < beginningIdx; i++)
+            {
+                ary[i] = i;
+            }
+            for (int i = beginningIdx + 1; i < trackAmount; i++)
+            {
+                ary[i - 1] = i;
+            }
+
+            // Swap randomly
+            for (int i = 0; i < trackAmount - 1; i++)
+            {
+                int tempIdx = rand.Next(trackAmount - 1);
+                int temp = ary[tempIdx];
+                ary[tempIdx] = ary[i];
+                ary[i] = temp;
+            }
+
+            trackQueue.Enqueue(beginningIdx);
+            for (int i = 0; i < trackAmount - 1; i++)
+            {
+                trackQueue.Enqueue(ary[i]);
+            }
+        }
+
+        private void _SetTrackQueue_Single(int trackAmount, int beginningIdx)
+        {
+            trackQueue = new Queue<int>(1);
+            trackQueue.Enqueue(beginningIdx);
+        }
+
+        public void ClearQueue()
+        {
+            if (trackQueue != null)
+            {
+                trackQueue.Clear();
+                trackQueue = null;
+            }
+        }
+
+        // Reset queue when playlist is re-ordered
+        // 1. SetTrackQueue(..., idx_of_playing_track, ...)
+        // 2. dequeue (remove first index -> idx_of_playing_track)
+        // NOTE: in the following mode, no need to reset queue
+        //      PlaySingle, RepeatTrack
+        public void ResetQueue(int trackAmount, int beginningIdx, int offset, MPLiteConstant.PlaybackMode mode)
+        {
+            ClearQueue();
+
+            switch (mode)
+            {
+                case MPLiteConstant.PlaybackMode.Default:
+                    _SetTrackQueue_Default(trackAmount, beginningIdx);
+                    trackQueue.Dequeue();
+                    break;
+                case MPLiteConstant.PlaybackMode.RepeatList:
+                    _SetTrackQueue_RepeatList(trackAmount, beginningIdx);
+                    trackQueue.Dequeue();
+                    break;
+                case MPLiteConstant.PlaybackMode.Shuffle:
+                case MPLiteConstant.PlaybackMode.ShuffleOnce:
+                    // TODO
+                    break;
+                case MPLiteConstant.PlaybackMode.PlaySingle:
+                case MPLiteConstant.PlaybackMode.RepeatTrack:
+                default:
+                    break;
+            }
         }
     }
 
