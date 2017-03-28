@@ -36,8 +36,8 @@ namespace MPLite
             InitializeComponent();
             InitPlaylist();
 
-            //lb_PlayistMenu.SelectedIndex = 0;  // select default list
-            //lb_PlayistMenu.
+            lb_PlaylistMenu.SelectedIndex = Properties.Settings.Default.LastSelectedPlaylistIndex;  // select default list
+            //lb_PlayistMenu.SelectedItem = lb_PlayistMenu.Items.IndexOf(Properties.Settings.Default.LastSelectedPlaylist);
 
             MainWindow.GetTrackEvent += MainWindow_GetTrackEvent;
             MainWindow.TrackIsPlayedEvent += SetTrackStatus;
@@ -83,7 +83,7 @@ namespace MPLite
         private void InitPlaylist()
         {
             RefreshPlaylist();
-            RefreshPlaylistContent(Properties.Settings.Default.LastSelectedPlaylist);
+            RefreshPlaylistContent(Properties.Settings.Default.LastSelectedPlaylist, Properties.Settings.Default.LastSelectedPlaylistIndex);
         }
 
         private void RefreshPlaylist()
@@ -95,15 +95,15 @@ namespace MPLite
             {
                 ListBoxItem lvi = new ListBoxItem();
                 lvi.Content = pl.ListName;
-                lb_PlayistMenu.Items.Add(lvi);
+                lb_PlaylistMenu.Items.Add(lvi);
             }
         }
 
-        private void RefreshPlaylistContent(string selectedPlaylist)
+        private void RefreshPlaylistContent(string selectedPlaylist, int selectedPlaylistIndex)
         {
             // Check whether there has been some playlist in lb_PlayistMenu.
             // If not, lv_Playlist show be hidden.
-            if (lb_PlayistMenu.Items.Count == 0)
+            if (lb_PlaylistMenu.Items.Count == 0)
                 lv_Playlist.Visibility = Visibility.Hidden;
 
             PlaylistCollection plc = PlaylistCollection.GetDatabase();
@@ -121,12 +121,13 @@ namespace MPLite
 
             // Update info
             Properties.Settings.Default.LastSelectedPlaylist = selectedPlaylist;
+            Properties.Settings.Default.LastSelectedPlaylistIndex = selectedPlaylistIndex;
             Properties.Settings.Default.Save();
 
             // Show playing track
-            if ((ListBoxItem)lb_PlayistMenu.SelectedItem != null)
+            if ((ListBoxItem)lb_PlaylistMenu.SelectedItem != null)
             {
-                string listName = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
+                string listName = ((ListBoxItem)lb_PlaylistMenu.SelectedItem).Content.ToString();
 
                 if (Properties.Settings.Default.TaskPlaylist == currShowingPlaylist)
                 {
@@ -146,7 +147,7 @@ namespace MPLite
         private void lv_Playlist_Drop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            string selectedPlaylist = ((ListBoxItem)lb_PlayistMenu.SelectedValue).Content.ToString();
+            string selectedPlaylist = ((ListBoxItem)lb_PlaylistMenu.SelectedValue).Content.ToString();
             int cnt = 0;    // Counter for preventing unnesaccery update of database
 
             // Update lv_Playlist
@@ -169,8 +170,8 @@ namespace MPLite
             int selIdx = lv_Playlist.SelectedIndex;
             if (selIdx < 0) return;
 
-            string playlistName = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
-            SetPrevAndCurrShowingPlaylist(((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString());
+            string playlistName = ((ListBoxItem)lb_PlaylistMenu.SelectedItem).Content.ToString();
+            SetPrevAndCurrShowingPlaylist(((ListBoxItem)lb_PlaylistMenu.SelectedItem).Content.ToString());
 
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
 
@@ -187,7 +188,7 @@ namespace MPLite
         {
             if (e.Key == Key.Delete && lv_Playlist.SelectedItems.Count != 0)
             {
-                string selectedPlaylist = ((ListBoxItem)lb_PlayistMenu.SelectedValue).Content.ToString();
+                string selectedPlaylist = ((ListBoxItem)lb_PlaylistMenu.SelectedValue).Content.ToString();
                 List<int> selectedIdx = new List<int>();
 
                 foreach (TrackInfo track in lv_Playlist.SelectedItems)
@@ -222,7 +223,7 @@ namespace MPLite
 
         private TrackInfo MainWindow_GetTrackEvent(MusicPlayer player, PlayTrackEventArgs e)
         {
-            if (lb_PlayistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
+            if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
             {
                 throw new EmptyPlaylistException("No tracks avalible");
             }
@@ -266,24 +267,24 @@ namespace MPLite
 
             // Add to ListBox
             lbi.Content = listNameWithSerialNum;
-            lb_PlayistMenu.Items.Add(lbi);
+            lb_PlaylistMenu.Items.Add(lbi);
 
             // Focus on it
-            lb_PlayistMenu.SelectedItem = lbi;
+            lb_PlaylistMenu.SelectedItem = lbi;
 
             // Refresh lv_Playlist
-            RefreshPlaylistContent(listNameWithSerialNum);
+            RefreshPlaylistContent(listNameWithSerialNum, lb_PlaylistMenu.Items.IndexOf(lbi));
 
             lv_Playlist.Visibility = Visibility.Visible;
         }
 
         private void lb_PlaylistMenu_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (lb_PlayistMenu.SelectedItems.Count == 1)
+            if (lb_PlaylistMenu.SelectedItems.Count == 1)
             {
-                string selectedPlaylist = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
+                string selectedPlaylist = ((ListBoxItem)lb_PlaylistMenu.SelectedItem).Content.ToString();
                 SetPrevAndCurrShowingPlaylist(selectedPlaylist);
-                RefreshPlaylistContent(selectedPlaylist);
+                RefreshPlaylistContent(selectedPlaylist, lb_PlaylistMenu.SelectedIndex);
                 Properties.Settings.Default.LastSelectedPlaylist = selectedPlaylist;
                 Properties.Settings.Default.Save();
 
@@ -294,21 +295,21 @@ namespace MPLite
 
         private void lb_PlaylistMenu_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Delete && lb_PlayistMenu.SelectedItems.Count == 1)
+            if (e.Key == Key.Delete && lb_PlaylistMenu.SelectedItems.Count == 1)
             {
-                string selectedPlaylist = ((ListBoxItem)lb_PlayistMenu.SelectedItem).Content.ToString();
+                string selectedPlaylist = ((ListBoxItem)lb_PlaylistMenu.SelectedItem).Content.ToString();
                 // Remove playlist from database
                 PlaylistCollection.RemovePlaylist(selectedPlaylist);
                 // Refresh lv_Playlist
-                RefreshPlaylistContent(selectedPlaylist);
+                RefreshPlaylistContent(selectedPlaylist, lb_PlaylistMenu.SelectedIndex);
                 // Remove ListBoxItem
-                lb_PlayistMenu.Items.Remove(lb_PlayistMenu.SelectedItem);
+                lb_PlaylistMenu.Items.Remove(lb_PlaylistMenu.SelectedItem);
 
                 // Switch content of lv_playlist to previous one, or hide lv_playlist if there is no remaining items in lb_PlaylistMenu
-                if (lb_PlayistMenu.Items.Count != 0)
+                if (lb_PlaylistMenu.Items.Count != 0)
                 {
-                    string prevShowingPlaylist = ((ListBoxItem)(lb_PlayistMenu.Items[lb_PlayistMenu.Items.Count - 1])).Content.ToString();
-                    RefreshPlaylistContent(prevShowingPlaylist);
+                    string prevShowingPlaylist = ((ListBoxItem)(lb_PlaylistMenu.Items[lb_PlaylistMenu.Items.Count - 1])).Content.ToString();
+                    RefreshPlaylistContent(prevShowingPlaylist, lb_PlaylistMenu.Items.Count - 1);
                 }
                 else
                 {

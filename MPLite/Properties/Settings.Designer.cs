@@ -94,5 +94,17 @@ namespace MPLite.Properties {
                 this["TaskPlaylist"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LastSelectedPlaylistIndex {
+            get {
+                return ((int)(this["LastSelectedPlaylistIndex"]));
+            }
+            set {
+                this["LastSelectedPlaylistIndex"] = value;
+            }
+        }
     }
 }
