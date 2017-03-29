@@ -22,12 +22,12 @@ namespace MPLite
 
         public void SetTrackLength(PlayTrackEventArgs e)
         {
-            trackDuration = e.Track.Duration;
+            trackDuration = e.CurrTrack.Duration;
         }
 
         public void SetTrackName(PlayTrackEventArgs e)
         {
-            TrackName.Content = e.Track.TrackName;
+            TrackName.Content = e.CurrTrack.TrackName;
         }
 
         public void ResetTrackName(PlayTrackEventArgs e)

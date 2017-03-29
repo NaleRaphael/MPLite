@@ -21,7 +21,8 @@ namespace MPLite
         private ProxyWindow proxyWin = null;
 
         #region Event
-        public delegate void SchedulerIsTriggeredEventHandler(PlayTrackEventArgs e);
+        public delegate void SchedulerIsTriggeredEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1,
+            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None);
         public static event SchedulerIsTriggeredEventHandler SchedulerIsTriggeredEvent;
         #endregion
 
@@ -47,10 +48,12 @@ namespace MPLite
 
         private void btn_AddEvent_Click(object sender, RoutedEventArgs e)
         {
-            PlayTrackEventArgs playtrack_eArgs = new PlayTrackEventArgs("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
-
+            //PlayTrackEventArgs playtrack_eArgs = new PlayTrackEventArgs("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
+            //
             // Fire event to notify PagePlaylist play track.
-            SchedulerIsTriggeredEvent(playtrack_eArgs);
+            //SchedulerIsTriggeredEvent(playtrack_eArgs);
+
+            SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
         }
     }
 }

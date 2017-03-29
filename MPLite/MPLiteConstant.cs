@@ -40,5 +40,16 @@ namespace MPLite
             /// </summary>
             PlaySingle
         }
+
+        public enum TrackStatus
+        {
+            None = 0,
+            Playing = 1,
+            Paused,
+            Stopped,
+            IncorrectPath
+        }
+
+        public static string[] TrackStatusSign = { "", ">", ">", "", "(!)"};
     }
 }

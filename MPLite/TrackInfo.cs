@@ -19,12 +19,22 @@ namespace MPLite
         [JsonIgnore]
         private string _playingSign;
 
+        /*[JsonIgnore]
+        private MPLiteConstant.TrackStatus _trackStatus = MPLiteConstant.TrackStatus.None;*/
+
         [JsonIgnore]
         public string PlayingSign
         {
             get { return _playingSign; }
             set { _playingSign = value; NotifyPropertyChanged("PlayingSign"); }
         }
+
+        /*[JsonIgnore]
+        public MPLiteConstant.TrackStatus TrackStatus
+        {
+            get { return _trackStatus; }
+            set { _trackStatus = value; NotifyPropertyChanged("TrackStatus"); }
+        }*/
 
         public string TrackName { get; set; }
         public string TrackPath { get; set; }

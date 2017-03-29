@@ -210,16 +210,26 @@ namespace MPLite
     public class PlayTrackEventArgs : EventArgs
     {
         public string PlaylistName { get; set; }
-        public int TrackIndex { get; set; }
-        public TrackInfo Track { get; set; }
+        public int PrevTrackIndex { get; set; }
+        public int CurrTrackIndex { get; set; }
+        public TrackInfo CurrTrack { get; set; }
+        public TrackInfo PrevTrack { get; set; }
+        public MPLiteConstant.TrackStatus PrevTrackStatus { get; set; }
+        public MPLiteConstant.TrackStatus CurrTrackStatus { get; set; }
         public MPLiteConstant.PlaybackMode PlaybackMode { get; set; }
 
         // Default value of playlistName should be `null` so that music play can selected playlist automatically.
-        public PlayTrackEventArgs(string playlistName = null, int trackIdx = -1, 
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+        public PlayTrackEventArgs(string playlistName = null, int trackIdx = -1, TrackInfo track = null,
+            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None, 
+            MPLiteConstant.TrackStatus trackStatus = MPLiteConstant.TrackStatus.None)
         {
             PlaylistName = (playlistName == null) ? Properties.Settings.Default.LastSelectedPlaylist : playlistName;
-            TrackIndex = trackIdx;
+            PrevTrack = null;
+            CurrTrack = track;
+            PrevTrackIndex = -1;
+            CurrTrackIndex = trackIdx;
+            PrevTrackStatus = MPLiteConstant.TrackStatus.None;
+            CurrTrackStatus = (trackStatus == MPLiteConstant.TrackStatus.None) ? MPLiteConstant.TrackStatus.None : trackStatus;
             PlaybackMode = (mode == MPLiteConstant.PlaybackMode.None) ? 
                 (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode : mode;
 
@@ -227,6 +237,16 @@ namespace MPLite
             Properties.Settings.Default.TaskPlaybackMode = (int)PlaybackMode;
             //Properties.Settings.Default.TaskPlaylist = PlaylistName;
             Properties.Settings.Default.Save();
+        }
+
+        public void SetNextTrack(TrackInfo newTrack = null, int newTrackIdx = -1)
+        {
+            PrevTrack = CurrTrack;
+            CurrTrack = newTrack;
+            PrevTrackIndex = CurrTrackIndex;
+            CurrTrackIndex = newTrackIdx;
+            PrevTrackStatus = CurrTrackStatus;
+            CurrTrackStatus = MPLiteConstant.TrackStatus.None;
         }
     }
 }
