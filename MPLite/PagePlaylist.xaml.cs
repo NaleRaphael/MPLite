@@ -271,7 +271,7 @@ namespace MPLite
             return e;
         }
 
-        private void btn_AddPlaylist_Click(object sender, RoutedEventArgs e)
+        private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
         {
             ListBoxItem lbi = new ListBoxItem();
             string newListName = "New Playlist";  // TODO: add serial number

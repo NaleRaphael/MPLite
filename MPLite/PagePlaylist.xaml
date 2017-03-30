@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/StylePlaylist.xaml"/>
+                <ResourceDictionary Source="Resources/ResMainWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -76,6 +77,6 @@
                 </ListView.View>
             </ListView>
         </DockPanel>
-        <Button x:Name="btn_AddPlaylist" Content="+" Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="30" Height="30" Click="btn_AddPlaylist_Click"/>
+        <Button x:Name="btnAddPlaylist" Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="30" Height="30" Style="{DynamicResource Style_btnAddPlaylist}" Click="btnAddPlaylist_Click"/>
     </Grid>
 </Page>

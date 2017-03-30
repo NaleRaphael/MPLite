@@ -98,7 +98,10 @@ namespace MPLite
             // Volume bar
             trackbarVolume.Visibility = Visibility.Hidden;
             trackbarVolume.Maximum = 1000;  // limit: 1000 (mciSendString@winmm.dll)
-            trackbarVolume.Value = Properties.Settings.Default.DefaultVolume;
+            trackbarVolume.Value = Properties.Settings.Default.Volume;
+
+            // Volume button
+            //SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
 
             // Track status displayer
             trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName);
@@ -435,9 +438,51 @@ namespace MPLite
         private void trackbarVolume_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             _musicPlayer.SetVolume((int)trackbarVolume.Value);
-            Properties.Settings.Default.DefaultVolume = (int)trackbarVolume.Value;
+
+            // TODO: change icon according volume
+            SetVolumeIcon((int)trackbarVolume.Value, Properties.Settings.Default.IsMuted);
+
+            Properties.Settings.Default.Volume = (int)trackbarVolume.Value;
             Properties.Settings.Default.Save();
         }
+
+        private void SetVolumeIcon(double value, bool isMuted)
+        {
+            Object obj = btnVolumeControl.Template.FindName("content", btnVolumeControl);
+
+            if (isMuted)
+            {
+                ((ContentPresenter)obj).Content = FindResource("Volume_muted");
+            }
+            else if (value > 1000*2/3.0)
+            {
+                ((ContentPresenter)obj).Content = FindResource("Volume_100");
+            }
+            else if (value > 1000/3.0)
+            {
+                ((ContentPresenter)obj).Content = FindResource("Volume_66");
+            }
+            else if (value > 0)
+            {
+                ((ContentPresenter)obj).Content = FindResource("Volume_33");
+            }
+            else
+            {
+                ((ContentPresenter)obj).Content = FindResource("Volume_0");
+            }
+        }
         #endregion
+
+        private void btnVolumeControl_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Properties.Settings.Default.IsMuted = !Properties.Settings.Default.IsMuted;
+            Properties.Settings.Default.Save();
+
+            int volume = (Properties.Settings.Default.IsMuted) ? 0 : Properties.Settings.Default.Volume;
+            _musicPlayer.SetVolume(volume);
+
+            // Change icon of btnVolumeControl
+            SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
+        }
     }
 }

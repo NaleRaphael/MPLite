@@ -110,12 +110,24 @@ namespace MPLite.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1000")]
-        public int DefaultVolume {
+        public int Volume {
             get {
-                return ((int)(this["DefaultVolume"]));
+                return ((int)(this["Volume"]));
             }
             set {
-                this["DefaultVolume"] = value;
+                this["Volume"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsMuted {
+            get {
+                return ((bool)(this["IsMuted"]));
+            }
+            set {
+                this["IsMuted"] = value;
             }
         }
     }

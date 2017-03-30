@@ -35,7 +35,7 @@
                     <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnForward}" Margin="60,0,30,0">
                         <Image Source="images/icons/forward.png"/>
                     </Button>
-                    <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnVolumeControl}" Margin="90,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave">
+                    <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnVolumeControl}" Margin="90,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
                         <Image Source="images/icons/volw_100.png"/>
                     </Button>
                     <Slider x:Name="trackbarVolume" HorizontalAlignment="Left" VerticalAlignment="Top" Width="90" Height="30" Style="{DynamicResource StyleTrackBarVolumeControl}" Margin="0,0,30,0" 
