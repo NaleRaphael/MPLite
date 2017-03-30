@@ -22,6 +22,7 @@ namespace MPLite
     {
         // Window control
         private bool isWindowMaximized = false;
+        private bool hasEnteredVolumeBar = false;
 
         // Pages
         private PagePlaylist pagePlaylist = null;
@@ -85,8 +86,6 @@ namespace MPLite
             _musicPlayer.PlayerStoppedEvent += ResetTimerAndTrackBar;
             _musicPlayer.PlayerPausedEvent += Set_btn_StartPlayback_Icon_Play;
             _musicPlayer.TrackEndsEvent += StopPlayerOrPlayNextTrack;
-            _musicPlayer.MissingTrackEvent += StopPlayerOrPlayNextTrack;
-
 
             // Timer control
             timer = new DispatcherTimer();
@@ -95,6 +94,11 @@ namespace MPLite
 
             // Track bar
             trackBar.IsMoveToPointEnabled = true;
+
+            // Volume bar
+            trackbarVolume.Visibility = Visibility.Hidden;
+            trackbarVolume.Maximum = 1000;  // limit: 1000 (mciSendString@winmm.dll)
+            trackbarVolume.Value = Properties.Settings.Default.DefaultVolume;
 
             // Track status displayer
             trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName);
@@ -175,14 +179,13 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        // Called from `PagePlaylist`, so that `selectedIdx` is avaliable.
         private void MainWindow_PlayTrackEvent(string selectedPlaylist = null, int selectedTrackIndex = -1,
             MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
         {
             PlayTrack(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode));
         }
 
-        private void Btn_StartPlayback_Click(object sender, RoutedEventArgs e)
+        private void btnStartPlayback_Click(object sender, RoutedEventArgs e)
         {
             // If no track is selected, find the first track in "default playlist" (store this info in Property) and play it
             try
@@ -212,7 +215,6 @@ namespace MPLite
         {
             try
             {
-                //if (!_musicPlayer.IsStopped())
                 _musicPlayer.Stop(e);    // TODO: pass a PlayTrackEventArgs into it
 
                 if (e.CurrTrack == null)
@@ -245,7 +247,7 @@ namespace MPLite
             ResetTrackBar();
 
             // Reset icon of btn_StartPlayback
-            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            Object obj = btnStartPlayback.Template.FindName("content", btnStartPlayback);
             ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
 
             // Fire event to notify subscribber that track has been stopped
@@ -260,7 +262,7 @@ namespace MPLite
             timer.Start();
 
             // Change icon of btn_StartPlayback to "Pause"
-            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            Object obj = btnStartPlayback.Template.FindName("content", btnStartPlayback);
             ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Pause");
         }
 
@@ -268,7 +270,7 @@ namespace MPLite
         private void Set_btn_StartPlayback_Icon_Play()
         {
             timer.Stop();
-            Object obj = btn_StartPlayback.Template.FindName("content", btn_StartPlayback);
+            Object obj = btnStartPlayback.Template.FindName("content", btnStartPlayback);
             ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
         }
 
@@ -276,15 +278,6 @@ namespace MPLite
         private void StopPlayerOrPlayNextTrack(PlayTrackEventArgs e)
         {
             // Play next track or replay the same track (according to user setting)
-            /*if (e == null)
-            {
-                MPLiteConstant.PlaybackMode mode = (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
-                string playlistName = Properties.Settings.Default.TaskPlaylist;
-                e = new PlayTrackEventArgs(playlistName, -1, mode);
-            }*/
-            //string playlistName = Properties.Settings.Default.TaskPlaylist;
-            //MPLiteConstant.PlaybackMode mode = (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
-            //_musicPlayer.Stop(e);
             PlayTrack(GetTrackEvent(_musicPlayer, e.PlaylistName, e.CurrTrackIndex, e.PlaybackMode));
         }
         #endregion
@@ -358,9 +351,6 @@ namespace MPLite
         }
         #endregion
 
-        #region Status displayer control
-        #endregion
-
         #region DragMove
         private void DPane_Header_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -404,5 +394,50 @@ namespace MPLite
                 }
             }
         }
+
+        #region Volume control
+        private void ShowOrHideVolumeBar(bool show)
+        {
+            trackbarVolume.Visibility = show ? Visibility.Visible : Visibility.Hidden;
+            btnBackward.Visibility = show ? Visibility.Hidden : Visibility.Visible;
+            btnStartPlayback.Visibility = show ? Visibility.Hidden : Visibility.Visible;
+            btnForward.Visibility = show ? Visibility.Hidden : Visibility.Visible;
+        }
+
+        private void btnVolumeControl_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ShowOrHideVolumeBar(!(trackbarVolume.Visibility == Visibility.Visible));
+        }
+
+        private void btnVolumeControl_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            timer.Start();
+            timer.Tick += (tSender, tArgs) =>
+            {
+                timer.Stop();
+                if (!hasEnteredVolumeBar)
+                    ShowOrHideVolumeBar(hasEnteredVolumeBar);
+            };
+        }
+
+        private void trackbarVolume_MouseEnter(object sender, MouseEventArgs e)
+        {
+            hasEnteredVolumeBar = true;
+        }
+
+        private void trackbarVolume_MouseLeave(object sender, MouseEventArgs e)
+        {
+            hasEnteredVolumeBar = false;
+            ShowOrHideVolumeBar(false);
+        }
+
+        private void trackbarVolume_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            _musicPlayer.SetVolume((int)trackbarVolume.Value);
+            Properties.Settings.Default.DefaultVolume = (int)trackbarVolume.Value;
+            Properties.Settings.Default.Save();
+        }
+        #endregion
     }
 }

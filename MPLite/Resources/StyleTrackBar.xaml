@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:MPLite"
                     x:Class="Slider">
     <!-- ref: http://stackoverflow.com/questions/25136114 -->
-    <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
+    <Style x:Key="SliderRepeatButtonBackground" TargetType="RepeatButton">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="IsTabStop" Value="false" />
@@ -17,13 +17,40 @@
         </Setter>
     </Style>
 
-    <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
+    <Style x:Key="SliderRepeatButtonBackground_VolumeBar" TargetType="RepeatButton">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="Focusable" Value="false" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border  BorderThickness="0" BorderBrush="Black" Background="#FF7D7D7D" Height="8"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SliderRepeatButton_Trackbar" TargetType="RepeatButton">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
                     <Border SnapsToDevicePixels="True" Background="Green"  BorderThickness="1" BorderBrush="YellowGreen" Height="5"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SliderRepeatButton_VolumeBar" TargetType="RepeatButton">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <!-- Background="#FF0087FF" BorderThickness="1" BorderBrush="#FF7FF2FF" -->
+                    <Border SnapsToDevicePixels="True" Background="#FF00A1FF"  Height="8"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -41,7 +68,19 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="Slider"  TargetType="Slider">
+    <Style x:Key="SliderThumb_VolumeControl" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Rectangle Height="10" Width="5" Fill="Black"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="SliderTrackBar"  TargetType="Slider">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -50,27 +89,61 @@
             </Grid.RowDefinitions>
             <Track Grid.Row="1" x:Name="PART_Track"   >
                 <Track.DecreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
+                    <RepeatButton Style="{StaticResource SliderRepeatButton_Trackbar}"  Command="Slider.DecreaseLarge" />
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb >
                     <Thumb Style="{StaticResource SliderThumb}" />
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
-                    <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
+                    <RepeatButton Style="{StaticResource SliderRepeatButtonBackground}" Command="Slider.IncreaseLarge" />
                 </Track.IncreaseRepeatButton>
             </Track>
         </Grid>
     </ControlTemplate>
 
-    <Style x:Key="CustomTrackBar" TargetType="Slider">
+    <ControlTemplate x:Key="SliderTrackBarVolumeControl"  TargetType="Slider">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5" />
+                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                <RowDefinition Height="5" />
+            </Grid.RowDefinitions>
+            <Track Grid.Row="1" x:Name="PART_Track"   >
+                <Track.DecreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource SliderRepeatButton_VolumeBar}"  Command="Slider.DecreaseLarge" />
+                </Track.DecreaseRepeatButton>
+                <Track.Thumb >
+                    <Thumb Style="{StaticResource SliderThumb_VolumeControl}" />
+                </Track.Thumb>
+                <Track.IncreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource SliderRepeatButtonBackground_VolumeBar}" Command="Slider.IncreaseLarge" />
+                </Track.IncreaseRepeatButton>
+            </Track>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="StyleTrackBar" TargetType="Slider">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Style.Triggers>
             <Trigger Property="Orientation" Value="Horizontal">
                 <Setter Property="MinHeight" Value="21" />
-                <Setter Property="MinWidth" Value="104" />
-                <Setter Property="Template" Value="{StaticResource Slider}" />
+                <Setter Property="MinWidth" Value="30" />
+                <Setter Property="Template" Value="{StaticResource SliderTrackBar}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="StyleTrackBarVolumeControl" TargetType="Slider">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="MinHeight" Value="21" />
+                <Setter Property="MinWidth" Value="30" />
+                <Setter Property="Template" Value="{StaticResource SliderTrackBarVolumeControl}" />
             </Trigger>
         </Style.Triggers>
     </Style>

@@ -235,7 +235,6 @@ namespace MPLite
 
             // Use TaskPlaybackMode as a global variable to handle PlayTrackEvent whether it comes from user-clicked or scheduler-triggered.
             Properties.Settings.Default.TaskPlaybackMode = (int)PlaybackMode;
-            //Properties.Settings.Default.TaskPlaylist = PlaylistName;
             Properties.Settings.Default.Save();
         }
 

@@ -18,6 +18,7 @@ namespace MPLite
 {
     public partial class PagePlaylist : Page
     {
+        #region Event
         public delegate void PlayTrackEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1, 
             MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None);
         public static event PlayTrackEventHandler PlayTrackEvent;
@@ -25,15 +26,16 @@ namespace MPLite
         public static event NewSelectionEventHandler NewSelectionEvent;
         public delegate void StopPlayerRequestEventHandler(PlayTrackEventArgs e);
         public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
+        #endregion
 
-
-        private int idxOfPlayingTrack = -1;
+        #region Field
         private string prevShowingPlaylist;
         private string currShowingPlaylist;
 
         // Workaround of avoid playing wrong song when there are duplicates
         private int prevTrackIdx = -1;
         private int currTrackIdx = -1;
+        #endregion
 
         public PagePlaylist()
         {
@@ -41,14 +43,12 @@ namespace MPLite
             InitPlaylist();
 
             lb_PlaylistMenu.SelectedIndex = Properties.Settings.Default.LastSelectedPlaylistIndex;  // select default list
+            currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
             MainWindow.GetTrackEvent += MainWindow_GetTrackEvent;
             MainWindow.TrackIsPlayedEvent += SetTrackStatus;
             MainWindow.TrackIsStoppedEvent += ResetTrackStatus;
             MainWindow.FailedToPlayTrackEvent += SetTrackStatus;
-
-            // TODO: select first playlist or last selected playlist
-            currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
         }
 
         #region Initialization
@@ -112,7 +112,6 @@ namespace MPLite
         #region Track status control
         public void ResetTrackStatus(PlayTrackEventArgs e)
         {
-            // TODO:
             string listName = Properties.Settings.Default.TaskPlaylist;
 
             // Check whether selected list is the one hosting the playing track.
@@ -122,21 +121,16 @@ namespace MPLite
             // So we just only have to set `PlayingSign` when the selected playlist is the one hosting playing track.)
             if (listName == currShowingPlaylist)
             {
-                //SetPlayingStateOfTrack(prevTrackIdx, "");
                 SetPlayingStateOfTrack(e.PrevTrackIndex, MPLiteConstant.TrackStatusSign[(int)e.PrevTrackStatus]);
-                //SetPlayingStateOfTrack(e.PrevTrackIndex, "");
             }
         }
 
         public void SetTrackStatus(PlayTrackEventArgs e)
         {
-            // TODO:
             string listName = Properties.Settings.Default.TaskPlaylist;
             if (listName == currShowingPlaylist)
             {
-                //SetPlayingStateOfTrack(currTrackIdx, ">");
                 SetPlayingStateOfTrack(e.CurrTrackIndex, MPLiteConstant.TrackStatusSign[(int)e.CurrTrackStatus]);
-                //SetPlayingStateOfTrack(e.TrackIndex, ">");
             }
         }
 
@@ -249,7 +243,6 @@ namespace MPLite
             try
             {
                 // If no playlist is selected (user click btn_StartPlayback to play music)
-                //e.PlaylistName = (e.PlaylistName == null) ? currShowingPlaylist : e.PlaylistName;
                 selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
 
                 // Track info will be stored into e
@@ -270,7 +263,6 @@ namespace MPLite
             {
                 prevTrackIdx = currTrackIdx;    // workaround
                 e = player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
-                idxOfPlayingTrack = currTrackIdx;
             }
             catch
             {
@@ -354,6 +346,7 @@ namespace MPLite
     public class EmptyPlaylistException : Exception
     {
         public EmptyPlaylistException(string message) : base(message)
-        { }
+        {
+        }
     }
 }

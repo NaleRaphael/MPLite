@@ -106,5 +106,17 @@ namespace MPLite.Properties {
                 this["LastSelectedPlaylistIndex"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int DefaultVolume {
+            get {
+                return ((int)(this["DefaultVolume"]));
+            }
+            set {
+                this["DefaultVolume"] = value;
+            }
+        }
     }
 }

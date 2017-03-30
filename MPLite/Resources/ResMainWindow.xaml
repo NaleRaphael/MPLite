@@ -6,7 +6,28 @@
     <Image x:Key="PlaybackCtrl_Forward" Source="../images/icons/forward.png"/>
     <Image x:Key="PlaybackCtrl_Backward" Source="../images/icons/backward.png"/>
 
-    <Style x:Key="Style_tBtnStartPlayback" TargetType="Button">
+    <Style x:Key="Style_btnExitProgram" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content">
+                            <ContentPresenter.Content>
+                                <Image Name="image" Source="../images/icons/exit.png"/>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="bd" Property="Border.BorderBrush" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style x:Key="Style_btnStartPlayback" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -17,25 +38,59 @@
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </Border>
-
                     <ControlTemplate.Triggers>
-                        <!--
-                        <Trigger Property="ToggleButton.IsChecked" Value="True">
-                            <Setter TargetName="content" Property="ContentPresenter.Content">
-                                <Setter.Value>
-                                    <Image Source="../images/icons/pause.png"/>
-                                </Setter.Value>
-                            </Setter>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="White"/>
                         </Trigger>
-                        <Trigger Property="ToggleButton.IsChecked" Value="False">
-                            <Setter TargetName="content" Property="ContentPresenter.Content">
-                                <Setter.Value>
-                                    <Image Source="../images/icons/play.png"/>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                        -->
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Style_btnBackward" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content">
+                            <ContentPresenter.Content>
+                                <Image Name="image" Source="../images/icons/backward.png"/>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Style_btnForward" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content">
+                            <ContentPresenter.Content>
+                                <Image Name="image" Source="../images/icons/forward.png"/>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="Style_btnVolumeControl" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content">
+                            <ContentPresenter.Content>
+                                <Image Name="image" Source="../images/icons/volw_100.png"/>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

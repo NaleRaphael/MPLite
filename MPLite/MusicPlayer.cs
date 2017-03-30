@@ -49,7 +49,6 @@ namespace MPLite
         public delegate void TrackEndsEventHandler(PlayTrackEventArgs e);
         public event TrackEndsEventHandler TrackEndsEvent;
         public delegate void MissingTrackEventHandler(PlayTrackEventArgs e);
-        public event MissingTrackEventHandler MissingTrackEvent;
         #endregion
 
         #region MCI API calls
@@ -129,18 +128,14 @@ namespace MPLite
             {
                 trackIsOpened = Open(e);
             }
-            catch (FailedToOpenFileException ex_FailedToOpen)
+            catch (FailedToOpenFileException ex_FailedToOpen)  // Unacceptable chars in file path
             {
-                // Unacceptable chars in file path
                 throw ex_FailedToOpen;
             }
             catch (InvalidFilePathException ex_InvaildPath)
             {
-                // Invalid file path
                 this.CurrentTrackStatus = MPLiteConstant.TrackStatus.IncorrectPath;
                 e.CurrTrackStatus = this.CurrentTrackStatus;
-                // TODO: get next track
-                //MissingTrackEvent(e);
 
                 throw ex_InvaildPath;
             }
@@ -153,15 +148,10 @@ namespace MPLite
                 if (error == 0)
                 {
                     // Save the trackInfo that is playing currently
-                    /*CurrentTrack = e.CurrTrack;
-                    CurrentTrackIndex = e.CurrTrackIndex;
-                    PlaybackMode = e.PlaybackMode;*/
                     PlayerStatus = PlaybackState.Playing;
+
                     this.CurrentTrackStatus = MPLiteConstant.TrackStatus.Playing;
                     e.CurrTrackStatus = this.CurrentTrackStatus;
-
-                    //Properties.Settings.Default.TaskPlaylist = e.PlaylistName;
-                    //Properties.Settings.Default.Save();
 
                     // Fire event to notify subscribers
                     PlayerStartedEvent(e);
@@ -186,6 +176,7 @@ namespace MPLite
             {
                 Resume();
                 PlayerStatus = PlaybackState.Playing;
+                
                 // Fire event
                 PlayTrackEventArgs e = new PlayTrackEventArgs(Properties.Settings.Default.TaskPlaylist, -1,
                     CurrentTrack, (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
@@ -198,6 +189,7 @@ namespace MPLite
                 string cmd = "pause MediaFile";
                 error = mciSendString(cmd, null, 0, IntPtr.Zero);
                 PlayerStatus = PlaybackState.Paused;
+                
                 // Fire event
                 PlayerPausedEvent();
             }
@@ -219,16 +211,6 @@ namespace MPLite
             CurrentTrack = null;
             
             // Fire event to notify subscribers
-            /*if (e == null)
-            {
-                e = new PlayTrackEventArgs(Properties.Settings.Default.TaskPlaylist, -1);
-                e.PrevTrack = PrevTrack;
-                e.CurrTrackStatus = MPLiteConstant.TrackStatus.Stopped;
-            }*/
-            /*PlayTrackEventArgs e = new PlayTrackEventArgs(Properties.Settings.Default.TaskPlaylist, -1);
-            //e.Track = PrevTrack;
-            e.PrevTrack = PrevTrack;
-            e.CurrTrackStatus = MPLiteConstant.TrackStatus.Stopped;*/
             PlayerStoppedEvent(e);
         }
 
@@ -363,27 +345,6 @@ namespace MPLite
         }
         #endregion
 
-        public TrackInfo GetNextTrack(out int trackIdx)
-        {
-            if (CurrPlaylist == null)
-                throw new InvalidPlaylistException("No selected playlist");
-
-            trackIdx = GetTrackIdxFromQueue(CurrPlaylist, 0, this.PlaybackMode);
-
-            return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
-        }
-
-        public TrackInfo GetNextTrack(Playlist playlist, int selectedIdx, out int trackIdx)
-        {
-            if (playlist.TrackAmount <= 0)
-                throw new EmptyPlaylistException("Playlist is empty");
-
-            trackIdx = GetTrackIdxFromQueue(playlist, selectedIdx,
-                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
-
-            return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
-        }
-
         public PlayTrackEventArgs GetNextTrack(string playlistName, int selectedIdx, MPLiteConstant.PlaybackMode mode, out int trackIdx)
         {
             Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
@@ -396,17 +357,6 @@ namespace MPLite
             PlayTrackEventArgs e = new PlayTrackEventArgs(playlistName, this.CurrentTrackIndex, this.CurrentTrack, mode, this.CurrentTrackStatus);
             e.SetNextTrack(track, trackIdx);
             return e;
-        }
-
-        public TrackInfo GetNextTrack(string playlistName, int selectedIdx, out int trackIdx, MPLiteConstant.PlaybackMode mode)
-        {
-            Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
-            if (pl == null || pl.TrackAmount == 0)
-                throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", playlistName));
-
-            trackIdx = GetTrackIdxFromQueue(pl, selectedIdx, mode);
-
-            return (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
         }
 
         private int GetTrackIdxFromQueue(Playlist playlist, int beginningIdx, MPLiteConstant.PlaybackMode mode)

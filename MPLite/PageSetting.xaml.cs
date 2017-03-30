@@ -26,6 +26,8 @@ namespace MPLite
         {
             foreach (string mode in Enum.GetNames(typeof(MPLiteConstant.PlaybackMode)))
             {
+                if (mode == "None")
+                    continue;
                 cmb_PlaybackSetting.Items.Add(mode);
             }
 

@@ -48,11 +48,7 @@ namespace MPLite
 
         private void btn_AddEvent_Click(object sender, RoutedEventArgs e)
         {
-            //PlayTrackEventArgs playtrack_eArgs = new PlayTrackEventArgs("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
-            //
             // Fire event to notify PagePlaylist play track.
-            //SchedulerIsTriggeredEvent(playtrack_eArgs);
-
             SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
         }
     }
