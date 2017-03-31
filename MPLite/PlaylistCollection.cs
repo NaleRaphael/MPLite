@@ -17,7 +17,7 @@ namespace MPLite
         // TODO: Update by given playlist? (necessary?)
 
         // TODO: Update listview then update database (according to the order of playlist)
-        public static void Update(string[] filePaths, string selectedPlaylist)
+        public static void AddPlaylist(string[] filePaths, string selectedPlaylist)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
@@ -37,7 +37,7 @@ namespace MPLite
             DataControl.SaveData<PlaylistCollection>(configPath, plc);
         }
 
-        public static void Update(List<TrackInfo> tracks, string selectedPlaylist)
+        public static void AddPlaylist(List<TrackInfo> tracks, string selectedPlaylist)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);

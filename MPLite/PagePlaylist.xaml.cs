@@ -171,7 +171,7 @@ namespace MPLite
 
             // Update database
             if (cnt != 0)
-                PlaylistCollection.Update(files, selectedPlaylist);
+                PlaylistCollection.AddPlaylist(files, selectedPlaylist);
         }
 
         private void lv_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)

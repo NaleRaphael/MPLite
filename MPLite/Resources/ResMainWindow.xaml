@@ -16,7 +16,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                    <Border Name="border" Background="Transparent" BorderThickness="0">
                         <ContentPresenter Name="content">
                             <ContentPresenter.Content>
                                 <Image Name="image" Source="../images/icons/exit.png"/>
@@ -25,7 +25,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="bd" Property="Border.BorderBrush" Value="White"/>
+                            <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FF323232" TargetName="border"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -55,24 +58,27 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="White"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="Style_btnBackward" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                    <Border Name="border" Background="Transparent" BorderThickness="0">
                         <ContentPresenter Name="content">
                             <ContentPresenter.Content>
                                 <Image Name="image" Source="../images/icons/backward.png"/>
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FF323232" TargetName="border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -82,13 +88,21 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                    <Border Name="border" Background="Transparent" BorderThickness="0">
                         <ContentPresenter Name="content">
                             <ContentPresenter.Content>
                                 <Image Name="image" Source="../images/icons/forward.png"/>
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FF323232" TargetName="border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -98,13 +112,21 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border Name="bd" Background="Transparent" BorderThickness="0">
+                    <Border Name="border" Background="Transparent" BorderThickness="0">
                         <ContentPresenter Name="content">
                             <ContentPresenter.Content>
                                 <Image Name="image" Source="../images/icons/volw_100.png"/>
                             </ContentPresenter.Content>
                         </ContentPresenter>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FF323232" TargetName="border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
