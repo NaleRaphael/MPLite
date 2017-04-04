@@ -101,7 +101,7 @@ namespace MPLite
             trackbarVolume.Value = Properties.Settings.Default.Volume;
 
             // Volume button
-            //SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
+            SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
 
             // Track status displayer
             trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName);
@@ -112,6 +112,8 @@ namespace MPLite
 
             // Scheduler
             PageCalendar.SchedulerIsTriggeredEvent += pagePlaylist.RunPlaylist;
+
+            UpdateLayout();
         }
 
         #region PageControl
@@ -250,8 +252,7 @@ namespace MPLite
             ResetTrackBar();
 
             // Reset icon of btn_StartPlayback
-            Object obj = btnStartPlayback.Template.FindName("content", btnStartPlayback);
-            ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
+            btnStartPlayback.Content = FindResource("PlaybackCtrl_Play");
 
             // Fire event to notify subscribber that track has been stopped
             // (reset `TrackInfo.playingSign`, ... etc)
@@ -265,16 +266,14 @@ namespace MPLite
             timer.Start();
 
             // Change icon of btn_StartPlayback to "Pause"
-            Object obj = btnStartPlayback.Template.FindName("content", btnStartPlayback);
-            ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Pause");
+            btnStartPlayback.Content = FindResource("PlaybackCtrl_Pause");
         }
 
         // Subscriber
         private void Set_btn_StartPlayback_Icon_Play()
         {
             timer.Stop();
-            Object obj = btnStartPlayback.Template.FindName("content", btnStartPlayback);
-            ((ContentPresenter)obj).Content = FindResource("PlaybackCtrl_Play");
+            btnStartPlayback.Content = FindResource("PlaybackCtrl_Play");
         }
 
         // Subscriber
@@ -448,27 +447,25 @@ namespace MPLite
 
         private void SetVolumeIcon(double value, bool isMuted)
         {
-            Object obj = btnVolumeControl.Template.FindName("content", btnVolumeControl);
-
             if (isMuted)
             {
-                ((ContentPresenter)obj).Content = FindResource("Volume_muted");
+                btnVolumeControl.Content = FindResource("Volume_muted");
             }
-            else if (value > 1000*2/3.0)
+            else if (value > 850)
             {
-                ((ContentPresenter)obj).Content = FindResource("Volume_100");
+                btnVolumeControl.Content = FindResource("Volume_100");
             }
-            else if (value > 1000/3.0)
+            else if (value > 500)
             {
-                ((ContentPresenter)obj).Content = FindResource("Volume_66");
+                btnVolumeControl.Content = FindResource("Volume_66");
             }
-            else if (value > 0)
+            else if (value > 150)
             {
-                ((ContentPresenter)obj).Content = FindResource("Volume_33");
+                btnVolumeControl.Content = FindResource("Volume_33");
             }
             else
             {
-                ((ContentPresenter)obj).Content = FindResource("Volume_0");
+                btnVolumeControl.Content = FindResource("Volume_0");
             }
         }
         #endregion

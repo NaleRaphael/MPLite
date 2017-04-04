@@ -19,24 +19,24 @@
         <DockPanel x:Name="DPane_Header" Height="50" LastChildFill="False" Width="Auto" Background="#FF4B4B4B" VerticalAlignment="Top" MouseDown="DPane_Header_MouseDown" ClipToBounds="True">
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <StackPanel Height="30" VerticalAlignment="Top" Width="30" Margin="20,10,0,0">
-                    <Button x:Name="btnExitProgram" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnExitProgram}" Click="Btn_ExitProgram_Click">
-                        <Image Source="images/icons/exit.png"/>
+                    <Button x:Name="btnExitProgram" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="Btn_ExitProgram_Click">
+                        <Image Source="images/icons/exit.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                 </StackPanel>
             </ContentControl>
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <Grid x:Name="gridPlaybackControl" Width="120" HorizontalAlignment="Left" Margin="20,10,0,10" >
-                    <Button x:Name="btnBackward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnBackward}" Margin="0,0,90,0">
-                        <Image Source="images/icons/backward.png"/>
+                    <Button x:Name="btnBackward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="0,0,90,0">
+                        <Image Source="images/icons/backward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnStartPlayback" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnStartPlayback}"  Click="btnStartPlayback_Click" Margin="30,0,60,0">
-                        <Image Source="images/icons/play.png"/>
+                    <Button x:Name="btnStartPlayback" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}"  Click="btnStartPlayback_Click" Margin="30,0,60,0">
+                        <Image Source="images/icons/play.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnForward}" Margin="60,0,30,0">
-                        <Image Source="images/icons/forward.png"/>
+                    <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="60,0,30,0">
+                        <Image Source="images/icons/forward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_btnVolumeControl}" Margin="90,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
-                        <Image Source="images/icons/volw_100.png"/>
+                    <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="90,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
+                        <Image Source="images/icons/volw_100.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                     <Slider x:Name="trackbarVolume" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="30" Style="{DynamicResource StyleTrackBarVolumeControl}" Margin="5,0,35,0" 
                             MouseLeave="trackbarVolume_MouseLeave" MouseEnter="trackbarVolume_MouseEnter" IsMoveToPointEnabled="True" PreviewMouseUp="trackbarVolume_PreviewMouseUp"/>
@@ -56,11 +56,11 @@
 
         <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
             <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="70" Margin="10,0,0,0" Orientation="Horizontal">
-                <Button x:Name="btn_Playlist" BorderThickness="1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
-                    <Image Source="images/icons/playlist.png"/>
+                <Button x:Name="btn_Playlist" BorderThickness="1,0" Style="{DynamicResource Style_FlatImageButton}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
+                    <Image Source="images/icons/playlist.png" RenderOptions.BitmapScalingMode="HighQuality" Width="30" Height="30"/>
                 </Button>
-                <Button x:Name="btn_Setting" BorderThickness="0,0,1,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Width="35" Height="35" Click="Btn_Setting_Click" BorderBrush="#FF323232">
-                    <Image Source="images/icons/gear.png"/>
+                <Button x:Name="btn_Setting" BorderThickness="0,0,1,0" Style="{DynamicResource Style_FlatImageButton}" Width="35" Height="35" Click="Btn_Setting_Click" BorderBrush="#FF323232">
+                    <Image Source="images/icons/gear.png" RenderOptions.BitmapScalingMode="HighQuality" Width="30" Height="30"/>
                 </Button>
             </StackPanel>
             <StackPanel x:Name="SPane_Setting" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="70" Background="#FF7D7D7D" Orientation="Horizontal">

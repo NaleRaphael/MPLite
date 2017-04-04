@@ -77,6 +77,8 @@
                 </ListView.View>
             </ListView>
         </DockPanel>
-        <Button x:Name="btnAddPlaylist" Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="30" Height="30" Style="{DynamicResource Style_btnAddPlaylist}" Click="btnAddPlaylist_Click"/>
+        <Button x:Name="btnAddPlaylist" Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="30" Height="30" Style="{DynamicResource Style_FlatImageButton}" Click="btnAddPlaylist_Click">
+            <Image Source="images/icons/add_playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </Button>
     </Grid>
 </Page>
