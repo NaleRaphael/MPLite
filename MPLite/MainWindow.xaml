@@ -54,22 +54,27 @@
                    Margin="230,10,0,15" FontSize="10" HorizontalAlignment="Right" PreviewMouseDown="lbl_TrackProgess_PreviewMouseDown"/>
         </Grid>
 
-        <DockPanel x:Name="DPane_Footer" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
-            <StackPanel x:Name="SPane_PageControl" Height="35" VerticalAlignment="Top" Width="70" Margin="10,0,0,0" Orientation="Horizontal">
-                <Button x:Name="btn_Playlist" BorderThickness="1,0" Style="{DynamicResource Style_FlatImageButton}" Width="35" Height="35" Click="Btn_Playlist_Click" BorderBrush="#FF323232">
+        <DockPanel x:Name="dPaneFooter" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
+            <StackPanel x:Name="sPanelPageControl" Height="35" VerticalAlignment="Top" Width="70" Margin="10,0,0,0" Orientation="Horizontal">
+                <Button x:Name="btnPlaylist" BorderThickness="1,0" Style="{DynamicResource Style_FlatImageButton}" Width="35" Height="35" Click="btnPlaylist_Click" BorderBrush="#FF323232">
                     <Image Source="images/icons/playlist.png" RenderOptions.BitmapScalingMode="HighQuality" Width="30" Height="30"/>
                 </Button>
-                <Button x:Name="btn_Setting" BorderThickness="0,0,1,0" Style="{DynamicResource Style_FlatImageButton}" Width="35" Height="35" Click="Btn_Setting_Click" BorderBrush="#FF323232">
+                <Button x:Name="btnSetting" BorderThickness="0,0,1,0" Style="{DynamicResource Style_FlatImageButton}" Width="35" Height="35" Click="btnSetting_Click" BorderBrush="#FF323232" MouseEnter="btnSetting_MouseEnter" MouseLeave="btnSetting_MouseLeave">
                     <Image Source="images/icons/gear.png" RenderOptions.BitmapScalingMode="HighQuality" Width="30" Height="30"/>
                 </Button>
             </StackPanel>
-            <StackPanel x:Name="SPane_Setting" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="70" Background="#FF7D7D7D" Orientation="Horizontal">
-                <Button x:Name="btn_Setting_Basic" Content="Baisc" Width="35" Click="btn_Setting_Basic_Click"/>
-                <Button x:Name="btn_Setting_Scheduler" Content="Sch" Width="35" Click="btn_Setting_Scheduler_Click"/>
-            </StackPanel>
+            <Grid x:Name="gridMenuSetting" ClipToBounds="True">
+                <StackPanel x:Name="sPanelSetting" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="70" Background="#FF7D7D7D" Orientation="Horizontal" MouseEnter="sPanelSetting_MouseEnter" MouseLeave="sPanelSetting_MouseLeave">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform x:Name="settingTranslateTransform"/>
+                    </StackPanel.RenderTransform>
+                    <Button x:Name="btnSetting_Basic" Content="Baisc" Width="35" Click="btnSetting_Basic_Click"/>
+                    <Button x:Name="btnSetting_Scheduler" Content="Sch" Width="35" Click="btnSetting_Scheduler_Click"/>
+                </StackPanel>
+            </Grid>
         </DockPanel>
 
-        <Frame x:Name="Frame_PageSwitcher" Content="" Margin="0,50,0,35" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="framePageSwitcher" Content="" Margin="0,50,0,35" NavigationUIVisibility="Hidden"/>
         
     </Grid>
 </Window>

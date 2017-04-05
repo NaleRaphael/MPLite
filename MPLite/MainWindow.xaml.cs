@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
@@ -30,7 +31,9 @@ namespace MPLite
         private PageCalendar pageCalendar = null;
 
         // Menu_Setting
-        private bool isMenuCollapsed = true;
+        private bool hasEnteredMenuSetting = false;
+        private bool hasEnteredBtnSetting = false;
+        private bool isMenuSettingShowing = false;
 
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
@@ -45,10 +48,13 @@ namespace MPLite
         public static event FailedToPlayTrackEventHandler FailedToPlayTrackEvent;
 
         // Timer
-        DispatcherTimer timer;
+        private DispatcherTimer timer;
+
+        // Animation control
+        private bool doesAnimationEnd = true;
 
         // TrackBar control
-        bool isScrolling = false;
+        private bool isScrolling = false;
 
         // Track status displayer module
         private TrackStatusDispModule trackStatusDisplayer;
@@ -69,10 +75,10 @@ namespace MPLite
             URLSecurityZoneAPI.InternetSetFeatureEnabled(URLSecurityZoneAPI.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, URLSecurityZoneAPI.SetFeatureOn.PROCESS, true);
 
             // Page switcher
-            PageSwitcher.pageSwitcher = this.Frame_PageSwitcher;
+            PageSwitcher.pageSwitcher = this.framePageSwitcher;
 
             // Menu_Setting
-            SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
+            ShowMenuSetting(false);
 
             // Default page
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
@@ -126,28 +132,95 @@ namespace MPLite
             PageSwitcher.Switch(target);
         }
 
-        private void Btn_Playlist_Click(object sender, RoutedEventArgs e)
+        private void btnPlaylist_Click(object sender, RoutedEventArgs e)
         {
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
         }
 
-        private void Btn_Setting_Click(object sender, RoutedEventArgs e)
+        private void btnSetting_Click(object sender, RoutedEventArgs e)
         {
-            CollapseMenuSetting(isMenuCollapsed);
+            ShowMenuSetting(!isMenuSettingShowing);
         }
 
-        private void btn_Setting_Basic_Click(object sender, RoutedEventArgs e)
+        private void btnSetting_MouseEnter(object sender, MouseEventArgs e)
+        {
+            hasEnteredBtnSetting = true;
+            if (!isMenuSettingShowing)
+            {
+                ShowMenuSetting(true);
+            }
+                
+        }
+
+        private void btnSetting_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DispatcherTimer tempTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(70) };
+            tempTimer.Start();
+            tempTimer.Tick += (tSender, tArgs) =>
+            {
+                tempTimer.Stop();
+                if (!hasEnteredMenuSetting && isMenuSettingShowing)
+                {
+                    ShowMenuSetting(false);
+                }
+                hasEnteredBtnSetting = false;
+                tempTimer = null;
+            };
+        }
+
+        private void sPanelSetting_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (doesAnimationEnd)
+                hasEnteredMenuSetting = true;
+        }
+
+        private void sPanelSetting_MouseLeave(object sender, MouseEventArgs e)
+        {
+            DispatcherTimer tempTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+            tempTimer.Start();
+            tempTimer.Tick += (tSender, tArgs) =>
+            {
+                tempTimer.Stop();
+                if (hasEnteredMenuSetting && isMenuSettingShowing && !hasEnteredBtnSetting)
+                {
+                    ShowMenuSetting(false);
+                }
+                hasEnteredMenuSetting = false;
+                tempTimer = null;  // will memory leak?
+            };
+        }
+
+        private void btnSetting_Basic_Click(object sender, RoutedEventArgs e)
         {
             // TODO: navigate to desired page
             PageSwitchControl<PageSetting>(ref pageSetting);
-            CollapseMenuSetting(false);
-
+            ShowMenuSetting(false);
         }
 
-        private void btn_Setting_Scheduler_Click(object sender, RoutedEventArgs e)
+        private void btnSetting_Scheduler_Click(object sender, RoutedEventArgs e)
         {
             PageSwitchControl<PageCalendar>(ref pageCalendar);
-            CollapseMenuSetting(false);
+            ShowMenuSetting(false);
+        }
+
+        private void ShowMenuSetting(bool show)
+        {
+            if (doesAnimationEnd)
+            {
+                doesAnimationEnd = false;
+
+                DoubleAnimation da = new DoubleAnimation();
+                da.From = show ? -70 : 0;
+                da.To = show ? 0 : -70;
+
+                da.Duration = TimeSpan.FromMilliseconds(70);
+                da.Completed += (sender, args) =>
+                {
+                    doesAnimationEnd = true;
+                    isMenuSettingShowing = show;
+                };
+                settingTranslateTransform.BeginAnimation(TranslateTransform.XProperty, da);
+            }
         }
         #endregion
 
@@ -171,15 +244,14 @@ namespace MPLite
             Application.Current.Shutdown();
         }
 
-        private void CollapseMenuSetting(bool isCollapsed)
-        {
-            isMenuCollapsed = !isCollapsed;
-            SPane_Setting.Visibility = isMenuCollapsed ? Visibility.Collapsed : Visibility.Visible;
-        }
-
         private void CloseProxyWindow()
         {
             //scheduler;
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // TODO: global hotkey for player control
         }
         #endregion
 
@@ -381,22 +453,6 @@ namespace MPLite
         }
         #endregion
 
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-
-            if (e.Key == Key.Space)
-            {
-                if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Playing)
-                {
-                    _musicPlayer.Pause();
-                }
-                else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
-                {
-                    _musicPlayer.Resume();
-                }
-            }
-        }
-
         #region Volume control
         private void ShowOrHideVolumeBar(bool show)
         {
@@ -413,11 +469,11 @@ namespace MPLite
 
         private void btnVolumeControl_MouseLeave(object sender, MouseEventArgs e)
         {
-            DispatcherTimer timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
-            timer.Start();
-            timer.Tick += (tSender, tArgs) =>
+            DispatcherTimer tempTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(50) };
+            tempTimer.Start();
+            tempTimer.Tick += (tSender, tArgs) =>
             {
-                timer.Stop();
+                tempTimer.Stop();
                 if (!hasEnteredVolumeBar)
                     ShowOrHideVolumeBar(hasEnteredVolumeBar);
             };
@@ -468,7 +524,6 @@ namespace MPLite
                 btnVolumeControl.Content = FindResource("Volume_0");
             }
         }
-        #endregion
 
         private void btnVolumeControl_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -481,5 +536,6 @@ namespace MPLite
             // Change icon of btnVolumeControl
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
         }
+        #endregion
     }
 }
