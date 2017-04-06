@@ -4,18 +4,16 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MPLite"
-      xmlns:calendar="clr-namespace:Calendar.NET;assembly=Calendar.NET"
+      xmlns:Jarloo="clr-namespace:Jarloo.Calendar;assembly=Jarloo.Calendar"
       xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="525"
       Title="PageCalendar" Loaded="Page_Loaded" Unloaded="Page_Unloaded" Background="#FF323232">
 
     <Grid x:Name="GridContainer">
-        <WindowsFormsHost Name="wfh" Margin="150,50,0,0">
-            <calendar:Calendar x:Name="calendar" CalendarView="Day"/>
-        </WindowsFormsHost>
+        <!--<Jarloo:Calendar x:Name="calender" Margin="90,50,0,0"/>-->
+        <Jarloo:Calendar x:Name="calendar" Margin="103,0,0,0" Foreground="#FF969696"/>
         <Button x:Name="btn_AddEvent" Content="Add Events" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="75" Click="btn_AddEvent_Click"/>
-        <DockPanel x:Name="dPane_SchedulerHeader" Height="50" LastChildFill="False" VerticalAlignment="Top" Background="#FF282828"/>
         <Button x:Name="btnChangeView" Content="Button" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top" Width="75" Click="btnChangeView_Click"/>
     </Grid>
 </Page>

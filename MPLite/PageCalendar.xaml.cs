@@ -34,14 +34,12 @@ namespace MPLite
 
         private void InitializeCalender()
         {
-            calendar.AllowEditingEvents = true;
-            //calendar.CalendarView = Calendar.NET.CalendarViews.Day;
+            // TODO
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (proxyWin == null)
-                proxyWin = new ProxyWindow(this.wfh, new Calendar.NET.Calendar());
+            // TODO
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -61,8 +59,8 @@ namespace MPLite
 
         private void btnChangeView_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.MessageBox.Show(calendar.CalendarView.ToString());
-            calendar.CalendarView = (calendar.CalendarView == Calendar.NET.CalendarViews.Day) ? Calendar.NET.CalendarViews.Month : Calendar.NET.CalendarViews.Day;
+            /*System.Windows.MessageBox.Show(calendar.CalendarView.ToString());
+            calendar.CalendarView = (calendar.CalendarView == Calendar.NET.CalendarViews.Day) ? Calendar.NET.CalendarViews.Month : Calendar.NET.CalendarViews.Day;*/
         }
     }
 }
