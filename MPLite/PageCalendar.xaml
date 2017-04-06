@@ -12,9 +12,10 @@
 
     <Grid x:Name="GridContainer">
         <WindowsFormsHost Name="wfh" Margin="150,50,0,0">
-            <calendar:Calendar/>
+            <calendar:Calendar x:Name="calendar" CalendarView="Day"/>
         </WindowsFormsHost>
         <Button x:Name="btn_AddEvent" Content="Add Events" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="75" Click="btn_AddEvent_Click"/>
         <DockPanel x:Name="dPane_SchedulerHeader" Height="50" LastChildFill="False" VerticalAlignment="Top" Background="#FF282828"/>
+        <Button x:Name="btnChangeView" Content="Button" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top" Width="75" Click="btnChangeView_Click"/>
     </Grid>
 </Page>

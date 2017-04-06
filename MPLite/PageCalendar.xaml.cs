@@ -29,6 +29,13 @@ namespace MPLite
         public PageCalendar()
         {
             InitializeComponent();
+            InitializeCalender();
+        }
+
+        private void InitializeCalender()
+        {
+            calendar.AllowEditingEvents = true;
+            //calendar.CalendarView = Calendar.NET.CalendarViews.Day;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -50,6 +57,12 @@ namespace MPLite
         {
             // Fire event to notify PagePlaylist play track.
             SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
+        }
+
+        private void btnChangeView_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.MessageBox.Show(calendar.CalendarView.ToString());
+            calendar.CalendarView = (calendar.CalendarView == Calendar.NET.CalendarViews.Day) ? Calendar.NET.CalendarViews.Month : Calendar.NET.CalendarViews.Day;
         }
     }
 }

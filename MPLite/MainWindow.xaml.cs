@@ -71,6 +71,8 @@ namespace MPLite
         public MainWindow()
         {
             InitializeComponent();
+            InitializeWindow();
+
             //CoInternetSetFeatureEnabled(Feature, SetFeatureOnProcess, true);
             URLSecurityZoneAPI.InternetSetFeatureEnabled(URLSecurityZoneAPI.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, URLSecurityZoneAPI.SetFeatureOn.PROCESS, true);
 
@@ -120,6 +122,12 @@ namespace MPLite
             PageCalendar.SchedulerIsTriggeredEvent += pagePlaylist.RunPlaylist;
 
             UpdateLayout();
+        }
+
+        private void InitializeWindow()
+        {
+            this.Height = Properties.Settings.Default.WindowHeight;
+            this.Width = Properties.Settings.Default.WindowWidth;
         }
 
         #region PageControl
@@ -249,9 +257,16 @@ namespace MPLite
             //scheduler;
         }
 
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void winMain_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // TODO: global hotkey for player control
+        }
+
+        private void winMain_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Properties.Settings.Default.WindowHeight = this.ActualHeight;
+            Properties.Settings.Default.WindowWidth = this.ActualWidth;
+            Properties.Settings.Default.Save();
         }
         #endregion
 
@@ -536,6 +551,7 @@ namespace MPLite
             // Change icon of btnVolumeControl
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
         }
+
         #endregion
     }
 }
