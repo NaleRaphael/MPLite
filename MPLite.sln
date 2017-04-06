@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPLite", "MPLite\MPLite.csproj", "{B855F4E8-2A27-4F4F-9F66-9234717F6682}"
+	ProjectSection(ProjectDependencies) = postProject
+		{31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F} = {31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jarloo.Calendar", "Jarloo.Calendar\Jarloo.Calendar.csproj", "{31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{B855F4E8-2A27-4F4F-9F66-9234717F6682}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B855F4E8-2A27-4F4F-9F66-9234717F6682}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B855F4E8-2A27-4F4F-9F66-9234717F6682}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31C3B4A7-504B-4EFF-BACC-C8F2FFE5AF6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

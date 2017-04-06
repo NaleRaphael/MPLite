@@ -96,6 +96,12 @@
     <Resource Include="Images\move_prev.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)MPLite\dll"
+copy "$(TargetDir)Microsoft.Expression.Interactions.dll" "$(SolutionDir)MPLite\dll"
+copy "$(TargetDir)System.Windows.Interactivity.dll" "$(SolutionDir)MPLite\dll"
+copy "$(TargetDir)Microsoft.Expression.Interactions.xml" "$(SolutionDir)MPLite\dll"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

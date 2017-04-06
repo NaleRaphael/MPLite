@@ -26,7 +26,7 @@
                         <DockPanel>
                             <TextBlock Text="{Binding Date}" />
                             
-                            <Grid Height="30" DockPanel.Dock="Top" Background="Gray">
+                            <Grid Height="30" DockPanel.Dock="Top" Background="Black">
                                 
                             </Grid>
                             
