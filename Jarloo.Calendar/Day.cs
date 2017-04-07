@@ -12,6 +12,7 @@ using System.ComponentModel;
 
 namespace Jarloo.Calendar
 {
+    // TODO: implement IEvent for scheduler
     public class Day : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

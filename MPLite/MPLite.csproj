@@ -25,6 +25,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -102,7 +103,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataControl.cs" />
-    <Compile Include="ExtensionMethod.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -196,7 +196,6 @@
     <Resource Include="images\icons\volw_66.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dll\Calendar.NET.dll" />
     <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
     <Resource Include="images\icons\add_playlist.png" />
     <Resource Include="images\icons\volw_muted.png" />

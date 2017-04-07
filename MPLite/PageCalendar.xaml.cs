@@ -57,10 +57,10 @@ namespace MPLite
             SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
         }
 
-        private void btnChangeView_Click(object sender, RoutedEventArgs e)
+        private void btnAddEventInCalendar_Click(object sender, RoutedEventArgs e)
         {
-            /*System.Windows.MessageBox.Show(calendar.CalendarView.ToString());
-            calendar.CalendarView = (calendar.CalendarView == Calendar.NET.CalendarViews.Day) ? Calendar.NET.CalendarViews.Month : Calendar.NET.CalendarViews.Day;*/
+            //calendar.CurrentDate
+            calendar.Days[6].Notes = "TEST";
         }
     }
 }
