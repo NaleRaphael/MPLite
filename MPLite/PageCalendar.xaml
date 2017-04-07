@@ -11,9 +11,11 @@
       Title="PageCalendar" Loaded="Page_Loaded" Unloaded="Page_Unloaded" Background="#FF323232">
 
     <Grid x:Name="GridContainer">
-        <!--<Jarloo:Calendar x:Name="calender" Margin="90,50,0,0"/>-->
-        <Jarloo:Calendar x:Name="calendar" Margin="103,0,0,0" Foreground="#FF969696"/>
-        <Button x:Name="btn_AddEvent" Content="Add Events" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" Width="75" Click="btn_AddEvent_Click"/>
-        <Button x:Name="btnChangeView" Content="Button" HorizontalAlignment="Left" Margin="10,116,0,0" VerticalAlignment="Top" Width="75" Click="btnChangeView_Click"/>
+        <Grid HorizontalAlignment="Left" Height="350" VerticalAlignment="Top" Width="103">
+            <Button x:Name="btn_AddEvent" Content="Add Events" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="75" Click="btn_AddEvent_Click"/>
+            <Button x:Name="btnChangeView" Content="Button" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnChangeView_Click"/>
+        </Grid>
+        <Jarloo:Calendar x:Name="calendar" Margin="103,0,0,0" Foreground="#FFAFA082" Background="#FF2D323C" FontFamily="Segoe UI"/>
+
     </Grid>
 </Page>

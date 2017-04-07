@@ -89,6 +89,7 @@
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TaskBase.cs" />
     <Compile Include="TrackInfo.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />

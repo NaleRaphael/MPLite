@@ -47,11 +47,11 @@
 
         <Grid Height="Auto" VerticalAlignment="Top" Margin="205,0,10,0">
             <Label x:Name="lbl_TrackName" Content="Soundtrack" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                   Margin="80,8,80,17" PreviewMouseDown="lbl_TrackName_PreviewMouseDown"/>
+                   Margin="80,8,80,17" PreviewMouseDown="lbl_TrackName_PreviewMouseDown" FontFamily="Segoe UI"/>
             <Slider x:Name="trackBar" Height="25" VerticalAlignment="Top" Margin="0,26,0,0" Style="{DynamicResource StyleTrackBar}" 
                     Thumb.DragCompleted="Slider_DragCompleted" PreviewMouseDown="trackBar_PreviewMouseDown" PreviewMouseUp="trackBar_PreviewMouseUp"/>
             <Label x:Name="lbl_TrackProgess" Content="00:00 / 00:00" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                   Margin="230,10,0,15" FontSize="10" HorizontalAlignment="Right" PreviewMouseDown="lbl_TrackProgess_PreviewMouseDown"/>
+                   Margin="230,10,0,15" FontSize="10" HorizontalAlignment="Right" PreviewMouseDown="lbl_TrackProgess_PreviewMouseDown" FontFamily="Segoe UI"/>
         </Grid>
 
         <DockPanel x:Name="dPaneFooter" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
