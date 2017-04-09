@@ -20,6 +20,9 @@ namespace MPLite
         // ref: https://social.msdn.microsoft.com/Forums/vstudio/en-US/1f99c3c1-aeea-45aa-a501-a5b54b262799/winformhost-control-does-not-shown-when-windows-allowtransparency-true?forum=wpf
         private ProxyWindow proxyWin = null;
 
+        // TEST
+        private int count = 0;
+
         #region Event
         public delegate void SchedulerIsTriggeredEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1,
             MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None);
@@ -29,12 +32,13 @@ namespace MPLite
         public PageCalendar()
         {
             InitializeComponent();
-            InitializeCalender();
+            InitializeCalendar();
         }
 
-        private void InitializeCalender()
+        private void InitializeCalendar()
         {
-            // TODO
+            // TODO: show events on calendar
+            
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -60,7 +64,8 @@ namespace MPLite
         private void btnAddEventInCalendar_Click(object sender, RoutedEventArgs e)
         {
             //calendar.CurrentDate
-            calendar.Days[6].Notes = "TEST";
+            //calendar.Days[6].Notes = "TEST";
+            calendar.Days[6].Events.Add("TEST" + count++);
         }
     }
 }

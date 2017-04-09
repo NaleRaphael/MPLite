@@ -8,11 +8,14 @@
 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
-    xmlns:Jarloo="clr-namespace:Jarloo.Calendar" xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+    xmlns:Jarloo="clr-namespace:Jarloo.Calendar"
+    xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters">
 
     <Converters:DateConverter x:Key="DateConverter"></Converters:DateConverter>
     <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter>
+    <Converters:DayContentConverter x:Key="DayContentConverter"></Converters:DayContentConverter>
 
     <Style x:Key="StyleDayContent" TargetType="ListBoxItem">
         <Setter Property="Background" Value="Transparent"/>
@@ -77,10 +80,10 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
 
                         <DockPanel>
-                            <TextBlock Text="{Binding Date}" />
-
                             <Grid Height="30" DockPanel.Dock="Top" Background="Black">
-                                
+                                <!-- Original: <TextBlock Text="{Binding Date}" /> -->
+                                <!-- <TextBlock Text="{Binding CurrentDate, diag:PresentationTraceSources.TraceLevel=High}" /> -->
+                                <TextBlock Text="{Binding CurrentDate}" />
                             </Grid>
                             
                             <ItemsControl ItemsSource="{Binding DayNames}" DockPanel.Dock="Top">                              
@@ -109,7 +112,7 @@
                                         <!--Box-->
                                         <Border BorderBrush="Black" BorderThickness="1" Padding="0">
 
-                                            <Border Name="InnerBorder" BorderBrush="{Binding Path=Notes, Converter={StaticResource DayBorderColorConverter}}" BorderThickness="2">                                                
+                                            <Border Name="InnerBorder" BorderBrush="{Binding Notes, Converter={StaticResource DayBorderColorConverter}}" BorderThickness="2">                                                
                                                 
                                                 <Border.Style>
                                                     <Style TargetType="{x:Type Border}">
@@ -137,7 +140,6 @@
                                                             <TextBlock.Style>
                                                                 <Style TargetType="{x:Type TextBlock}">
                                                                     <Style.Triggers>
-                                                                        
                                                                         <DataTrigger Binding="{Binding IsTargetMonth}" Value="false">
                                                                             <Setter Property="TextBlock.Foreground" Value="Gray"></Setter>
                                                                         </DataTrigger>
@@ -148,22 +150,31 @@
                                                     </StackPanel>
 
                                                     <!-- Content of a day -->
-                                                    <ListBox IsEnabled="{Binding IsEnabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" >
+
+                                                    <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" ItemsSource="{Binding Events}">
                                                         <ListBox.ItemTemplate>
                                                             <DataTemplate>
-                                                                <TextBlock Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                                                <!--
+                                                                <Border Name="in2Border" BorderBrush="{Binding Notes, UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}" 
+                                                                        BorderThickness="2"/>
+                                                                -->
+                                                                <StackPanel>
+                                                                    <Label Content="{Binding UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}"/>
+                                                                </StackPanel>
                                                             </DataTemplate>
                                                         </ListBox.ItemTemplate>
+                                                        
                                                         <!--
                                                         <ListBoxItem Background="Transparent">
-                                                            <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                            <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}" 
                                                              AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                                                              Background="{x:Null}" Foreground="White" />
                                                         </ListBoxItem>
                                                         -->
                                                     </ListBox>
+                                                    
                                                     <!--
-                                                    <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                    <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}" 
                                                              AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                                                              Background="{x:Null}" Foreground="White" />
                                                     -->

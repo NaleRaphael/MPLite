@@ -36,7 +36,7 @@ namespace Jarloo.Calendar
         public Calendar()
         {
             DataContext = this;
-            CurrentDate = DateTime.Today;
+            CurrentDate = DateTime.Today;       // TODO: remove "hh/mm/ss" part of the date
 
             //this won't work in Australia where they start the week with Monday. So remember to test in other 
             //places if you plan on using it. 
