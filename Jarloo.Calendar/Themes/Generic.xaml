@@ -142,7 +142,7 @@
                                                     </Style>
                                                 </Border.Style>
 
-                                                <DockPanel>
+                                                <DockPanel PreviewMouseDown="DockPanel_PreviewMouseDown">
                                                     <!--Day Number-->
                                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" FlowDirection="RightToLeft">
                                                         <TextBlock TextAlignment="Right" Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=DAY}" 
@@ -161,7 +161,7 @@
 
                                                     <!-- Content of a day -->
                                                     <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
-                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}" Style="{StaticResource StyleListBox}">
+                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}">
                                                         <!-- ItemContainerStyle="{StaticResource StyleDayContent}" -->
                                                         <!--
                                                         <ListBox.ItemTemplate>
