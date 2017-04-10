@@ -90,7 +90,6 @@
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TaskBase.cs" />
     <Compile Include="TrackInfo.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />
@@ -153,7 +152,6 @@
       <DependentUpon>PageSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageSwitcher.cs" />
-    <Compile Include="PlaybackControl.cs" />
     <Compile Include="PlaylistCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
