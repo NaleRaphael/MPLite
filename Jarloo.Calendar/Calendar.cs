@@ -119,6 +119,12 @@ namespace Jarloo.Calendar
         {
             RefreshCalendar(1);
         }
+
+        public void MoveToCurrentMonth()
+        {
+            DateTime targetDate = new DateTime(CurrentDate.Year, CurrentDate.Month, 1);
+            this.BuildCalendar(targetDate);
+        }
         #endregion
     }
 

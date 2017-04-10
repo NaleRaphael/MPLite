@@ -121,7 +121,7 @@
                                 <Button x:Name="btnMoveToPrevMonth" Width="30" Height="30" BorderThickness="0" HorizontalAlignment="Right" Content="←" Margin="0,0,30,0"/>
                                 <Button x:Name="btnMoveToNextMonth" Width="30" Height="30" BorderThickness="0" HorizontalAlignment="Right" Content="→" Margin="0,0,0,0"/>
                                 -->
-                                <TextBlock Text="{Binding CurrentDate_Short, StringFormat= 'Today: \{0\}'}" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
+                                <TextBlock Text="{Binding CurrentDate_Short, StringFormat='Today: \{0\}'}" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
                                 
                                 <!-- TODO: change `Month` according to currently showing month -->
                                 <TextBlock Text="{Binding}" FontFamily="Segoe UI" HorizontalAlignment="Center"/>

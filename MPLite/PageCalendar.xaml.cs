@@ -41,33 +41,6 @@ namespace MPLite
             
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            // TODO
-        }
-
-        private void Page_Unloaded(object sender, RoutedEventArgs e)
-        {
-            if (proxyWin != null)
-            {
-                proxyWin.Close();
-                proxyWin = null;
-            }
-        }
-
-        private void btn_AddEvent_Click(object sender, RoutedEventArgs e)
-        {
-            // Fire event to notify PagePlaylist play track.
-            SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
-        }
-
-        private void btnAddEventInCalendar_Click(object sender, RoutedEventArgs e)
-        {
-            //calendar.CurrentDate
-            //calendar.Days[6].Notes = "TEST";
-            calendar.Days[6].Events.Add("TEST" + count++);
-        }
-
         #region Calendar control
         private void gridLeftContainer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
@@ -98,8 +71,26 @@ namespace MPLite
         {
             calendar.MoveToNextMonth();
         }
+
+        private void btnMoveToCurrentDate_Click(object sender, RoutedEventArgs e)
+        {
+            calendar.MoveToCurrentMonth();
+        }
         #endregion
 
+        private void btn_AddEvent_Click(object sender, RoutedEventArgs e)
+        {
+            // Fire event to notify PagePlaylist play track.
+            SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
+        }
 
+        private void btnAddEventInCalendar_Click(object sender, RoutedEventArgs e)
+        {
+            //calendar.CurrentDate
+            //calendar.Days[6].Notes = "TEST";
+            calendar.Days[6].Events.Add("TEST" + count++);
+        }
+
+        
     }
 }
