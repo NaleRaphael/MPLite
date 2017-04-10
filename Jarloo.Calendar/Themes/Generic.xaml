@@ -11,43 +11,53 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
     xmlns:Jarloo="clr-namespace:Jarloo.Calendar"
-    xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters">
+    xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
+    x:Class="Jarloo.Calendar.Themes.Generic">
 
     <Converters:DateConverter x:Key="DateConverter"></Converters:DateConverter>
     <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter>
     <Converters:DayContentConverter x:Key="DayContentConverter"></Converters:DayContentConverter>
 
-    <Style x:Key="StyleDayContent" TargetType="ListBoxItem">
+    
+    <Style x:Key="StyleListBox" TargetType="{x:Type ListBox}">
+        <EventSetter Event="PreviewMouseDown" Handler="ListBox_PreviewMouseDown" />
+    </Style>
+    
+    
+    <Style x:Key="StyleDayContent" TargetType="{x:Type ListBoxItem}">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Height" Value="14"/>
         <Setter Property="Foreground" Value="#FFC8C8C8"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="Padding" Value="5,0,0,0"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="BorderThickness" Value="0"/>
 
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListBoxItem">
-                    <Border x:Name="bd" Background="{TemplateBinding Background}">
-                        <!--
-                        <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding ListBoxItem.Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}"/>
-                        -->
-                        <ContentPresenter x:Name="contentPresenter" Content="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                          />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        
+        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
+
+        <!--<Setter Property="VerticalContentAlignment" Value="Top"/>-->
+
+
         <!--
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
-                    <Border>
-                        <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                            AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
-                            Background="{x:Null}" Foreground="White" />
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}" BorderThickness="0">
+                        <Label Content="{Binding UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}"/>
+                        
+                        <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding ListBoxItem.Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Top" Margin="{TemplateBinding Padding}"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Foreground" Value="#FFC8C8C8"/>
+                            <Setter Property="Background" Value="#FFB28E50"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="false">
+                            <Setter Property="Foreground" Value="#FFC8C8C8"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -150,26 +160,15 @@
                                                     </StackPanel>
 
                                                     <!-- Content of a day -->
-
-                                                    <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" ItemsSource="{Binding Events}">
+                                                    <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
+                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}" Style="{StaticResource StyleListBox}">
+                                                        <!-- ItemContainerStyle="{StaticResource StyleDayContent}" -->
+                                                        <!--
                                                         <ListBox.ItemTemplate>
                                                             <DataTemplate>
-                                                                <!--
-                                                                <Border Name="in2Border" BorderBrush="{Binding Notes, UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}" 
-                                                                        BorderThickness="2"/>
-                                                                -->
-                                                                <StackPanel>
-                                                                    <Label Content="{Binding UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}"/>
-                                                                </StackPanel>
+                                                                <Label Content="{Binding UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}"/>
                                                             </DataTemplate>
                                                         </ListBox.ItemTemplate>
-                                                        
-                                                        <!--
-                                                        <ListBoxItem Background="Transparent">
-                                                            <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}" 
-                                                             AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
-                                                             Background="{x:Null}" Foreground="White" />
-                                                        </ListBoxItem>
                                                         -->
                                                     </ListBox>
                                                     

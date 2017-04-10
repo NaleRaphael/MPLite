@@ -43,6 +43,7 @@ namespace Jarloo.Calendar
             DayNames = new ObservableCollection<string> {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
             Days = new ObservableCollection<Day>();
+
             BuildCalendar(DateTime.Today);
         }
 
