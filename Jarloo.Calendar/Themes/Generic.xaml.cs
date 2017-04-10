@@ -10,6 +10,10 @@ namespace Jarloo.Calendar.Themes
 {
     public partial class Generic
     {
+        // TODO
+        public delegate void DateSelectionEventHandler();
+        public event DateSelectionEventHandler DateSelectionEvent;
+
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             MessageBox.Show("ListBoxItem: Say YO");
@@ -30,7 +34,7 @@ namespace Jarloo.Calendar.Themes
             if (e.RightButton == MouseButtonState.Pressed && e.LeftButton == MouseButtonState.Released)
             {
                 Day info = (Day)((DockPanel)sender).DataContext;
-                MessageBox.Show(info.Date.ToString());
+                MessageBox.Show(info.Date.ToShortDateString().ToString());
             }
             return;
         }

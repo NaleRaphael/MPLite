@@ -14,6 +14,9 @@
     xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
     x:Class="Jarloo.Calendar.Themes.Generic">
 
+    <Image x:Key="MoveNext" Source="../Images/move_next.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="MovePrev" Source="../Images/move_prev.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+
     <Converters:DateConverter x:Key="DateConverter"></Converters:DateConverter>
     <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter>
     <Converters:DayContentConverter x:Key="DayContentConverter"></Converters:DayContentConverter>
@@ -80,6 +83,26 @@
         </Style.Resources>
     </Style>
 
+    <Style x:Key="Style_FlatImageButton" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content" Content="{TemplateBinding Button.Content}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FF323232" TargetName="border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type Jarloo:Calendar}">
         <Setter Property="Template">
             <Setter.Value>
@@ -93,7 +116,15 @@
                             <Grid Height="30" DockPanel.Dock="Top" Background="Black">
                                 <!-- Original: <TextBlock Text="{Binding Date}" /> -->
                                 <!-- <TextBlock Text="{Binding CurrentDate, diag:PresentationTraceSources.TraceLevel=High}" /> -->
-                                <TextBlock Text="{Binding CurrentDate}" />
+                                <!--<TextBlock Text="{Binding CurrentDate_Short}" />-->
+                                <!--
+                                <Button x:Name="btnMoveToPrevMonth" Width="30" Height="30" BorderThickness="0" HorizontalAlignment="Right" Content="←" Margin="0,0,30,0"/>
+                                <Button x:Name="btnMoveToNextMonth" Width="30" Height="30" BorderThickness="0" HorizontalAlignment="Right" Content="→" Margin="0,0,0,0"/>
+                                -->
+                                <TextBlock Text="{Binding CurrentDate_Short, StringFormat= 'Today: \{0\}'}" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
+                                
+                                <!-- TODO: change `Month` according to currently showing month -->
+                                <TextBlock Text="{Binding}" FontFamily="Segoe UI" HorizontalAlignment="Center"/>
                             </Grid>
                             
                             <ItemsControl ItemsSource="{Binding DayNames}" DockPanel.Dock="Top">                              

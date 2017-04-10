@@ -67,5 +67,39 @@ namespace MPLite
             //calendar.Days[6].Notes = "TEST";
             calendar.Days[6].Events.Add("TEST" + count++);
         }
+
+        #region Calendar control
+        private void gridLeftContainer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnMoveToPrevMonth.Visibility = Visibility.Visible;
+        }
+
+        private void gridLeftContainer_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnMoveToPrevMonth.Visibility = Visibility.Hidden;
+        }
+
+        private void gridRightContainer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnMoveToNextMonth.Visibility = Visibility.Visible;
+        }
+
+        private void gridRightContainer_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnMoveToNextMonth.Visibility = Visibility.Hidden;
+        }
+
+        private void btnMoveToPrevMonth_Click(object sender, RoutedEventArgs e)
+        {
+            calendar.MoveToPrevMonth();
+        }
+
+        private void btnMoveToNextMonth_Click(object sender, RoutedEventArgs e)
+        {
+            calendar.MoveToNextMonth();
+        }
+        #endregion
+
+
     }
 }

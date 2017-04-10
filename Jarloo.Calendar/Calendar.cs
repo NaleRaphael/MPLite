@@ -19,13 +19,30 @@ namespace Jarloo.Calendar
         public ObservableCollection<Day> Days { get; set; }
         public ObservableCollection<string> DayNames { get; set; }
         public static readonly DependencyProperty CurrentDateProperty = DependencyProperty.Register("CurrentDate", typeof (DateTime), typeof (Calendar));
-
+        
         public event EventHandler<DayChangedEventArgs> DayChanged;
+
+        public DateTime CurrentViewingDate { get; set; }
 
         public DateTime CurrentDate
         {
             get { return (DateTime) GetValue(CurrentDateProperty); }
             set { SetValue(CurrentDateProperty, value); }
+        }
+
+        public string CurrentDate_Short
+        {
+            get { return CurrentDate.ToShortDateString(); }
+        }
+
+        public int CurrentViewingYear
+        {
+            get { return CurrentViewingDate.Year; }
+        }
+
+        public int CurrentViewingMonth
+        {
+            get { return CurrentViewingDate.Month; }
         }
 
         static Calendar()
@@ -36,7 +53,8 @@ namespace Jarloo.Calendar
         public Calendar()
         {
             DataContext = this;
-            CurrentDate = DateTime.Today;       // TODO: remove "hh/mm/ss" part of the date
+            CurrentDate = DateTime.Today;
+            CurrentViewingDate = CurrentDate;
 
             //this won't work in Australia where they start the week with Monday. So remember to test in other 
             //places if you plan on using it. 
@@ -55,7 +73,10 @@ namespace Jarloo.Calendar
             //offset so we can fill in any boxes before that.
             DateTime d = new DateTime(targetDate.Year, targetDate.Month, 1);
             int offset = DayOfWeekNumber(d.DayOfWeek);
-            if (offset != 1) d = d.AddDays(-offset);
+            offset = (offset == 0) ? 7 : offset;
+
+            //if (offset != 0)  // BUG: if offset is not 0, beginning date should be modified.
+            d = d.AddDays(-offset);
 
             //Show 6 weeks each with 7 days = 42
             for (int box = 1; box <= 42; box++)
@@ -73,13 +94,32 @@ namespace Jarloo.Calendar
             if (e.PropertyName != "Notes") return;
             if (DayChanged == null) return;
 
-            DayChanged(this,new DayChangedEventArgs(sender as Day));
+            DayChanged(this, new DayChangedEventArgs(sender as Day));
         }
 
         private static int DayOfWeekNumber(DayOfWeek dow)
         {
             return Convert.ToInt32(dow.ToString("D"));
         }
+
+        private void RefreshCalendar(int offset)
+        {
+            CurrentViewingDate = CurrentViewingDate.AddMonths(offset);
+            DateTime targetDate = new DateTime(CurrentViewingDate.Year, CurrentViewingDate.Month, 1);
+            this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
+        }
+
+        #region Public methods
+        public void MoveToPrevMonth()
+        {
+            RefreshCalendar(-1);
+        }
+
+        public void MoveToNextMonth()
+        {
+            RefreshCalendar(1);
+        }
+        #endregion
     }
 
     public class DayChangedEventArgs : EventArgs
