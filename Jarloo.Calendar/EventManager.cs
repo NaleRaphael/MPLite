@@ -7,9 +7,9 @@ namespace Jarloo.Calendar
     public class EventManager
     {
         private DispatcherTimer refreshTimer;
+        private EventCollection ecdb;     // entry of database (recording all set events)
 
-        public ICollection<IEvent> EventList { get; set; }
-        public ICollection<DispatcherTimer> TimerList { get; set; }     // Once an event is added and it is in range (this day), create a timer for it.
+        public List<CustomEvent> ActivatedEvent { get; set; }    // events which are in the range of `NextRefreshingTime`
         public DateTime NextRefreshingTime { get; set; }
 
         public TimeSpan RefreshingTimerIntervalUnit
@@ -20,29 +20,38 @@ namespace Jarloo.Calendar
 
         public EventManager()
         {
-            EventList = new List<IEvent>();
-            TimerList = new List<DispatcherTimer>();
+            ecdb = new EventCollection();
+            ecdb.Initialize();
+            ActivatedEvent = new List<CustomEvent>();
             InitRefreshTimer();
         }
 
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
-        public void AddEvent(IEvent evnt)
+        public void AddEvent(CustomEvent evnt)
         {
-            if (!CheckEventIsInRange(evnt))
-                return;
+            ecdb.AddEvent(evnt);      // Saved into database
 
-            evnt.SetTimer();
-            EventList.Add(evnt);
-            TimerList.Add(evnt.Timer);
+            if (IsEventInRange(evnt))
+            {
+                ActivatedEvent.Add(evnt);
+                evnt.SetTimer();
+            }
         }
 
-        private bool CheckEventIsInRange(IEvent evnt)
+        private bool IsEventInRange(CustomEvent target)
         {
-            TimeSpan diff = NextRefreshingTime - evnt.BeginningTime;
-            if (diff <= TimeSpan.Zero || diff > RefreshingTimerIntervalUnit)
+            if (target.BeginningTime > NextRefreshingTime)
+                return false;
+            if (target.BeginningTime <= DateTime.Now)
+                return false;
+            else return true;
+            /*
+            TimeSpan diff = NextRefreshingTime - target.BeginningTime;
+            if (diff <= TimeSpan.Zero || diff >= RefreshingTimerIntervalUnit)
                 return false;
             else
                 return true;
+            */
         }
 
         #region refreshTimer control
@@ -51,7 +60,8 @@ namespace Jarloo.Calendar
             if (refreshTimer != null)
                 return;
 
-            NextRefreshingTime = DateTime.Today.AddDays(1);
+            //NextRefreshingTime = DateTime.Today.AddDays(1);
+            NextRefreshingTime = DateTime.Now.AddSeconds(10);
             refreshTimer = new DispatcherTimer { Interval = NextRefreshingTime - DateTime.Now };
             refreshTimer.Tick += (sender, args) =>
             {
@@ -71,7 +81,16 @@ namespace Jarloo.Calendar
         public void RefreshTasks()
         {
             // NOTE: check whether there will be some unfinished tasks being disposed?
-            return;
+            ActivatedEvent.Clear();
+
+            foreach (CustomEvent ce in ecdb.EventList)
+            {
+                if (IsEventInRange(ce))
+                {
+                    ActivatedEvent.Add(ce);
+                    ce.SetTimer();
+                }
+            }
         }
         #endregion
     }
