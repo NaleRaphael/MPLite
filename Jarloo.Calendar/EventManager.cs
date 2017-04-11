@@ -8,10 +8,15 @@ namespace Jarloo.Calendar
     {
         private DispatcherTimer refreshTimer;
 
-        // EventManger only have to handle events in one day.
-        // Update event list when day is changed.
-        public ICollection<IEvent> EventList;
-        public ICollection<DispatcherTimer> TimerList;     // Once an event is added and it is in range (this day), create a timer for it.
+        public ICollection<IEvent> EventList { get; set; }
+        public ICollection<DispatcherTimer> TimerList { get; set; }     // Once an event is added and it is in range (this day), create a timer for it.
+        public DateTime NextRefreshingTime { get; set; }
+
+        public TimeSpan RefreshingTimerIntervalUnit
+        {
+            get { return TimeSpan.FromDays(1); }
+            /* TODO: set {...} */
+        }
 
         public EventManager()
         {
@@ -23,16 +28,21 @@ namespace Jarloo.Calendar
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(IEvent evnt)
         {
-            CheckEventIsInRange(evnt);  // TODO: not implemented yet
-            evnt.SetTimer();
+            if (!CheckEventIsInRange(evnt))
+                return;
 
+            evnt.SetTimer();
             EventList.Add(evnt);
             TimerList.Add(evnt.Timer);
         }
 
-        private void CheckEventIsInRange(IEvent evnt)
+        private bool CheckEventIsInRange(IEvent evnt)
         {
-
+            TimeSpan diff = NextRefreshingTime - evnt.BeginningTime;
+            if (diff <= TimeSpan.Zero || diff > RefreshingTimerIntervalUnit)
+                return false;
+            else
+                return true;
         }
 
         #region refreshTimer control
@@ -41,8 +51,8 @@ namespace Jarloo.Calendar
             if (refreshTimer != null)
                 return;
 
-            // refreshTimer will be triggered at 0:00 of a day
-            refreshTimer = new DispatcherTimer { Interval = DateTime.Today.AddDays(1) - DateTime.Now };
+            NextRefreshingTime = DateTime.Today.AddDays(1);
+            refreshTimer = new DispatcherTimer { Interval = NextRefreshingTime - DateTime.Now };
             refreshTimer.Tick += (sender, args) =>
             {
                 refreshTimer.Stop();

@@ -36,7 +36,7 @@ namespace MPLite
         public static event TrackIsStoppedEventHandler TrackIsStoppedEvent; // subscriber: MainWindow_TrackIsStoppedEvent @ PagePlaylist.xaml.cs
         public delegate void FailedToPlayTrackEventHandler(PlayTrackEventArgs e);
         public static event FailedToPlayTrackEventHandler FailedToPlayTrackEvent;
-
+        
         // Timer (tracing track progress)
         private DispatcherTimer timer;
 
@@ -80,6 +80,7 @@ namespace MPLite
             PagePlaylist.PlayTrackEvent += this.StartPlayingTrack;
             PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             PagePlaylist.StopPlayerRequestEvent += _musicPlayer.Stop;
+            PagePlaylist.PausePlayerRequestEvent += _musicPlayer.Pause;
 
             _musicPlayer.PlayerStartedEvent += this.SetTimerAndTrackBar;
             _musicPlayer.PlayerStoppedEvent += this.ResetTimerAndTrackBar;

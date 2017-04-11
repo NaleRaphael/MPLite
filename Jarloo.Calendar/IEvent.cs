@@ -48,7 +48,6 @@ namespace Jarloo.Calendar
 
         IEvent Clone();
 
-        // Timer has to be set by EventManager, not start counting itself.
         void SetTimer();
     }
 

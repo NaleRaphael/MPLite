@@ -17,6 +17,8 @@ namespace MPLite
         public static event NewSelectionEventHandler NewSelectionEvent;
         public delegate void StopPlayerRequestEventHandler(PlayTrackEventArgs e);
         public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
+        public delegate void PausePlayerRequestEventHandler();
+        public static event PausePlayerRequestEventHandler PausePlayerRequestEvent;
         #endregion
 
         #region Field
@@ -222,47 +224,6 @@ namespace MPLite
             }
         }
 
-        /*
-        private PlayTrackEventArgs MainWindow_GetTrackEvent(MusicPlayer player, string selectedPlaylist = null, 
-            int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
-        {
-            if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
-            {
-                throw new EmptyPlaylistException("No tracks avalible");
-            }
-
-            PlayTrackEventArgs e;
-            try
-            {
-                // If no playlist is selected (user click btn_StartPlayback to play music)
-                selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
-
-                // Track info will be stored into e
-                e = GetTrack(player, selectedPlaylist, selectedTrackIndex, mode);
-            }
-            catch
-            {
-                throw;
-            }
-            return e;
-        }
-
-        private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
-            int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
-        {
-            PlayTrackEventArgs e;
-            try
-            {
-                prevTrackIdx = currTrackIdx;    // workaround
-                e = player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
-            }
-            catch
-            {
-                throw;
-            }
-            return e;
-        }*/
-
         private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
             int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
         {
@@ -271,22 +232,18 @@ namespace MPLite
                 throw new EmptyPlaylistException("No tracks avalible");
             }
 
-            PlayTrackEventArgs e;
-
             try
             {
                 // If no playlist is selected (user click btn_StartPlayback to play music)
                 selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
 
                 prevTrackIdx = currTrackIdx;    // workaround
-                e = player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
+                return player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
             }
             catch
             {
                 throw;
             }
-
-            return e;
         }
 
         private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
@@ -357,13 +314,24 @@ namespace MPLite
         public void RunPlaylist(SchedulerEventArgs e)
         {
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
-            if (e.Command == PlaybackCommands.Play)
+
+            switch (e.Command)
             {
-                StopPlayerRequestEvent(new PlayTrackEventArgs());
-                PlaySoundtrack(e.Playlist, e.TrackIndex, e.Mode);
+                case PlaybackCommands.Pause:
+                    PausePlayerRequestEvent();
+                    break;
+                case PlaybackCommands.Stop:
+                    StopPlayerRequestEvent(new PlayTrackEventArgs());
+                    break;
+                case PlaybackCommands.Play:
+                    StopPlayerRequestEvent(new PlayTrackEventArgs());
+                    PlaySoundtrack(e.Playlist, e.TrackIndex, e.Mode);
+                    break;
+                default:
+                    // Add a handling process for this exception
+                    //throw new Exception("Invalid command");
+                    break;
             }
-            else if (e.Command == PlaybackCommands.Stop)
-                StopPlayerRequestEvent(new PlayTrackEventArgs());
         }
         #endregion
     }

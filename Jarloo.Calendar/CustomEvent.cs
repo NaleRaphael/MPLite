@@ -54,6 +54,7 @@ namespace Jarloo.Calendar
             };
         }
 
+        // Timer has to be set by EventManager, not start counting itself.
         public void SetTimer()
         {
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };

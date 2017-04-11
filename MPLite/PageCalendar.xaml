@@ -16,6 +16,7 @@
             <Button x:Name="btnCalendarTester" Content="Calendar Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnCalendarTester_Click"/>
             <Button x:Name="btnEventManagerTester" Content="EvntMngr Test" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="75" Click="btnEventManagerTester_Click"/>
             <Button x:Name="btnStopPlayerEventTester" Content="Stop player Test" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="75" Click="btnStopPlayerEventTester_Click"/>
+            <Button x:Name="btnPausePlayerEventTester" Content="Pause player Test" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="75" Click="btnPausePlayerEventTester_Click"/>
         </Grid>
         <Jarloo:Calendar x:Name="calendar" Margin="100,0,0,0" Foreground="#FFAFA082" Background="#FF2D323C" FontFamily="Segoe UI"/>
         <Grid x:Name="gridLeftContainer" Height="Auto" Width="15" Margin="100,30,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="Transparent"

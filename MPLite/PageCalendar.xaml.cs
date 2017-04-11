@@ -64,6 +64,7 @@ namespace MPLite
         }
         #endregion
 
+        // TEST
         private void btnMusicPlayerEventTester_Click(object sender, RoutedEventArgs e)
         {
             // Fire event to notify PagePlaylist play track.
@@ -77,15 +78,17 @@ namespace MPLite
             SchedulerEvent(se);
         }
 
+        // TEST
         private void btnCalendarTester_Click(object sender, RoutedEventArgs e)
         {
             calendar.Days[6].Events.Add("TEST" + count++);
         }
 
+        // TEST
         private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent {
-                BeginningTime = DateTime.Now.AddSeconds(5),
+                BeginningTime = DateTime.Now.AddDays(10),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event",
@@ -116,11 +119,22 @@ namespace MPLite
             MPLiteEventManager.AddEvent(evnt);
         }
 
+        // TEST
         private void btnStopPlayerEventTester_Click(object sender, RoutedEventArgs e)
         {
             SchedulerEventArgs se = new SchedulerEventArgs
             {
                 Command = PlaybackCommands.Stop
+            };
+            SchedulerEvent(se);
+        }
+
+        // TEST
+        private void btnPausePlayerEventTester_Click(object sender, RoutedEventArgs e)
+        {
+            SchedulerEventArgs se = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Pause
             };
             SchedulerEvent(se);
         }
