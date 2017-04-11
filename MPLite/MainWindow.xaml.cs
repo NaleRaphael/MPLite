@@ -37,7 +37,7 @@ namespace MPLite
         public delegate void FailedToPlayTrackEventHandler(PlayTrackEventArgs e);
         public static event FailedToPlayTrackEventHandler FailedToPlayTrackEvent;
 
-        // Timer
+        // Timer (tracing track progress)
         private DispatcherTimer timer;
 
         // Animation control
@@ -77,13 +77,14 @@ namespace MPLite
 
             // Music player
             _musicPlayer = new MusicPlayer();
-            PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
+            PagePlaylist.PlayTrackEvent += this.StartPlayingTrack;
             PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             PagePlaylist.StopPlayerRequestEvent += _musicPlayer.Stop;
-            _musicPlayer.PlayerStartedEvent += SetTimerAndTrackBar;
-            _musicPlayer.PlayerStoppedEvent += ResetTimerAndTrackBar;
-            _musicPlayer.PlayerPausedEvent += Set_btn_StartPlayback_Icon_Play;
-            _musicPlayer.TrackEndsEvent += StopPlayerOrPlayNextTrack;
+
+            _musicPlayer.PlayerStartedEvent += this.SetTimerAndTrackBar;
+            _musicPlayer.PlayerStoppedEvent += this.ResetTimerAndTrackBar;
+            _musicPlayer.PlayerPausedEvent += this.PlayerPauseHandler;
+            _musicPlayer.TrackEndsEvent += this.StopPlayerOrPlayNextTrack;
 
             // Timer control
             timer = new DispatcherTimer();
@@ -109,7 +110,7 @@ namespace MPLite
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackProgress;
 
             // Scheduler
-            PageCalendar.SchedulerIsTriggeredEvent += pagePlaylist.RunPlaylist;
+            PageCalendar.SchedulerEvent += pagePlaylist.RunPlaylist;
 
             UpdateLayout();
         }
@@ -261,7 +262,7 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        private void MainWindow_PlayTrackEvent(string selectedPlaylist = null, int selectedTrackIndex = -1,
+        private void StartPlayingTrack(string selectedPlaylist = null, int selectedTrackIndex = -1,
             MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
         {
             PlayTrack(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode));
@@ -342,15 +343,20 @@ namespace MPLite
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
 
-            // Change icon of btn_StartPlayback to "Pause"
-            btnStartPlayback.Content = FindResource("PlaybackCtrl_Pause");
+            PlayerResumeHandler();
         }
 
         // Subscriber
-        private void Set_btn_StartPlayback_Icon_Play()
+        private void PlayerPauseHandler()
         {
             timer.Stop();
             btnStartPlayback.Content = FindResource("PlaybackCtrl_Play");
+        }
+
+        private void PlayerResumeHandler()
+        {
+            // Change icon of btn_StartPlayback to "Pause"
+            btnStartPlayback.Content = FindResource("PlaybackCtrl_Pause");
         }
 
         // Subscriber

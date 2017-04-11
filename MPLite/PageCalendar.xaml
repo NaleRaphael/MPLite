@@ -12,8 +12,10 @@
 
     <Grid x:Name="GridContainer">
         <Grid HorizontalAlignment="Left" Height="350" VerticalAlignment="Top" Width="100">
-            <Button x:Name="btn_AddEvent" Content="Add Events" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" Width="75" Click="btn_AddEvent_Click"/>
-            <Button x:Name="btnAddEventInCalendar" Content="Button" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnAddEventInCalendar_Click"/>
+            <Button x:Name="btnMusicPlayerEventTester" Content="Player Test" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="75" Click="btnMusicPlayerEventTester_Click"/>
+            <Button x:Name="btnCalendarTester" Content="Calendar Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnCalendarTester_Click"/>
+            <Button x:Name="btnEventManagerTester" Content="EvntMngr Test" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="75" Click="btnEventManagerTester_Click"/>
+            <Button x:Name="btnStopPlayerEventTester" Content="Stop player Test" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="75" Click="btnStopPlayerEventTester_Click"/>
         </Grid>
         <Jarloo:Calendar x:Name="calendar" Margin="100,0,0,0" Foreground="#FFAFA082" Background="#FF2D323C" FontFamily="Segoe UI"/>
         <Grid x:Name="gridLeftContainer" Height="Auto" Width="15" Margin="100,30,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="Transparent"

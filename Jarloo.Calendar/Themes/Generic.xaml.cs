@@ -35,6 +35,9 @@ namespace Jarloo.Calendar.Themes
             {
                 Day info = (Day)((DockPanel)sender).DataContext;
                 MessageBox.Show(info.Date.ToShortDateString().ToString());
+
+                TimeSpan diff = info.Date - DateTime.Now;
+                MessageBox.Show(diff.ToString());
             }
             return;
         }

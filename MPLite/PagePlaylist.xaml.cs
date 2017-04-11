@@ -36,7 +36,7 @@ namespace MPLite
             lb_PlaylistMenu.SelectedIndex = Properties.Settings.Default.LastSelectedPlaylistIndex;  // select default list
             currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
-            MainWindow.GetTrackEvent += MainWindow_GetTrackEvent;
+            MainWindow.GetTrackEvent += GetTrack;
             MainWindow.TrackIsPlayedEvent += SetTrackStatus;
             MainWindow.TrackIsStoppedEvent += ResetTrackStatus;
             MainWindow.FailedToPlayTrackEvent += SetTrackStatus;
@@ -222,6 +222,7 @@ namespace MPLite
             }
         }
 
+        /*
         private PlayTrackEventArgs MainWindow_GetTrackEvent(MusicPlayer player, string selectedPlaylist = null, 
             int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
         {
@@ -260,6 +261,32 @@ namespace MPLite
                 throw;
             }
             return e;
+        }*/
+
+        private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
+            int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+        {
+            if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
+            {
+                throw new EmptyPlaylistException("No tracks avalible");
+            }
+
+            PlayTrackEventArgs e;
+
+            try
+            {
+                // If no playlist is selected (user click btn_StartPlayback to play music)
+                selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
+
+                prevTrackIdx = currTrackIdx;    // workaround
+                e = player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
+            }
+            catch
+            {
+                throw;
+            }
+
+            return e;
         }
 
         private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
@@ -283,6 +310,7 @@ namespace MPLite
             lv_Playlist.Visibility = Visibility.Visible;
         }
 
+        #region Playlist menu control
         private void lb_PlaylistMenu_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (lb_PlaylistMenu.SelectedItems.Count == 1)
@@ -322,14 +350,20 @@ namespace MPLite
                 }
             }
         }
+        #endregion
 
         #region Handle events fired from scheduler
-        public void RunPlaylist(string selectedPlaylist = null, int selectedTrackIndex = -1,
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+        // TODO: rename this
+        public void RunPlaylist(SchedulerEventArgs e)
         {
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
-            StopPlayerRequestEvent(new PlayTrackEventArgs());
-            PlaySoundtrack(selectedPlaylist, selectedTrackIndex, mode);
+            if (e.Command == PlaybackCommands.Play)
+            {
+                StopPlayerRequestEvent(new PlayTrackEventArgs());
+                PlaySoundtrack(e.Playlist, e.TrackIndex, e.Mode);
+            }
+            else if (e.Command == PlaybackCommands.Stop)
+                StopPlayerRequestEvent(new PlayTrackEventArgs());
         }
         #endregion
     }

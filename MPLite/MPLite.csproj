@@ -87,6 +87,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EventRouter.cs" />
+    <Compile Include="SchedulerEventBase.cs" />
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>

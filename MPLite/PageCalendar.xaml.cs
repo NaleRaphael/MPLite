@@ -1,20 +1,18 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace MPLite
 {
     public partial class PageCalendar : Page
     {
-        // ref: https://social.msdn.microsoft.com/Forums/vstudio/en-US/1f99c3c1-aeea-45aa-a501-a5b54b262799/winformhost-control-does-not-shown-when-windows-allowtransparency-true?forum=wpf
-        private ProxyWindow proxyWin = null;
-
         // TEST
         private int count = 0;
 
+        public Jarloo.Calendar.EventManager MPLiteEventManager;
+
         #region Event
-        public delegate void SchedulerIsTriggeredEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1,
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None);
-        public static event SchedulerIsTriggeredEventHandler SchedulerIsTriggeredEvent;
+        public static event SchedulerEventHandler SchedulerEvent;
         #endregion
 
         public PageCalendar()
@@ -26,7 +24,7 @@ namespace MPLite
         private void InitializeCalendar()
         {
             // TODO: show events on calendar
-            
+            MPLiteEventManager = new Jarloo.Calendar.EventManager();
         }
 
         #region Calendar control
@@ -66,19 +64,65 @@ namespace MPLite
         }
         #endregion
 
-        private void btn_AddEvent_Click(object sender, RoutedEventArgs e)
+        private void btnMusicPlayerEventTester_Click(object sender, RoutedEventArgs e)
         {
             // Fire event to notify PagePlaylist play track.
-            SchedulerIsTriggeredEvent("New Playlist", -1, MPLiteConstant.PlaybackMode.Default);
+            SchedulerEventArgs se = new SchedulerEventArgs
+            {
+                Playlist = "New Playlist",
+                Command = PlaybackCommands.Play,
+                Mode = MPLiteConstant.PlaybackMode.Default,
+                TrackIndex = -1
+            };
+            SchedulerEvent(se);
         }
 
-        private void btnAddEventInCalendar_Click(object sender, RoutedEventArgs e)
+        private void btnCalendarTester_Click(object sender, RoutedEventArgs e)
         {
-            //calendar.CurrentDate
-            //calendar.Days[6].Notes = "TEST";
             calendar.Days[6].Events.Add("TEST" + count++);
         }
 
-        
+        private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
+        {
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent {
+                BeginningTime = DateTime.Now.AddSeconds(5),
+                Duration = TimeSpan.FromSeconds(5),
+                Enabled = true,
+                EventText = "Test event",
+                Rank = 1,
+                ReadOnlyEvent = false,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.None,
+                ThisDayForwardOnly = true,
+                IgnoreTimeComponent = true,
+            };
+
+            evnt.EventStartsEvent += (args) =>
+            {
+                SchedulerEventArgs se = new SchedulerEventArgs
+                {
+                    Playlist = "New Playlist",
+                    Command = PlaybackCommands.Play,
+                    Mode = MPLiteConstant.PlaybackMode.Default,
+                    TrackIndex = -1
+                };
+                SchedulerEvent(se);
+            };
+
+            evnt.EventEndsEvent += (args) =>
+            {
+                MessageBox.Show("Event ends.");
+            };
+
+            MPLiteEventManager.AddEvent(evnt);
+        }
+
+        private void btnStopPlayerEventTester_Click(object sender, RoutedEventArgs e)
+        {
+            SchedulerEventArgs se = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Stop
+            };
+            SchedulerEvent(se);
+        }
     }
 }
