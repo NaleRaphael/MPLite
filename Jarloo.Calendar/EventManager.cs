@@ -38,6 +38,8 @@ namespace Jarloo.Calendar
             }
         }
 
+        // public void 
+
         private bool IsEventInRange(CustomEvent target)
         {
             if (target.BeginningTime > NextRefreshingTime)
@@ -45,13 +47,6 @@ namespace Jarloo.Calendar
             if (target.BeginningTime <= DateTime.Now)
                 return false;
             else return true;
-            /*
-            TimeSpan diff = NextRefreshingTime - target.BeginningTime;
-            if (diff <= TimeSpan.Zero || diff >= RefreshingTimerIntervalUnit)
-                return false;
-            else
-                return true;
-            */
         }
 
         #region refreshTimer control
@@ -60,8 +55,8 @@ namespace Jarloo.Calendar
             if (refreshTimer != null)
                 return;
 
-            //NextRefreshingTime = DateTime.Today.AddDays(1);
-            NextRefreshingTime = DateTime.Now.AddSeconds(10);
+            NextRefreshingTime = DateTime.Today.AddDays(1);
+            //NextRefreshingTime = DateTime.Now.AddSeconds(10);  // TEST
             refreshTimer = new DispatcherTimer { Interval = NextRefreshingTime - DateTime.Now };
             refreshTimer.Tick += (sender, args) =>
             {
@@ -77,9 +72,9 @@ namespace Jarloo.Calendar
             refreshTimer.Start();
         }
 
-        // Refresh tasks when this app is opened, or the day is changed. (e.g. 2017/04/10 -> 2017/04/11)
         public void RefreshTasks()
         {
+            // Refresh tasks when this app is opened, or the day is changed. (e.g. 2017/04/10 -> 2017/04/11)
             // NOTE: check whether there will be some unfinished tasks being disposed?
             ActivatedEvent.Clear();
 

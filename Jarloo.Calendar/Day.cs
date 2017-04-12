@@ -23,11 +23,11 @@ namespace Jarloo.Calendar
         private bool isTargetMonth;
         private bool isToday;
 
-        public ObservableCollection<string> Events { get; set; }
+        public ObservableCollection<string> EventTexts { get; set; }
 
         public Day()
         {
-            Events = new ObservableCollection<string>();
+            EventTexts = new ObservableCollection<string>();
         }
 
         public bool IsToday

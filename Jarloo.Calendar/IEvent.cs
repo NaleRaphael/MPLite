@@ -3,25 +3,6 @@ using System.Windows.Threading;
 
 namespace Jarloo.Calendar
 {
-    [Flags]
-    public enum RecurringFrequencies
-    {
-        None = 0x00,
-        EverySunday = 0x01,
-        EveryMonday = 0x02,
-        EveryTuesday = 0x04,
-        EveryWendsday = 0x08,
-        EveryThursday = 0x10,
-        EveryFriday = 0x20,
-        EverySaturday = 0x40,
-        EveryWeekday = EveryMonday | EveryTuesday | EveryWendsday | EveryThursday | EveryFriday,
-        EveryWeekend = EverySunday | EverySaturday,
-        Daily = EveryWeekday | EveryWeekend,
-        Monthly = 0x80,
-        Yearly = 0x100,
-        Custom = 0x200
-    }
-
     public interface IEvent
     {
         DateTime BeginningTime { get; set; }

@@ -60,6 +60,23 @@ namespace Jarloo.Calendar
             ec = null;
         }
 
+        // TODO: directly overwrite an empty list into database? (without reading the original one)
+        public void Clear()
+        {
+            string dbPath = Properties.Settings.Default.DBPath;
+
+            EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath);
+            if (ec == null)
+            {
+                return;
+            }
+
+            ec.EventList.Clear();
+            this.EventList = ec.EventList;
+            DataControl.SaveData<EventCollection>(dbPath, ec);
+            ec = null;
+        }
+
         public CustomEvent GetEvent(string eventText)
         {
             string dbPath = Properties.Settings.Default.DBPath;

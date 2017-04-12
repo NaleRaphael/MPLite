@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="CustomEvent.cs" />
     <Compile Include="DataControl.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="EventCollection.cs" />
     <Compile Include="EventManager.cs" />
     <Compile Include="IEvent.cs" />

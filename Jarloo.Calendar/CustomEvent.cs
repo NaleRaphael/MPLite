@@ -5,6 +5,7 @@ namespace Jarloo.Calendar
 {
     public class CustomEvent : IEvent
     {
+        // NOTE: time component should be processed independently
         public DateTime BeginningTime { get; set; }
         public TimeSpan Duration { get; set; }
         public DispatcherTimer Timer { get; set; }
@@ -60,8 +61,17 @@ namespace Jarloo.Calendar
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };
             Timer.Tick += (sender, args) =>
             {
+                IsTriggered = true;
                 Timer.Stop();
+                Timer = null;
+
+                // Notify subscribers that this event starts
                 EventStartsEvent(this);
+
+                // Update the next beginningTime of this event if it is a recurring event
+                UpdateBeginningTime();
+
+                // refresh `IsTriggered` property?
 
                 // Set timer to time the duration of this event
                 if (Duration != TimeSpan.Zero)
@@ -70,6 +80,8 @@ namespace Jarloo.Calendar
                     Timer.Tick += (s, a) =>
                     {
                         Timer.Stop();
+
+                        // Notify subscribers that this event ends
                         EventEndsEvent(this);
                         Timer = null;
                     };
@@ -77,6 +89,15 @@ namespace Jarloo.Calendar
                 }
             };
             Timer.Start();
+        }
+
+        private void UpdateBeginningTime()
+        {
+            if (RecurringFrequency == RecurringFrequencies.None)
+                return;
+
+            Weekday nextRecurringWeekday = Utils.GetNextRecurringWeekday(BeginningTime.DayOfWeek.ToCustomWeekday(), RecurringFrequency);
+            BeginningTime = Utils.DateTimeOfNextWeekday(BeginningTime, nextRecurringWeekday.ToSystemWeekday());
         }
     }
 }

@@ -22,13 +22,18 @@ namespace Jarloo.Calendar
 
         public static readonly DependencyProperty CurrentDateProperty = DependencyProperty.Register("CurrentDate", typeof (DateTime), typeof (Calendar));
 
+        #region Event
         public event PropertyChangedEventHandler CurrentlyViewingInfoChanged; // used to update currently viewing year & month
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<DayChangedEventArgs> DayChanged;
-
+        //public event EventHandler<>
+        #endregion
+        
         #region Properties
         public ObservableCollection<Day> Days { get; set; }
         public ObservableCollection<string> DayNames { get; set; }
+
+        public EventManager EventManager { get; set; }
 
         public DateTime CurrentDate
         {
@@ -89,6 +94,7 @@ namespace Jarloo.Calendar
             DayNames = new ObservableCollection<string> {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
             Days = new ObservableCollection<Day>();
+            EventManager = new EventManager();
 
             BuildCalendar(DateTime.Today);
         }
@@ -119,7 +125,7 @@ namespace Jarloo.Calendar
 
         private void Day_Changed(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != "Notes") return;
+            if (e.PropertyName != "EventTexts") return;
             if (DayChanged == null) return;
 
             DayChanged(this, new DayChangedEventArgs(sender as Day));
@@ -142,6 +148,11 @@ namespace Jarloo.Calendar
             CurrentViewingDate = CurrentViewingDate.AddMonths(offset);
             DateTime targetDate = new DateTime(CurrentViewingDate.Year, CurrentViewingDate.Month, 1);
             this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
+        }
+
+        private void UpdateEventsToCalendar()
+        {
+            
         }
 
         #region Public methods for user

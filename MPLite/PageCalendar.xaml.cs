@@ -9,8 +9,6 @@ namespace MPLite
         // TEST
         private int count = 0;
 
-        public Jarloo.Calendar.EventManager MPLiteEventManager;
-
         #region Event
         public static event SchedulerEventHandler SchedulerEvent;
         #endregion
@@ -24,7 +22,6 @@ namespace MPLite
         private void InitializeCalendar()
         {
             // TODO: show events on calendar
-            MPLiteEventManager = new Jarloo.Calendar.EventManager();
         }
 
         #region Calendar control
@@ -81,7 +78,7 @@ namespace MPLite
         // TEST
         private void btnCalendarTester_Click(object sender, RoutedEventArgs e)
         {
-            calendar.Days[6].Events.Add("TEST" + count++);
+            calendar.Days[6].EventTexts.Add("TEST" + count++);
         }
 
         // TEST
@@ -94,7 +91,7 @@ namespace MPLite
                 EventText = "Test event",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.None,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekday,
                 ThisDayForwardOnly = true,
                 IgnoreTimeComponent = true,
             };
@@ -116,7 +113,7 @@ namespace MPLite
                 MessageBox.Show("Event ends.");
             };
 
-            MPLiteEventManager.AddEvent(evnt);
+            calendar.EventManager.AddEvent(evnt);
         }
 
         // TEST
@@ -137,6 +134,25 @@ namespace MPLite
                 Command = PlaybackCommands.Pause
             };
             SchedulerEvent(se);
+        }
+
+        private void btnWeekdayConvert_Click(object sender, RoutedEventArgs e)
+        {
+            var result = Jarloo.Calendar.Utils.ConvertToCustomWeekday(DateTime.Now.AddDays(3));
+            byte temp = (byte)result;
+            MessageBox.Show(result.ToString());
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            /*
+            var rf = Jarloo.Calendar.RecurringFrequencies.EveryWeekend;
+            var result = Jarloo.Calendar.Utils.GetNextRecurringWeekday(Jarloo.Calendar.Weekday.Sunday, rf);
+            MessageBox.Show(result.ToString());
+            */
+
+            DateTime nextWeekday = Jarloo.Calendar.Utils.DateTimeOfNextWeekday(DateTime.Now, DayOfWeek.Thursday);
+            MessageBox.Show(nextWeekday.ToString());
         }
     }
 }

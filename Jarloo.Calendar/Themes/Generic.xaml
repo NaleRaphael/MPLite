@@ -200,7 +200,7 @@
 
                                                     <!-- Content of a day -->
                                                     <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
-                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}">
+                                                             ItemsSource="{Binding EventTexts}" ItemContainerStyle="{StaticResource StyleDayContent}">
                                                         <!-- ItemContainerStyle="{StaticResource StyleDayContent}" -->
                                                         <!--
                                                         <ListBox.ItemTemplate>
