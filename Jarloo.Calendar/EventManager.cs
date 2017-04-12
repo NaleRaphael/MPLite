@@ -34,11 +34,18 @@ namespace Jarloo.Calendar
             if (IsEventInRange(evnt))
             {
                 ActivatedEvent.Add(evnt);
+                if (evnt.AutoDelete)
+                    evnt.DestructMeEvent += DestructEvent;
                 evnt.SetTimer();
             }
         }
 
-        // public void 
+        private void DestructEvent(IEvent target)
+        {
+            ActivatedEvent.Remove((CustomEvent)target);
+            ecdb.DeleteEvent((CustomEvent)target);
+            target = null;
+        }
 
         private bool IsEventInRange(CustomEvent target)
         {

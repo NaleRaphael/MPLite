@@ -54,9 +54,9 @@ namespace Jarloo.Calendar
                 return;     // TODO: check this in PlaylistCollection, if plc == null, it should return directly.
             }
 
-            ec.EventList.Remove(target);
+            ec.EventList.Remove(ec.EventList.Find(x => x.GUID == target.GUID));
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, ec);
+            DataControl.SaveData<EventCollection>(dbPath, this);
             ec = null;
         }
 

@@ -6,6 +6,7 @@ namespace Jarloo.Calendar
     public class CustomEvent : IEvent
     {
         // NOTE: time component should be processed independently
+        public Guid GUID { get; set; }
         public DateTime BeginningTime { get; set; }
         public TimeSpan Duration { get; set; }
         public DispatcherTimer Timer { get; set; }
@@ -14,16 +15,19 @@ namespace Jarloo.Calendar
         public int Rank { get; set; }
         public bool IsTriggered { get; set; }
         public bool Enabled { get; set; }
+        public bool AutoDelete { get; set; }
         public bool IgnoreTimeComponent { get; set; }
         public bool ReadOnlyEvent { get; set; }
         public bool ThisDayForwardOnly { get; set; }
-        public CustomRecurringFrequenciesHandler CustomRecurringFunction { get; set; }
+        //public CustomRecurringFrequenciesHandler CustomRecurringFunction { get; set; }
 
         public event TimerElapsedEventHandler EventStartsEvent;
         public event TimerElapsedEventHandler EventEndsEvent;
+        public event TimerElapsedEventHandler DestructMeEvent;  // workaround: try to implement `AutoDelete`
 
         public CustomEvent()
         {
+            GUID = Guid.NewGuid();
             Duration = TimeSpan.Zero;
             Timer = null;
             RecurringFrequency = RecurringFrequencies.None;
@@ -31,6 +35,7 @@ namespace Jarloo.Calendar
             Rank = 1;
             IsTriggered = false;
             Enabled = true;
+            AutoDelete = true;
             IgnoreTimeComponent = false;
             ReadOnlyEvent = false;
             ThisDayForwardOnly = true;
@@ -40,7 +45,8 @@ namespace Jarloo.Calendar
         {
             return new CustomEvent
             {
-                CustomRecurringFunction = CustomRecurringFunction,
+                //CustomRecurringFunction = CustomRecurringFunction,
+                // TODO: can GUID clone too?
                 BeginningTime = BeginningTime,
                 Duration = Duration,
                 Timer = Timer,
@@ -49,6 +55,7 @@ namespace Jarloo.Calendar
                 Rank = Rank,
                 IsTriggered = IsTriggered,
                 Enabled = Enabled,
+                AutoDelete = AutoDelete,
                 IgnoreTimeComponent = IgnoreTimeComponent,
                 ReadOnlyEvent = ReadOnlyEvent,
                 ThisDayForwardOnly = ThisDayForwardOnly
@@ -71,7 +78,7 @@ namespace Jarloo.Calendar
                 // Update the next beginningTime of this event if it is a recurring event
                 UpdateBeginningTime();
 
-                // refresh `IsTriggered` property?
+                // TODO: refresh `IsTriggered` property?
 
                 // Set timer to time the duration of this event
                 if (Duration != TimeSpan.Zero)
@@ -84,6 +91,9 @@ namespace Jarloo.Calendar
                         // Notify subscribers that this event ends
                         EventEndsEvent(this);
                         Timer = null;
+
+                        if (AutoDelete)
+                            DestructMeEvent(this);
                     };
                     Timer.Start();
                 }
