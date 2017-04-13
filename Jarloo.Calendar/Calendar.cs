@@ -14,19 +14,68 @@ using System.Windows.Controls;
 
 namespace Jarloo.Calendar
 {
-    public class Calendar : Control
+    public class Calendar : Control, INotifyPropertyChanged
     {
-        public ObservableCollection<Day> Days { get; set; }
-        public ObservableCollection<string> DayNames { get; set; }
+        private int currentViewingYear;
+        private int currentViewingMonth;
+        private DateTime currentViewingDate;
+
         public static readonly DependencyProperty CurrentDateProperty = DependencyProperty.Register("CurrentDate", typeof (DateTime), typeof (Calendar));
 
+        #region Event
+        public event PropertyChangedEventHandler CurrentlyViewingInfoChanged; // used to update currently viewing year & month
+        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<DayChangedEventArgs> DayChanged;
+        //public event EventHandler<>
+        #endregion
+        
+        #region Properties
+        public ObservableCollection<Day> Days { get; set; }
+        public ObservableCollection<string> DayNames { get; set; }
+
+        public EventManager EventManager { get; set; }
 
         public DateTime CurrentDate
         {
             get { return (DateTime) GetValue(CurrentDateProperty); }
             set { SetValue(CurrentDateProperty, value); }
         }
+
+        public string CurrentDate_Short
+        {
+            get { return CurrentDate.ToShortDateString(); }
+        }
+
+        public DateTime CurrentViewingDate
+        {
+            get { return currentViewingDate; }
+            set
+            {
+                currentViewingDate = value;
+                if (CurrentlyViewingInfoChanged != null) CurrentlyViewingInfoChanged(this, new PropertyChangedEventArgs("CurrentViewingDate"));
+            }
+        }
+
+        public int CurrentViewingYear
+        {
+            get { return CurrentViewingDate.Year; }
+            set
+            {
+                currentViewingYear = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CurrentViewingYear"));
+            }
+        }
+
+        public int CurrentViewingMonth
+        {
+            get { return CurrentViewingDate.Month; }
+            set
+            {
+                currentViewingMonth = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("CurrentViewingMonth"));
+            }
+        }
+        #endregion
 
         static Calendar()
         {
@@ -37,12 +86,16 @@ namespace Jarloo.Calendar
         {
             DataContext = this;
             CurrentDate = DateTime.Today;
+            CurrentViewingDate = CurrentDate;
+            CurrentlyViewingInfoChanged += this.UpdateCurrentViewingInfo;
 
             //this won't work in Australia where they start the week with Monday. So remember to test in other 
             //places if you plan on using it. 
             DayNames = new ObservableCollection<string> {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
             Days = new ObservableCollection<Day>();
+            EventManager = new EventManager();
+
             BuildCalendar(DateTime.Today);
         }
 
@@ -54,7 +107,10 @@ namespace Jarloo.Calendar
             //offset so we can fill in any boxes before that.
             DateTime d = new DateTime(targetDate.Year, targetDate.Month, 1);
             int offset = DayOfWeekNumber(d.DayOfWeek);
-            if (offset != 1) d = d.AddDays(-offset);
+            offset = (offset == 0) ? 7 : offset;
+
+            //if (offset != 0)  // BUG: if offset is not 0, beginning date should be modified.
+            d = d.AddDays(-offset);
 
             //Show 6 weeks each with 7 days = 42
             for (int box = 1; box <= 42; box++)
@@ -69,16 +125,54 @@ namespace Jarloo.Calendar
 
         private void Day_Changed(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != "Notes") return;
+            if (e.PropertyName != "EventTexts") return;
             if (DayChanged == null) return;
 
-            DayChanged(this,new DayChangedEventArgs(sender as Day));
+            DayChanged(this, new DayChangedEventArgs(sender as Day));
+        }
+
+        // Event subscriber (CurrentlyViewingInfoChanged)
+        private void UpdateCurrentViewingInfo(object sender, PropertyChangedEventArgs e)
+        {
+            CurrentViewingYear = CurrentViewingDate.Year;
+            CurrentViewingMonth = CurrentViewingDate.Month;
         }
 
         private static int DayOfWeekNumber(DayOfWeek dow)
         {
             return Convert.ToInt32(dow.ToString("D"));
         }
+
+        private void RefreshCalendar(int offset)
+        {
+            CurrentViewingDate = CurrentViewingDate.AddMonths(offset);
+            DateTime targetDate = new DateTime(CurrentViewingDate.Year, CurrentViewingDate.Month, 1);
+            this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
+        }
+
+        private void UpdateEventsToCalendar()
+        {
+            
+        }
+
+        #region Public methods for user
+        public void MoveToPrevMonth()
+        {
+            RefreshCalendar(-1);
+        }
+
+        public void MoveToNextMonth()
+        {
+            RefreshCalendar(1);
+        }
+
+        public void MoveToCurrentMonth()
+        {
+            CurrentViewingDate = CurrentDate;
+            DateTime targetDate = new DateTime(CurrentViewingDate.Year, CurrentViewingDate.Month, 1);
+            this.BuildCalendar(targetDate);
+        }
+        #endregion
     }
 
     public class DayChangedEventArgs : EventArgs

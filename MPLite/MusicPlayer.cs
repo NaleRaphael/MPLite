@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;   //DllImport
-using System.Windows.Forms;
 
 namespace MPLite
 {
@@ -77,6 +75,7 @@ namespace MPLite
         public static extern int mciGetErrorString(int errCode, StringBuilder errMsg, int buflen);
         #endregion
 
+        #region Constructer
         public MusicPlayer()
         {
             PlayerStatus = PlaybackState.Stopped;
@@ -85,8 +84,9 @@ namespace MPLite
             PrevTrackIndex = -1;
             CurrentTrackIndex = -1;
         }
+        #endregion
 
-        #region Buttons
+        #region Player action
         public void Close()
         {
             string cmd = "close MediaFile";
@@ -229,7 +229,7 @@ namespace MPLite
         }
         #endregion
 
-        #region Status
+        #region Player status
         public bool IsPlaying()
         {
             string cmd = "status MediaFile mode";
@@ -271,7 +271,7 @@ namespace MPLite
         }
         #endregion
 
-        #region Logic
+        #region Player logic
         public int GetCurrentMilisecond()
         {
             string cmd = "status MediaFile position";
@@ -314,7 +314,7 @@ namespace MPLite
         }
         #endregion
 
-        #region Audio
+        #region Audio control
         public bool SetVolume(int volume)
         {
             if (volume >= 0 && volume <= 1000)

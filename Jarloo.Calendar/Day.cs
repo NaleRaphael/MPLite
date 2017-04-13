@@ -9,6 +9,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace Jarloo.Calendar
 {
@@ -21,7 +22,14 @@ namespace Jarloo.Calendar
         private bool enabled;
         private bool isTargetMonth;
         private bool isToday;
-        
+
+        public ObservableCollection<string> EventTexts { get; set; }
+
+        public Day()
+        {
+            EventTexts = new ObservableCollection<string>();
+        }
+
         public bool IsToday
         {
             get { return isToday; }

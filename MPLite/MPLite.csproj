@@ -86,9 +86,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EventRouter.cs" />
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SchedulerEventBase.cs" />
     <Compile Include="TrackInfo.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />
@@ -101,7 +103,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DataControl.cs" />
-    <Compile Include="ExtensionMethod.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -152,7 +153,6 @@
       <DependentUpon>PageSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageSwitcher.cs" />
-    <Compile Include="PlaybackControl.cs" />
     <Compile Include="PlaylistCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

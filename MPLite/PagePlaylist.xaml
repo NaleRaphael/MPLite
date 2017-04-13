@@ -24,10 +24,11 @@
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" PreviewMouseUp="lb_PlaylistMenu_PreviewMouseUp" KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}"/>
+            <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" PreviewMouseUp="lb_PlaylistMenu_PreviewMouseUp" 
+                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" FontFamily="Segoe UI"/>
             <ListView Grid.Row="0" x:Name="lv_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
-                  lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="lv_Playlist_DragEnter" Drop="lv_Playlist_Drop" MouseDoubleClick="lv_Playlist_MouseDoubleClick" KeyDown="lv_Playlist_KeyDown"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="lv_Playlist_DragEnter" Drop="lv_Playlist_Drop" MouseDoubleClick="lv_Playlist_MouseDoubleClick" 
+                      KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="TextBlock.Foreground" Value="#FFC8C8C8"/>

@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Itenso.Windows.Controls.ListViewLayout;
-using System.Threading;
 
 namespace MPLite
 {
@@ -26,6 +17,8 @@ namespace MPLite
         public static event NewSelectionEventHandler NewSelectionEvent;
         public delegate void StopPlayerRequestEventHandler(PlayTrackEventArgs e);
         public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
+        public delegate void PausePlayerRequestEventHandler();
+        public static event PausePlayerRequestEventHandler PausePlayerRequestEvent;
         #endregion
 
         #region Field
@@ -45,7 +38,7 @@ namespace MPLite
             lb_PlaylistMenu.SelectedIndex = Properties.Settings.Default.LastSelectedPlaylistIndex;  // select default list
             currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
-            MainWindow.GetTrackEvent += MainWindow_GetTrackEvent;
+            MainWindow.GetTrackEvent += GetTrack;
             MainWindow.TrackIsPlayedEvent += SetTrackStatus;
             MainWindow.TrackIsStoppedEvent += ResetTrackStatus;
             MainWindow.FailedToPlayTrackEvent += SetTrackStatus;
@@ -231,7 +224,7 @@ namespace MPLite
             }
         }
 
-        private PlayTrackEventArgs MainWindow_GetTrackEvent(MusicPlayer player, string selectedPlaylist = null, 
+        private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
             int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
         {
             if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
@@ -239,36 +232,18 @@ namespace MPLite
                 throw new EmptyPlaylistException("No tracks avalible");
             }
 
-            PlayTrackEventArgs e;
             try
             {
                 // If no playlist is selected (user click btn_StartPlayback to play music)
                 selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
 
-                // Track info will be stored into e
-                e = GetTrack(player, selectedPlaylist, selectedTrackIndex, mode);
-            }
-            catch
-            {
-                throw;
-            }
-            return e;
-        }
-
-        private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
-            int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
-        {
-            PlayTrackEventArgs e;
-            try
-            {
                 prevTrackIdx = currTrackIdx;    // workaround
-                e = player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
+                return player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
             }
             catch
             {
                 throw;
             }
-            return e;
         }
 
         private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
@@ -292,6 +267,7 @@ namespace MPLite
             lv_Playlist.Visibility = Visibility.Visible;
         }
 
+        #region Playlist menu control
         private void lb_PlaylistMenu_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (lb_PlaylistMenu.SelectedItems.Count == 1)
@@ -331,14 +307,31 @@ namespace MPLite
                 }
             }
         }
+        #endregion
 
         #region Handle events fired from scheduler
-        public void RunPlaylist(string selectedPlaylist = null, int selectedTrackIndex = -1,
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+        // TODO: rename this
+        public void RunPlaylist(SchedulerEventArgs e)
         {
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
-            StopPlayerRequestEvent(new PlayTrackEventArgs());
-            PlaySoundtrack(selectedPlaylist, selectedTrackIndex, mode);
+
+            switch (e.Command)
+            {
+                case PlaybackCommands.Pause:
+                    PausePlayerRequestEvent();
+                    break;
+                case PlaybackCommands.Stop:
+                    StopPlayerRequestEvent(new PlayTrackEventArgs());
+                    break;
+                case PlaybackCommands.Play:
+                    StopPlayerRequestEvent(new PlayTrackEventArgs());
+                    PlaySoundtrack(e.Playlist, e.TrackIndex, e.Mode);
+                    break;
+                default:
+                    // Add a handling process for this exception
+                    //throw new Exception("Invalid command");
+                    break;
+            }
         }
         #endregion
     }

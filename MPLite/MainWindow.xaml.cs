@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Runtime.InteropServices;
-using System.IO;
 
 namespace MPLite
 {
@@ -46,8 +36,8 @@ namespace MPLite
         public static event TrackIsStoppedEventHandler TrackIsStoppedEvent; // subscriber: MainWindow_TrackIsStoppedEvent @ PagePlaylist.xaml.cs
         public delegate void FailedToPlayTrackEventHandler(PlayTrackEventArgs e);
         public static event FailedToPlayTrackEventHandler FailedToPlayTrackEvent;
-
-        // Timer
+        
+        // Timer (tracing track progress)
         private DispatcherTimer timer;
 
         // Animation control
@@ -87,13 +77,15 @@ namespace MPLite
 
             // Music player
             _musicPlayer = new MusicPlayer();
-            PagePlaylist.PlayTrackEvent += MainWindow_PlayTrackEvent;
+            PagePlaylist.PlayTrackEvent += this.StartPlayingTrack;
             PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             PagePlaylist.StopPlayerRequestEvent += _musicPlayer.Stop;
-            _musicPlayer.PlayerStartedEvent += SetTimerAndTrackBar;
-            _musicPlayer.PlayerStoppedEvent += ResetTimerAndTrackBar;
-            _musicPlayer.PlayerPausedEvent += Set_btn_StartPlayback_Icon_Play;
-            _musicPlayer.TrackEndsEvent += StopPlayerOrPlayNextTrack;
+            PagePlaylist.PausePlayerRequestEvent += _musicPlayer.Pause;
+
+            _musicPlayer.PlayerStartedEvent += this.SetTimerAndTrackBar;
+            _musicPlayer.PlayerStoppedEvent += this.ResetTimerAndTrackBar;
+            _musicPlayer.PlayerPausedEvent += this.PlayerPauseHandler;
+            _musicPlayer.TrackEndsEvent += this.StopPlayerOrPlayNextTrack;
 
             // Timer control
             timer = new DispatcherTimer();
@@ -119,7 +111,7 @@ namespace MPLite
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackProgress;
 
             // Scheduler
-            PageCalendar.SchedulerIsTriggeredEvent += pagePlaylist.RunPlaylist;
+            PageCalendar.SchedulerEvent += pagePlaylist.RunPlaylist;
 
             UpdateLayout();
         }
@@ -271,7 +263,7 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        private void MainWindow_PlayTrackEvent(string selectedPlaylist = null, int selectedTrackIndex = -1,
+        private void StartPlayingTrack(string selectedPlaylist = null, int selectedTrackIndex = -1,
             MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
         {
             PlayTrack(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode));
@@ -352,15 +344,20 @@ namespace MPLite
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
 
-            // Change icon of btn_StartPlayback to "Pause"
-            btnStartPlayback.Content = FindResource("PlaybackCtrl_Pause");
+            PlayerResumeHandler();
         }
 
         // Subscriber
-        private void Set_btn_StartPlayback_Icon_Play()
+        private void PlayerPauseHandler()
         {
             timer.Stop();
             btnStartPlayback.Content = FindResource("PlaybackCtrl_Play");
+        }
+
+        private void PlayerResumeHandler()
+        {
+            // Change icon of btn_StartPlayback to "Pause"
+            btnStartPlayback.Content = FindResource("PlaybackCtrl_Pause");
         }
 
         // Subscriber
