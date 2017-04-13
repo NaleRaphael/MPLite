@@ -9,11 +9,93 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
-    xmlns:Jarloo="clr-namespace:Jarloo.Calendar" xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters">
-    
+    xmlns:Jarloo="clr-namespace:Jarloo.Calendar" xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
+    x:Class="Jarloo.Calendar.Themes.Generic">
+
+    <Image x:Key="MoveNext" Source="../Images/move_next.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="MovePrev" Source="../Images/move_prev.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+
     <Converters:DateConverter x:Key="DateConverter"></Converters:DateConverter>
-    <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter> 
-           
+    <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter>
+
+    <Style x:Key="StyleDayContent" TargetType="{x:Type ListBoxItem}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Height" Value="14"/>
+        <Setter Property="Foreground" Value="#FFC8C8C8"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="BorderThickness" Value="0"/>
+
+        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
+
+        <!--<Setter Property="VerticalContentAlignment" Value="Top"/>-->
+
+
+        <!--
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="bd" Background="{TemplateBinding Background}" BorderThickness="0">
+                        <Label Content="{Binding UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}"/>
+                        
+                        <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding ListBoxItem.Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Top" Margin="{TemplateBinding Padding}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Foreground" Value="#FFC8C8C8"/>
+                            <Setter Property="Background" Value="#FFB28E50"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="false">
+                            <Setter Property="Foreground" Value="#FFC8C8C8"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        -->
+
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="true">
+                <Setter Property="Foreground" Value="#FFC8C8C8"/>
+                <Setter Property="Background" Value="Transparent"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="false">
+                <Setter Property="Foreground" Value="#FFC8C8C8"/>
+            </Trigger>
+        </Style.Triggers>
+
+        <!-- Override these key to modify the color of "SelectedUnfucoused" ListBoxItem -->
+        <!--
+        <Style.Resources>
+            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey }" Color="#FFB28E50"/>
+            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey }" Color="Transparent"/>
+        </Style.Resources>
+        -->
+    </Style>
+    
+    <Style x:Key="Style_FlatImageButton" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" Background="Transparent" BorderThickness="0">
+                        <ContentPresenter Name="content" Content="{TemplateBinding Button.Content}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="#FF323232" TargetName="border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="{x:Type Jarloo:Calendar}">
         <Setter Property="Template">
             <Setter.Value>
@@ -92,7 +174,11 @@
                                                         </TextBlock>                                                                                                      
                                                     </StackPanel>
 
-                                                    <TextBox IsEnabled="{Binding IsEnabled}" Text="{Binding Notes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="{x:Null}" Foreground="White" />
+                                                    <!-- Content of a day -->
+                                                    <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
+                                                             ItemsSource="{Binding EventTexts}" ItemContainerStyle="{StaticResource StyleDayContent}">
+                                                    </ListBox>
+                                                    
                                                 </DockPanel>
                                             </Border>
                                         </Border>
