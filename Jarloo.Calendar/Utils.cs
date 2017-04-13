@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Jarloo.Calendar
 {
@@ -105,6 +106,67 @@ namespace Jarloo.Calendar
             DayOfWeek today = date.DayOfWeek;
             int diff = (target - today <= 0) ? target - today + 7 : target - today;
             return date.AddDays(diff);
+        }
+
+        public static void FindRangeOfWeek(DateTime date, out DateTime beginningDate, out DateTime endingDate)
+        {
+            int offset = (int)date.DayOfWeek;
+            beginningDate = date.AddDays(-offset);
+            endingDate = date.AddDays(7 - offset).AddSeconds(-1);
+        }
+
+        public static void FindRangeOfMonth(DateTime date, out DateTime beginningDate, out DateTime endingDate)
+        {
+            beginningDate = new DateTime(date.Year, date.Month, 1);
+            endingDate = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+        }
+
+        public static bool IsDayInRange(DateTime source, DateTime target, CalenderViewingMode mode)
+        {
+            if (source.Year != target.Year) return false;
+
+            if (mode == CalenderViewingMode.Monthly)
+                return (source.Month == target.Month) ? true : false;
+            else if (mode == CalenderViewingMode.Daily)
+                return (source.Day == target.Day) ? true : false;
+            else if (mode == CalenderViewingMode.Weekly)
+            {
+                DateTime wkb;
+                DateTime wke;
+                FindRangeOfWeek(source, out wkb, out wke);
+
+                // or compare them by converting into OADate
+                return (target >= wkb && target < wke) ? true : false;
+            }
+            else return false;      // or throw exception (Invalid CalenderViewingMode)
+        }
+
+        public static List<DateTime> FindAllRecurringDate(IEvent target, CalenderViewingMode mode)
+        {
+            List<DateTime> result = new List<DateTime>();
+            DateTime rngb = DateTime.MinValue;   // beginning of range
+            DateTime rnge = DateTime.MinValue;   // ending of range
+            RecurringFrequencies rf = target.RecurringFrequency;
+
+            switch (mode)
+            {
+                case CalenderViewingMode.Monthly:
+                    FindRangeOfMonth(target.BeginningTime, out rngb, out rnge);
+                    break;
+                case CalenderViewingMode.Weekly:
+                    FindRangeOfWeek(target.BeginningTime, out rngb, out rnge);
+                    break;
+                default:
+                    break;
+            }
+
+            for (DateTime iter = rngb; iter < rnge; iter = iter.AddDays(1))
+            {
+                if (((byte)iter.DayOfWeek.ToCustomWeekday() & (byte)rf) >= 1)
+                    result.Add(iter);
+            }
+
+            return result;
         }
     }
 }

@@ -8,6 +8,7 @@
 */
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,10 +27,12 @@ namespace Jarloo.Calendar
         public event PropertyChangedEventHandler CurrentlyViewingInfoChanged; // used to update currently viewing year & month
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<DayChangedEventArgs> DayChanged;
-        //public event EventHandler<>
         #endregion
         
         #region Properties
+        // TODO: monthly view, weekly view (, daily view)
+        public CalenderViewingMode ViewingMode { get; set; }
+
         public ObservableCollection<Day> Days { get; set; }
         public ObservableCollection<string> DayNames { get; set; }
 
@@ -95,6 +98,9 @@ namespace Jarloo.Calendar
 
             Days = new ObservableCollection<Day>();
             EventManager = new EventManager();
+            EventManager.NewEventIsAddedEvent += UpdateEventsToCalendar; // update layout when there is a new event added
+
+            ViewingMode = CalenderViewingMode.Monthly;
 
             BuildCalendar(DateTime.Today);
         }
@@ -120,6 +126,11 @@ namespace Jarloo.Calendar
                 day.IsToday = d == DateTime.Today; 
                 Days.Add(day);
                 d = d.AddDays(1);
+            }
+
+            foreach (IEvent evnt in EventManager.EventDB)
+            {
+                UpdateEventsToCalendar(evnt);
             }
         }
 
@@ -150,9 +161,40 @@ namespace Jarloo.Calendar
             this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
         }
 
-        private void UpdateEventsToCalendar()
+        private void UpdateEventsToCalendar(IEvent evnt)
         {
-            
+            if (!Utils.IsDayInRange(CurrentViewingDate, evnt.BeginningTime, ViewingMode))
+                return;
+
+            switch (ViewingMode)
+            {
+                case CalenderViewingMode.Daily:
+                    break;
+                case CalenderViewingMode.Weekly:
+                    break;
+                case CalenderViewingMode.Monthly:
+                    UpdateEventsMonthlyView(evnt);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateEventsMonthlyView(IEvent target)
+        {
+            int offset = (target.BeginningTime.Month == Days[0].Date.Month) ? 0 : 
+                DateTime.DaysInMonth(Days[0].Date.Year, Days[0].Date.Month) - Days[0].Date.Day;
+            //Days[targett.BeginningTime.Day + offset].EventTexts.Add(target.EventText);
+
+            // TODO: improve this
+            List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, ViewingMode);
+            foreach(DateTime dt in recurringDates)
+            {
+                Days[dt.Day + offset].EventTexts.Add(target.EventText);
+            }
+
+            // TODO: add a event for remove / gray out those events have ended already
+
         }
 
         #region Public methods for user
@@ -183,5 +225,12 @@ namespace Jarloo.Calendar
         {
             this.Day = day;
         }
+    }
+
+    public enum CalenderViewingMode
+    {
+        Daily = 0,
+        Weekly = 1,
+        Monthly = 2
     }
 }

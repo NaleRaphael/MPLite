@@ -151,8 +151,58 @@ namespace MPLite
             MessageBox.Show(result.ToString());
             */
 
+            /*
             DateTime nextWeekday = Jarloo.Calendar.Utils.DateTimeOfNextWeekday(DateTime.Now, DayOfWeek.Thursday);
             MessageBox.Show(nextWeekday.ToString());
+            */
+
+            /*
+            // Find the range of week by given date
+            DateTime wkb;
+            DateTime wke;
+            DateTime source = DateTime.Today.AddDays(-5);
+            Jarloo.Calendar.Utils.FindRangeOfWeek(source, out wkb, out wke);
+            MessageBox.Show(source.ToString() + "\n" + wkb.ToString() + ", " + wke.ToString());
+            */
+
+            DateTime source = DateTime.Today;
+            bool result = Jarloo.Calendar.Utils.IsDayInRange(source, source.AddDays(-5), Jarloo.Calendar.CalenderViewingMode.Weekly);
+            MessageBox.Show(result.ToString());
+        }
+
+        private void btnAddNewEvent_Click(object sender, RoutedEventArgs e)
+        {
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
+            {
+                BeginningTime = DateTime.Now.AddSeconds(120),
+                Duration = TimeSpan.FromSeconds(5),
+                Enabled = true,
+                EventText = "Test event",
+                Rank = 1,
+                ReadOnlyEvent = false,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekday,
+                ThisDayForwardOnly = true,
+                IgnoreTimeComponent = true,
+            };
+
+            evnt.EventStartsEvent += (args) =>
+            {
+                SchedulerEventArgs se = new SchedulerEventArgs
+                {
+                    Playlist = "New Playlist",
+                    Command = PlaybackCommands.Play,
+                    Mode = MPLiteConstant.PlaybackMode.Default,
+                    TrackIndex = -1
+                };
+                SchedulerEvent(se);
+            };
+
+            evnt.EventEndsEvent += (args) =>
+            {
+                MessageBox.Show("Event ends.");
+            };
+
+            calendar.EventManager.AddEvent(evnt);
         }
     }
 }

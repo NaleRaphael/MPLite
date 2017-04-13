@@ -10,7 +10,11 @@ namespace Jarloo.Calendar
         private EventCollection ecdb;     // entry of database (recording all set events)
 
         public List<CustomEvent> ActivatedEvent { get; set; }    // events which are in the range of `NextRefreshingTime`
+        public List<CustomEvent> EventDB { get; set; }
         public DateTime NextRefreshingTime { get; set; }
+
+        public delegate void NewEventIsAddedEventHandler(IEvent evnt);
+        public event NewEventIsAddedEventHandler NewEventIsAddedEvent;
 
         public TimeSpan RefreshingTimerIntervalUnit
         {
@@ -24,12 +28,19 @@ namespace Jarloo.Calendar
             ecdb.Initialize();
             ActivatedEvent = new List<CustomEvent>();
             InitRefreshTimer();
+
+            // TODO: update --activated event list-- event database (those events are not expired yet)
+            UpdateEventDB();
         }
 
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(CustomEvent evnt)
         {
             ecdb.AddEvent(evnt);      // Saved into database
+
+            // Fire an event to notify subscribber that event is added successfully
+            // TODO: notify calender to update layout
+            NewEventIsAddedEvent(evnt);
 
             if (IsEventInRange(evnt))
             {
@@ -38,6 +49,8 @@ namespace Jarloo.Calendar
                     evnt.DestructMeEvent += DestructEvent;
                 evnt.SetTimer();
             }
+
+            UpdateEventDB();
         }
 
         private void DestructEvent(IEvent target)
@@ -54,6 +67,11 @@ namespace Jarloo.Calendar
             if (target.BeginningTime <= DateTime.Now)
                 return false;
             else return true;
+        }
+
+        private void UpdateEventDB()
+        {
+            EventDB = ecdb.EventList;
         }
 
         #region refreshTimer control
@@ -95,5 +113,15 @@ namespace Jarloo.Calendar
             }
         }
         #endregion
+    }
+
+    public class NewlyAddedEventArgs : EventArgs
+    {
+        public IEvent NewEvent { get; set; }
+
+        public NewlyAddedEventArgs(IEvent newEvent)
+        {
+            this.NewEvent = newEvent;
+        }
     }
 }
