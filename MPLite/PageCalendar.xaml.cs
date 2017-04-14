@@ -85,7 +85,7 @@ namespace MPLite
         private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent {
-                BeginningTime = DateTime.Now.AddSeconds(5),
+                BeginningTime = DateTime.Now.AddSeconds(600),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event",
@@ -174,7 +174,7 @@ namespace MPLite
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent()
             {
-                BeginningTime = DateTime.Now.AddSeconds(5),
+                BeginningTime = DateTime.Now.AddSeconds(1200),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event2",

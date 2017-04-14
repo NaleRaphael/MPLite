@@ -10,11 +10,14 @@ namespace Jarloo.Calendar
         private EventCollection ecdb;     // entry of database (recording all set events)
 
         public List<CustomEvent> ActivatedEvent { get; set; }    // events which are in the range of `NextRefreshingTime`
+        //public List<DispatcherTimer> ActivatedTimers { get; set; }
         public List<CustomEvent> EventDB { get; set; }
         public DateTime NextRefreshingTime { get; set; }
 
-        public delegate void NewEventIsAddedEventHandler(IEvent evnt);
-        public event NewEventIsAddedEventHandler NewEventIsAddedEvent;
+        public delegate void EventIsAddedEventHandler(IEvent evnt);
+        public event EventIsAddedEventHandler EventIsAddedEvent;
+        public delegate void EventIsDeletedEventHandler(IEvent evnt);
+        public event EventIsDeletedEventHandler EventIsDeletedEvent;
 
         public TimeSpan RefreshingTimerIntervalUnit
         {
@@ -27,36 +30,69 @@ namespace Jarloo.Calendar
             ecdb = new EventCollection();
             ecdb.Initialize();
             ActivatedEvent = new List<CustomEvent>();
+            //ActivatedTimers = new List<DispatcherTimer>();
             InitRefreshTimer();
 
             // TODO: update --activated event list-- event database (those events are not expired yet)
             UpdateEventDB();
+            RefreshTasks();     // Update activated tasks when program is started every time
         }
 
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(CustomEvent evnt)
         {
+            //evnt.SetGUID();
             ecdb.AddEvent(evnt);      // Saved into database
+            UpdateEventDB();    // TODO: rewrite this. Add a event in EventCollection, fire it when there is a new event added. And then subscribe to it.
 
             // Fire an event to notify subscribber that event is added successfully
             // TODO: notify calender to update layout
-            NewEventIsAddedEvent(evnt);
+            EventIsAddedEvent(evnt);
 
             if (IsEventInRange(evnt))
             {
                 ActivatedEvent.Add(evnt);
                 if (evnt.AutoDelete)
-                    evnt.DestructMeEvent += DestructEvent;
-                evnt.SetTimer();
-            }
+                    evnt.DestructMeEvent += DeleteEvent;
 
-            UpdateEventDB();
+                evnt.SetTimer();
+
+                // Add timer to watchlist, and it will be remove when the event is deleted.
+                // If we don't monitor this timer, event will stll execute when it was deleted from database.
+                //ActivatedTimers.Add(evnt.Timer);
+            }
         }
 
-        private void DestructEvent(IEvent target)
+        public void DeleteEvent(Guid targetGUID)
         {
+            // NOTE: delete event both in database and ActivatedList
+            IEvent target = ecdb.GetEvent(targetGUID);
+            if (target == null) return;
+
+            IEvent activatedTarget = ActivatedEvent.Find(x => x.GUID == targetGUID);
+            activatedTarget.DisposeTimer();
+
+            ActivatedEvent.Remove((CustomEvent)activatedTarget);
+            //ActivatedTimers.Remove(target.Timer);
+            ecdb.DeleteEvent(targetGUID);
+            UpdateEventDB();
+
+            EventIsDeletedEvent(target);
+            target = null;
+        }
+
+        private void DeleteEvent(IEvent target)
+        {
+            if (target == null) return;
+
+            target.DisposeTimer();
+
             ActivatedEvent.Remove((CustomEvent)target);
+            //ActivatedTimers.Remove(target.Timer);
             ecdb.DeleteEvent((CustomEvent)target);
+            UpdateEventDB();
+
+            EventIsDeletedEvent(target);
             target = null;
         }
 
@@ -109,6 +145,7 @@ namespace Jarloo.Calendar
                 {
                     ActivatedEvent.Add(ce);
                     ce.SetTimer();
+                    //ActivatedTimers.Add(ce.Timer);
                 }
             }
         }

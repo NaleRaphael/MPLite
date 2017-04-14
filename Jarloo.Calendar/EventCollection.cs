@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Jarloo.Calendar
 {
@@ -60,6 +58,23 @@ namespace Jarloo.Calendar
             ec = null;
         }
 
+        public void DeleteEvent(Guid targetGUID)
+        {
+            string dbPath = Properties.Settings.Default.DBPath;
+
+            EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath);
+            if (ec == null)
+            {
+                return;
+            }
+
+            ec.EventList.Remove(ec.EventList.Find(x => x.GUID == targetGUID));
+            this.EventList = ec.EventList;
+            DataControl.SaveData<EventCollection>(dbPath, this);
+            ec = null;
+
+        }
+
         // TODO: directly overwrite an empty list into database? (without reading the original one)
         public void Clear()
         {
@@ -77,7 +92,7 @@ namespace Jarloo.Calendar
             ec = null;
         }
 
-        public CustomEvent GetEvent(string eventText)
+        public CustomEvent GetEvent(Guid targetGUID)
         {
             string dbPath = Properties.Settings.Default.DBPath;
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath);
@@ -89,7 +104,7 @@ namespace Jarloo.Calendar
             CustomEvent result;
             try
             {
-                result = ec.EventList.Find(x => x.EventText == eventText);
+                result = ec.EventList.Find(x => x.GUID == targetGUID);
             }
             catch
             {

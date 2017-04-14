@@ -6,7 +6,7 @@ namespace Jarloo.Calendar
     public class CustomEvent : IEvent
     {
         // NOTE: time component should be processed independently
-        public Guid GUID { get; private set; }
+        public Guid GUID { get; set; }
         public DateTime BeginningTime { get; set; }
         public TimeSpan Duration { get; set; }
         public DispatcherTimer Timer { get; set; }
@@ -101,6 +101,15 @@ namespace Jarloo.Calendar
             Timer.Start();
         }
 
+        public void DisposeTimer()
+        {
+            if (Timer != null)
+            {
+                Timer.Stop();
+                Timer = null;
+            }
+        }
+
         private void UpdateBeginningTime()
         {
             if (RecurringFrequency == RecurringFrequencies.None)
@@ -115,5 +124,12 @@ namespace Jarloo.Calendar
             if (AutoDelete && RecurringFrequency != RecurringFrequencies.None)
                 throw new Exception("Property `AutoDelete` should be false if `RecurringFreqeuncy` is not \"None\".");
         }
+
+        /*
+        public void SetGUID()
+        {
+            if (GUID == Guid.Empty)
+                GUID = Guid.NewGuid();
+        }*/
     }
 }

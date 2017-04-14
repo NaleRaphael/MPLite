@@ -8,14 +8,16 @@ namespace Jarloo.Calendar.Themes
     public partial class Generic
     {
         // TODO: show event details when a ListBoxItem is selected
-        public delegate void DateSelectionEventHandler();
-        public event DateSelectionEventHandler DateSelectionEvent;
+        public delegate void DayContentSelectionEventHandler(Guid guid);
+        public static event DayContentSelectionEventHandler DayContentSelectionEvent;
 
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
             MessageBox.Show(obj.GUID.ToString());
-            return;
+            
+            // Notify subscriber which event is selected
+            DayContentSelectionEvent(obj.GUID);
         }
 
         private void ListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)

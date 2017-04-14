@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Linq;
+using Jarloo.Calendar.Themes;
 
 namespace Jarloo.Calendar
 {
@@ -98,11 +101,30 @@ namespace Jarloo.Calendar
 
             Days = new ObservableCollection<Day>();
             EventManager = new EventManager();
-            EventManager.NewEventIsAddedEvent += UpdateEventsToCalendar; // update layout when there is a new event added
+            EventManager.EventIsAddedEvent += AddEventsToCalendar; // update layout when there is a new event added
+            EventManager.EventIsDeletedEvent += DeleteEventsToCalendar;
 
             ViewingMode = CalenderViewingMode.Monthly;
 
             BuildCalendar(DateTime.Today);
+
+            Generic.DayContentSelectionEvent += EventManager.DeleteEvent;
+            
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            // TODO: use command instead?
+            /*
+            var lb = this.Template.FindName("icDays", this);
+            if (lb != null) lb.MouseDoubleClick += (s, a) =>
+            {
+               CustomEvent evnt = (CustomEvent)((ListBoxItem)s).Content;
+               MessageBox.Show(evnt.GUID.ToString());
+            };
+            */
         }
 
         public void BuildCalendar(DateTime targetDate)
@@ -128,10 +150,7 @@ namespace Jarloo.Calendar
                 d = d.AddDays(1);
             }
 
-            foreach (IEvent evnt in EventManager.EventDB)
-            {
-                UpdateEventsToCalendar(evnt);
-            }
+            AddEventsToCalendar(null);
         }
 
         private void Day_Changed(object sender, PropertyChangedEventArgs e)
@@ -161,10 +180,23 @@ namespace Jarloo.Calendar
             this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
         }
 
-        private void UpdateEventsToCalendar(IEvent evnt)
+        // TODO: rewrite this (parameter IEvent is not used)
+        private void AddEventsToCalendar(IEvent evnt)
         {
-            /*if (!Utils.IsDayInRange(CurrentViewingDate, evnt.BeginningTime, ViewingMode))
-                return;*/
+            RefreshEventsToCalenderEntry(evnt, true);
+        }
+
+        private void DeleteEventsToCalendar(IEvent evnt)
+        {
+            RefreshEventsToCalenderEntry(evnt, false);
+        }
+
+        private void RefreshEventsToCalenderEntry(IEvent evnt, bool addOrDelete)
+        {
+            /*
+            if (!Utils.IsDayInRange(CurrentViewingDate, evnt.BeginningTime, ViewingMode))
+                return;
+            */
 
             switch (ViewingMode)
             {
@@ -173,14 +205,24 @@ namespace Jarloo.Calendar
                 case CalenderViewingMode.Weekly:
                     break;
                 case CalenderViewingMode.Monthly:
-                    UpdateEventsMonthlyView(evnt);
+                    if (evnt == null)   // No event is given, read from database
+                    {
+                        foreach (IEvent e in EventManager.EventDB)
+                        {
+                            UpdateEventsMonthlyView(e, addOrDelete);
+                        }
+                    }
+                    else
+                    {
+                        UpdateEventsMonthlyView(evnt, addOrDelete);
+                    }
                     break;
                 default:
                     break;
             }
         }
 
-        private void UpdateEventsMonthlyView(IEvent target)
+        private void UpdateEventsMonthlyView(IEvent target, bool addEvent)
         {
             int offset = DateTime.DaysInMonth(Days[0].Date.Year, Days[0].Date.Month) - Days[0].Date.Day;
 
@@ -188,12 +230,16 @@ namespace Jarloo.Calendar
             List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, CurrentViewingDate, ViewingMode);
             foreach(DateTime dt in recurringDates)
             {
-                //Days[dt.Day + offset].EventTexts.Add(target.EventText);
-                Days[dt.Day + offset].Events.Add(target);
+                if (addEvent)
+                    Days[dt.Day + offset].Events.Add(target);
+                else
+                {
+                    var temp = Days[dt.Day + offset].Events;
+                    temp.Remove(temp.Where(x => x.GUID == target.GUID).FirstOrDefault());
+                }
+                    
             }
-
             // TODO: add a event for remove / gray out those events have ended already
-
         }
 
         #region Public methods for user
@@ -231,5 +277,20 @@ namespace Jarloo.Calendar
         Daily = 0,
         Weekly = 1,
         Monthly = 2
+    }
+
+    public class DayContentDoubleClickCommand : ICommand
+    {
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return true;
+        }
+
+        public void Execute(object parameter)
+        {
+            MessageBox.Show("Wut?!");
+        }
     }
 }

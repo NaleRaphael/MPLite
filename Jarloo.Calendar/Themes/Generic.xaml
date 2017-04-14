@@ -97,7 +97,9 @@
     </Style>
 
     <Style x:Key="StyleDockPanel" TargetType="{x:Type DockPanel}">
-        <EventSetter Event="PreviewMouseDown" Handler="DockPanel_PreviewMouseDown" />
+        <!--
+        <EventSetter Event="PreviewMouseDown" Handler="PreviewMouseDown" />
+        -->
     </Style>
     
     <Style TargetType="{x:Type Jarloo:Calendar}">
@@ -109,7 +111,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
 
-                        <DockPanel>
+                        <DockPanel x:Name="dpOutterContainer">
                             <Grid Height="30" DockPanel.Dock="Top" Background="Black">
                                 <TextBlock Text="{Binding CurrentDate_Short, StringFormat='Today: \{0\}'}" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
                                 <TextBlock x:Name="txtblockCurrentViewingMonth" FontFamily="Segoe UI" FontSize="16" HorizontalAlignment="Center" >
@@ -142,7 +144,7 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
 
-                            <ItemsControl ItemsSource="{Binding Days}">                               
+                            <ItemsControl x:Name="icDays" ItemsSource="{Binding Days}">                               
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>                                        
                                         <!--Box-->
@@ -186,7 +188,7 @@
                                                     </StackPanel>
 
                                                     <!-- Content of a day -->
-                                                    <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
+                                                    <ListBox x:Name="lbDayContent" IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
                                                              ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}">
                                                         <ListBox.ItemTemplate>
                                                             <DataTemplate>

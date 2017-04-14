@@ -35,6 +35,7 @@ namespace Jarloo.Calendar
         IEvent Clone();
 
         void SetTimer();
+        void DisposeTimer();
     }
 
     // Used to reset event for recurrsion

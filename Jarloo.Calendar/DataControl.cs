@@ -21,20 +21,27 @@ namespace Jarloo.Calendar
 
         public static T ReadFromJson<T>(string filePath) where T : class
         {
-            JObject result;
+            //JObject result;
+            T result;
             try
             {
                 using (StreamReader sr = File.OpenText(filePath))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    result = (T)serializer.Deserialize(sr, typeof(T));
+                }
+                /*
                 using (JsonReader jsonReader = new JsonTextReader(sr))
                 {
                     result = (JObject)JToken.ReadFrom(jsonReader);
-                }
+                }*/
             }
             catch (Exception ex)
             {
                 return null;
             }
-            return result.ToObject<T>();
+            //return result.ToObject<T>();
+            return result;
         }
 
         public static JObject ConvertToJson<T>(Object obj)
