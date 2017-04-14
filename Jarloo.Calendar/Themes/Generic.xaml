@@ -147,7 +147,8 @@
                                     <DataTemplate>                                        
                                         <!--Box-->
                                         <Border BorderBrush="Black" BorderThickness="1" Padding="0">
-
+                                            
+                                            <!-- TODO: rebinding the property Notes -->
                                             <Border Name="InnerBorder" BorderBrush="{Binding Path=Notes, Converter={StaticResource DayBorderColorConverter}}" BorderThickness="2">                                                
                                                 
                                                 <Border.Style>
@@ -186,7 +187,14 @@
 
                                                     <!-- Content of a day -->
                                                     <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
-                                                             ItemsSource="{Binding EventTexts}" ItemContainerStyle="{StaticResource StyleDayContent}">
+                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}">
+                                                        <ListBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Background="Transparent">
+                                                                    <TextBlock Text="{Binding EventText}"/>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ListBox.ItemTemplate>
                                                     </ListBox>
                                                     
                                                 </DockPanel>

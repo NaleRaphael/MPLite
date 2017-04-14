@@ -78,7 +78,7 @@ namespace MPLite
         // TEST
         private void btnCalendarTester_Click(object sender, RoutedEventArgs e)
         {
-            calendar.Days[6].EventTexts.Add("TEST" + count++);
+            //calendar.Days[6].EventTexts.Add("TEST" + count++);
         }
 
         // TEST

@@ -188,7 +188,8 @@ namespace Jarloo.Calendar
             List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, CurrentViewingDate, ViewingMode);
             foreach(DateTime dt in recurringDates)
             {
-                Days[dt.Day + offset].EventTexts.Add(target.EventText);
+                //Days[dt.Day + offset].EventTexts.Add(target.EventText);
+                Days[dt.Day + offset].Events.Add(target);
             }
 
             // TODO: add a event for remove / gray out those events have ended already

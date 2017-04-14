@@ -13,7 +13,8 @@ namespace Jarloo.Calendar.Themes
 
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            MessageBox.Show("ListBoxItem: Say YO");
+            CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
+            MessageBox.Show(obj.GUID.ToString());
             return;
         }
 
