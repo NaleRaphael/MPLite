@@ -6,20 +6,19 @@ namespace Jarloo.Calendar
     public class CustomEvent : IEvent
     {
         // NOTE: time component should be processed independently
-        public Guid GUID { get; set; }
+        public Guid GUID { get; private set; }
         public DateTime BeginningTime { get; set; }
         public TimeSpan Duration { get; set; }
         public DispatcherTimer Timer { get; set; }
         public RecurringFrequencies RecurringFrequency { get; set; }
         public string EventText { get; set; }
         public int Rank { get; set; }
-        public bool IsTriggered { get; set; }
+        public bool IsTriggered { get; private set; }
         public bool Enabled { get; set; }
         public bool AutoDelete { get; set; }
         public bool IgnoreTimeComponent { get; set; }
         public bool ReadOnlyEvent { get; set; }
         public bool ThisDayForwardOnly { get; set; }
-        //public CustomRecurringFrequenciesHandler CustomRecurringFunction { get; set; }
 
         public event TimerElapsedEventHandler EventStartsEvent;
         public event TimerElapsedEventHandler EventEndsEvent;
@@ -27,6 +26,7 @@ namespace Jarloo.Calendar
 
         public CustomEvent()
         {
+            // TODO: Notify user if there is a conflict of RecurringFrequency and AutoDelete
             GUID = Guid.NewGuid();
             Duration = TimeSpan.Zero;
             Timer = null;
@@ -39,13 +39,13 @@ namespace Jarloo.Calendar
             IgnoreTimeComponent = false;
             ReadOnlyEvent = false;
             ThisDayForwardOnly = true;
+            CheckPropertyConflict();
         }
 
         public IEvent Clone()
         {
             return new CustomEvent
             {
-                //CustomRecurringFunction = CustomRecurringFunction,
                 // TODO: can GUID clone too?
                 BeginningTime = BeginningTime,
                 Duration = Duration,
@@ -65,6 +65,8 @@ namespace Jarloo.Calendar
         // Timer has to be set by EventManager, not start counting itself.
         public void SetTimer()
         {
+            IsTriggered = false;    // reset (for recurring event)
+
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };
             Timer.Tick += (sender, args) =>
             {
@@ -78,9 +80,7 @@ namespace Jarloo.Calendar
                 // Update the next beginningTime of this event if it is a recurring event
                 UpdateBeginningTime();
 
-                // TODO: refresh `IsTriggered` property?
-
-                // Set timer to time the duration of this event
+                // Timer for timing event duration
                 if (Duration != TimeSpan.Zero)
                 {
                     Timer = new DispatcherTimer { Interval = Duration };
@@ -108,6 +108,12 @@ namespace Jarloo.Calendar
 
             Weekday nextRecurringWeekday = Utils.GetNextRecurringWeekday(BeginningTime.DayOfWeek.ToCustomWeekday(), RecurringFrequency);
             BeginningTime = Utils.DateTimeOfNextWeekday(BeginningTime, nextRecurringWeekday.ToSystemWeekday());
+        }
+
+        private void CheckPropertyConflict()
+        {
+            if (AutoDelete && RecurringFrequency != RecurringFrequencies.None)
+                throw new Exception("Property `AutoDelete` should be false if `RecurringFreqeuncy` is not \"None\".");
         }
     }
 }

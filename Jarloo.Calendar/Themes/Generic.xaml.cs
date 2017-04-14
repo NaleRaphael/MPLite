@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +7,7 @@ namespace Jarloo.Calendar.Themes
 {
     public partial class Generic
     {
-        // TODO
+        // TODO: show event details when a ListBoxItem is selected
         public delegate void DateSelectionEventHandler();
         public event DateSelectionEventHandler DateSelectionEvent;
 

@@ -172,17 +172,18 @@ namespace MPLite
 
         private void btnAddNewEvent_Click(object sender, RoutedEventArgs e)
         {
-            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent()
             {
-                BeginningTime = DateTime.Now.AddSeconds(120),
+                BeginningTime = DateTime.Now.AddSeconds(5),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
-                EventText = "Test event",
+                EventText = "Test event2",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekday,
-                ThisDayForwardOnly = true,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.Daily,
+                ThisDayForwardOnly = false,
                 IgnoreTimeComponent = true,
+                AutoDelete = true,
             };
 
             evnt.EventStartsEvent += (args) =>

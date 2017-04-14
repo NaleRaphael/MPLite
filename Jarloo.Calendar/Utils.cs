@@ -141,26 +141,31 @@ namespace Jarloo.Calendar
             else return false;      // or throw exception (Invalid CalenderViewingMode)
         }
 
-        public static List<DateTime> FindAllRecurringDate(IEvent target, CalenderViewingMode mode)
+        public static List<DateTime> FindAllRecurringDate(IEvent target, DateTime ViewingDate, CalenderViewingMode mode)
         {
             List<DateTime> result = new List<DateTime>();
             DateTime rngb = DateTime.MinValue;   // beginning of range
             DateTime rnge = DateTime.MinValue;   // ending of range
             RecurringFrequencies rf = target.RecurringFrequency;
+            //DateTime bt = target.ThisDayForwardOnly ? target.BeginningTime : ViewingDate;
 
             switch (mode)
             {
                 case CalenderViewingMode.Monthly:
-                    FindRangeOfMonth(target.BeginningTime, out rngb, out rnge);
+                    FindRangeOfMonth(ViewingDate, out rngb, out rnge);
                     break;
                 case CalenderViewingMode.Weekly:
-                    FindRangeOfWeek(target.BeginningTime, out rngb, out rnge);
+                    FindRangeOfWeek(ViewingDate, out rngb, out rnge);
                     break;
                 default:
                     break;
             }
 
-            for (DateTime iter = rngb; iter < rnge; iter = iter.AddDays(1))
+            if (target.ThisDayForwardOnly && target.BeginningTime > rnge)
+                return result;
+
+            DateTime iter = target.ThisDayForwardOnly ? ((target.BeginningTime > rngb) ? target.BeginningTime : rngb) : rngb;
+            for (; iter <= rnge; iter = iter.AddDays(1))
             {
                 if (((byte)iter.DayOfWeek.ToCustomWeekday() & (byte)rf) >= 1)
                     result.Add(iter);

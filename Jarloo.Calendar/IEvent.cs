@@ -5,6 +5,7 @@ namespace Jarloo.Calendar
 {
     public interface IEvent
     {
+        Guid GUID { get; }
         DateTime BeginningTime { get; set; }
         TimeSpan Duration { get; set; }
         DispatcherTimer Timer { get; set; }
@@ -13,7 +14,7 @@ namespace Jarloo.Calendar
         string EventText { get; set; }
         int Rank { get; set; }
 
-        bool IsTriggered { get; set; }
+        bool IsTriggered { get; }
         bool Enabled { get; set; }
 
         // True if the event details cannot be modified

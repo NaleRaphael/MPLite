@@ -163,8 +163,8 @@ namespace Jarloo.Calendar
 
         private void UpdateEventsToCalendar(IEvent evnt)
         {
-            if (!Utils.IsDayInRange(CurrentViewingDate, evnt.BeginningTime, ViewingMode))
-                return;
+            /*if (!Utils.IsDayInRange(CurrentViewingDate, evnt.BeginningTime, ViewingMode))
+                return;*/
 
             switch (ViewingMode)
             {
@@ -182,12 +182,10 @@ namespace Jarloo.Calendar
 
         private void UpdateEventsMonthlyView(IEvent target)
         {
-            int offset = (target.BeginningTime.Month == Days[0].Date.Month) ? 0 : 
-                DateTime.DaysInMonth(Days[0].Date.Year, Days[0].Date.Month) - Days[0].Date.Day;
-            //Days[targett.BeginningTime.Day + offset].EventTexts.Add(target.EventText);
+            int offset = DateTime.DaysInMonth(Days[0].Date.Year, Days[0].Date.Month) - Days[0].Date.Day;
 
             // TODO: improve this
-            List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, ViewingMode);
+            List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, CurrentViewingDate, ViewingMode);
             foreach(DateTime dt in recurringDates)
             {
                 Days[dt.Day + offset].EventTexts.Add(target.EventText);
