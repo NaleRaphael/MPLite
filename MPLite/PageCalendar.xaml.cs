@@ -85,7 +85,7 @@ namespace MPLite
         private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent {
-                BeginningTime = DateTime.Now.AddSeconds(600),
+                BeginningTime = DateTime.Now.AddSeconds(5),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event",
@@ -111,6 +111,12 @@ namespace MPLite
             evnt.EventEndsEvent += (args) =>
             {
                 MessageBox.Show("Event ends.");
+
+                // BUG: player doesn't stop
+                SchedulerEventArgs se = new SchedulerEventArgs
+                {
+                    Command = PlaybackCommands.Stop
+                };
             };
 
             calendar.EventManager.AddEvent(evnt);
@@ -174,7 +180,7 @@ namespace MPLite
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent()
             {
-                BeginningTime = DateTime.Now.AddSeconds(1200),
+                BeginningTime = DateTime.Now.AddDays(-5),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event2",

@@ -8,6 +8,9 @@ namespace Jarloo.Calendar
     {
         public List<CustomEvent> EventList { get; set; }
 
+        public delegate void DatabaseIsChangedEventHandler();
+        public event DatabaseIsChangedEventHandler DatabaseIsChanged;
+
         public EventCollection()
         {
         }
@@ -23,6 +26,8 @@ namespace Jarloo.Calendar
             }
             this.EventList = ec.EventList;
             ec = null;
+
+            //DatabaseIsChanged();
         }
 
         public void AddEvent(CustomEvent target)
@@ -40,6 +45,8 @@ namespace Jarloo.Calendar
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, this);
             ec = null;
+
+            DatabaseIsChanged();
         }
 
         public void DeleteEvent(CustomEvent target)
@@ -56,6 +63,9 @@ namespace Jarloo.Calendar
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, this);
             ec = null;
+
+            // Notify subscriber
+            DatabaseIsChanged();
         }
 
         public void DeleteEvent(Guid targetGUID)
@@ -73,6 +83,8 @@ namespace Jarloo.Calendar
             DataControl.SaveData<EventCollection>(dbPath, this);
             ec = null;
 
+            // Notify subscriber
+            DatabaseIsChanged();
         }
 
         // TODO: directly overwrite an empty list into database? (without reading the original one)
@@ -90,6 +102,9 @@ namespace Jarloo.Calendar
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, ec);
             ec = null;
+
+            // Notify subscriber
+            DatabaseIsChanged();
         }
 
         public CustomEvent GetEvent(Guid targetGUID)
