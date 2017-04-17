@@ -10,7 +10,7 @@ namespace Jarloo.Calendar
         // NOTE: time component should be processed independently
         public Guid GUID { get; set; }
         public DateTime BeginningTime { get; set; }
-        public DateTime OriginalBeginningTime { get; set; }
+        public DateTime OriginalBeginningTime { get; set; }     // CHECK: unnecessary?
         public TimeSpan Duration { get; set; }
         public DispatcherTimer Timer { get; set; }
         public RecurringFrequencies RecurringFrequency { get; set; }
@@ -22,8 +22,6 @@ namespace Jarloo.Calendar
         public bool IgnoreTimeComponent { get; set; }
         public bool ReadOnlyEvent { get; set; }
         public bool ThisDayForwardOnly { get; set; }
-
-        public Type EventArgsType { get; set; }
 
         public CustomEventArgs EventStartsEventArgs { get; set; }
         public event TimerElapsedEventHandler EventStartsEvent;
@@ -127,7 +125,6 @@ namespace Jarloo.Calendar
             }
         }
 
-        //private void UpdateBeginningTime()
         public void UpdateBeginningTime()
         {
             if (RecurringFrequency == RecurringFrequencies.None)
@@ -137,10 +134,15 @@ namespace Jarloo.Calendar
 
             // assume that `dt` is today, check whether it has been expired or not. (if it is expired: starts from next day)
             DateTime beginningDateTime = BeginningTime.AddDays((DateTime.Today.Date - BeginningTime.Date).Days);
+            // Compare time part of the day only
             DayOfWeek targetWeekday = (BeginningTime.TimeOfDay <= DateTime.Now.TimeOfDay) ? DateTime.Now.DayOfWeek + 1 : DateTime.Now.DayOfWeek;
-
+            
             Weekday nextRecurringWeekday = Utils.GetNextRecurringWeekday(targetWeekday, RecurringFrequency);
-            BeginningTime = Utils.DateTimeOfNextWeekday(beginningDateTime, nextRecurringWeekday.ToSystemWeekday());
+
+            if (nextRecurringWeekday.ToSystemWeekday() == DateTime.Today.DayOfWeek)
+                BeginningTime = DateTime.Today.Date.Add(BeginningTime.TimeOfDay);
+            else
+                BeginningTime = Utils.DateTimeOfNextWeekday(beginningDateTime, nextRecurringWeekday.ToSystemWeekday());
         }
 
         private void CheckPropertyConflict()

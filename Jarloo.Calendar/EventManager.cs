@@ -44,6 +44,8 @@ namespace Jarloo.Calendar
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(CustomEvent evnt)
         {
+            // workaround: if event is created by object initializer, `OriginalBeginningTime` won't be set properly.
+            evnt.OriginalBeginningTime = evnt.BeginningTime;
             ecdb.AddEvent(evnt);      // Saved into database
 
             // TODO: RefreshTasks should be provided for a single-added task

@@ -148,7 +148,6 @@ namespace Jarloo.Calendar
             DateTime rngb = DateTime.MinValue;   // beginning of range
             DateTime rnge = DateTime.MinValue;   // ending of range
             RecurringFrequencies rf = target.RecurringFrequency;
-            //DateTime bt = target.ThisDayForwardOnly ? target.BeginningTime : ViewingDate;
 
             switch (mode)
             {
@@ -165,7 +164,7 @@ namespace Jarloo.Calendar
             if (target.ThisDayForwardOnly && target.BeginningTime > rnge)
                 return result;
 
-            DateTime iter = target.ThisDayForwardOnly ? ((target.BeginningTime > rngb) ? target.BeginningTime : rngb) : rngb;
+            DateTime iter = target.ThisDayForwardOnly ? ((target.OriginalBeginningTime > rngb) ? target.OriginalBeginningTime : rngb) : rngb;
             for (; iter <= rnge; iter = iter.AddDays(1))
             {
                 if (((byte)iter.DayOfWeek.ToCustomWeekday() & (byte)rf) >= 1)

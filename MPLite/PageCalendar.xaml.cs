@@ -79,7 +79,7 @@ namespace MPLite
         // TEST
         private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
         {
-            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent {
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent() {
                 BeginningTime = DateTime.Now.AddSeconds(5),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
@@ -173,19 +173,18 @@ namespace MPLite
 
         private void btnAddNewEvent_Click(object sender, RoutedEventArgs e)
         {
-            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent()
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
             {
-                BeginningTime = DateTime.Now.AddSeconds(10),
+                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(10),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event2",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.Daily,
-                ThisDayForwardOnly = false,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekend,
+                ThisDayForwardOnly = true,
                 IgnoreTimeComponent = true,
                 AutoDelete = true,
-                EventArgsType = typeof(SchedulerEventArgs)
             };
             
             evnt.EventStartsEventArgs = new SchedulerEventArgs
@@ -195,30 +194,11 @@ namespace MPLite
                 Mode = MPLiteConstant.PlaybackMode.Default,
                 TrackIndex = -1
             };
-            /*
-            evnt.EventStartsEvent += (args) =>
-            {
-                SchedulerEventArgs se = new SchedulerEventArgs
-                {
-                    Playlist = "New Playlist",
-                    Command = PlaybackCommands.Play,
-                    Mode = MPLiteConstant.PlaybackMode.Default,
-                    TrackIndex = -1
-                };
-                SchedulerEvent(se);
-            };
-            */
             
             evnt.EventEndsEventArgs = new SchedulerEventArgs
             {
                 Command = PlaybackCommands.Stop
             };
-            /*
-            evnt.EventEndsEvent += (args) =>
-            {
-                MessageBox.Show("Event ends.");
-            };
-            */
 
             calendar.EventManager.AddEvent(evnt);
         }

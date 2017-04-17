@@ -7,6 +7,7 @@ namespace Jarloo.Calendar
     {
         Guid GUID { get; }
         DateTime BeginningTime { get; set; }
+        DateTime OriginalBeginningTime { get; set; }
         TimeSpan Duration { get; set; }
         DispatcherTimer Timer { get; set; }
         
@@ -26,8 +27,6 @@ namespace Jarloo.Calendar
 
         // If this is a recurring event, set this to true to make the event show up only from the day specified forward
         bool ThisDayForwardOnly { get; set; }
-
-        Type EventArgsType { get; set; }
 
         CustomEventArgs EventStartsEventArgs { get; set; }
         event TimerElapsedEventHandler EventStartsEvent;
