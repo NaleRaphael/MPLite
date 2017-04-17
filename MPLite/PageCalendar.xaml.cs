@@ -6,12 +6,7 @@ namespace MPLite
 {
     public partial class PageCalendar : Page
     {
-        // TEST
-        private int count = 0;
-
-        #region Event
         public static event SchedulerEventHandler SchedulerEvent;
-        #endregion
 
         public PageCalendar()
         {
@@ -21,7 +16,7 @@ namespace MPLite
 
         private void InitializeCalendar()
         {
-            // TODO: show events on calendar
+            calendar.OnInitialization(new SchedulerEventHandlerFactory(SchedulerEvent));
         }
 
         #region Calendar control
@@ -110,13 +105,13 @@ namespace MPLite
 
             evnt.EventEndsEvent += (args) =>
             {
-                MessageBox.Show("Event ends.");
-
-                // BUG: player doesn't stop
                 SchedulerEventArgs se = new SchedulerEventArgs
                 {
                     Command = PlaybackCommands.Stop
                 };
+                SchedulerEvent(se);
+
+                MessageBox.Show("Event ends.");
             };
 
             calendar.EventManager.AddEvent(evnt);
@@ -180,7 +175,7 @@ namespace MPLite
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent()
             {
-                BeginningTime = DateTime.Now.AddDays(-5),
+                BeginningTime = DateTime.Now.AddSeconds(10),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event2",
@@ -190,8 +185,17 @@ namespace MPLite
                 ThisDayForwardOnly = false,
                 IgnoreTimeComponent = true,
                 AutoDelete = true,
+                EventArgsType = typeof(SchedulerEventArgs)
             };
-
+            
+            evnt.EventStartsEventArgs = new SchedulerEventArgs
+            {
+                Playlist = "New Playlist",
+                Command = PlaybackCommands.Play,
+                Mode = MPLiteConstant.PlaybackMode.Default,
+                TrackIndex = -1
+            };
+            /*
             evnt.EventStartsEvent += (args) =>
             {
                 SchedulerEventArgs se = new SchedulerEventArgs
@@ -203,11 +207,18 @@ namespace MPLite
                 };
                 SchedulerEvent(se);
             };
-
+            */
+            
+            evnt.EventEndsEventArgs = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Stop
+            };
+            /*
             evnt.EventEndsEvent += (args) =>
             {
                 MessageBox.Show("Event ends.");
             };
+            */
 
             calendar.EventManager.AddEvent(evnt);
         }

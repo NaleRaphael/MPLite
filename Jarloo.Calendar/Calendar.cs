@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Linq;
 using Jarloo.Calendar.Themes;
 
@@ -40,6 +39,7 @@ namespace Jarloo.Calendar
         public ObservableCollection<string> DayNames { get; set; }
 
         public EventManager EventManager { get; set; }
+        public IEventHandlerFactory EventHandlerFacotry { get; set; }
 
         public DateTime CurrentDate
         {
@@ -98,18 +98,21 @@ namespace Jarloo.Calendar
             //this won't work in Australia where they start the week with Monday. So remember to test in other 
             //places if you plan on using it. 
             DayNames = new ObservableCollection<string> {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-
             Days = new ObservableCollection<Day>();
-            EventManager = new EventManager();
-            EventManager.EventIsAddedEvent += AddEventsToCalendar; // update layout when there is a new event added
-            EventManager.EventIsDeletedEvent += DeleteEventsToCalendar;
 
             ViewingMode = CalenderViewingMode.Monthly;
+        }
+
+        // Workaround: controls cannot be initialized with parameters, so that EventManager is created after Calendar has been initilized.
+        public void OnInitialization(IEventHandlerFactory handlerFactory)
+        {
+            EventManager = new EventManager(handlerFactory);
+            EventManager.EventIsAddedEvent += AddEventsToCalendar; // update layout when there is a new event added
+            EventManager.EventIsDeletedEvent += DeleteEventsToCalendar;
 
             BuildCalendar(DateTime.Today);
 
             Generic.DayContentSelectionEvent += EventManager.DeleteEvent;
-            
         }
 
         public override void OnApplyTemplate()
@@ -193,11 +196,6 @@ namespace Jarloo.Calendar
 
         private void RefreshEventsToCalenderEntry(IEvent evnt, bool addOrDelete)
         {
-            /*
-            if (!Utils.IsDayInRange(CurrentViewingDate, evnt.BeginningTime, ViewingMode))
-                return;
-            */
-
             switch (ViewingMode)
             {
                 case CalenderViewingMode.Daily:
@@ -239,6 +237,7 @@ namespace Jarloo.Calendar
                 }
                     
             }
+
             // TODO: add a event for remove / gray out those events have ended already
         }
 
@@ -277,20 +276,5 @@ namespace Jarloo.Calendar
         Daily = 0,
         Weekly = 1,
         Monthly = 2
-    }
-
-    public class DayContentDoubleClickCommand : ICommand
-    {
-        public event EventHandler CanExecuteChanged;
-
-        public bool CanExecute(object parameter)
-        {
-            return true;
-        }
-
-        public void Execute(object parameter)
-        {
-            MessageBox.Show("Wut?!");
-        }
     }
 }

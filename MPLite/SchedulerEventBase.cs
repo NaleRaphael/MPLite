@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Jarloo.Calendar;
 
 namespace MPLite
 {
@@ -11,7 +11,7 @@ namespace MPLite
         Pause = 2
     }
 
-    public class SchedulerEventArgs : EventArgs
+    public class SchedulerEventArgs : Jarloo.Calendar.CustomEventArgs
     {
         public PlaybackCommands Command { get; set; }
         public string Playlist { get; set; }
@@ -24,6 +24,36 @@ namespace MPLite
             Playlist = "";
             TrackIndex = -1;
             Mode = MPLiteConstant.PlaybackMode.None;
+        }
+    }
+
+    public class SchedulerEventHandlerFactory : Jarloo.Calendar.IEventHandlerFactory
+    {
+        public event SchedulerEventHandler SchedulerEvent;
+
+        public SchedulerEventHandlerFactory(SchedulerEventHandler handler)
+        {
+            SchedulerEvent = handler;
+        }
+
+        public TimerElapsedEventHandler CreateStartingEventHandler(IEvent source)
+        {
+            TimerElapsedEventHandler handler;
+            handler = (args) =>
+            {
+                SchedulerEvent(source.EventStartsEventArgs as SchedulerEventArgs);
+            };
+            return handler;
+        }
+
+        public TimerElapsedEventHandler CreateEndingEventHandler(IEvent source)
+        {
+            TimerElapsedEventHandler handler;
+            handler = (args) =>
+            {
+                SchedulerEvent(source.EventEndsEventArgs as SchedulerEventArgs);
+            };
+            return handler;
         }
     }
 }

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Jarloo.Calendar
 {
@@ -12,41 +8,36 @@ namespace Jarloo.Calendar
     {
         public static void SaveData<T>(string filePath, Object obj) where T : class
         {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.TypeNameHandling = TypeNameHandling.All;
+            serializer.Formatting = Formatting.Indented;
+
             using (StreamWriter sw = File.CreateText(filePath))
-            using (JsonTextWriter jsonWriter = new JsonTextWriter(sw))
+            using (JsonWriter writer = new JsonTextWriter(sw))
             {
-                ConvertToJson<T>(obj).WriteTo(jsonWriter);
+                serializer.Serialize(writer, obj);
             }
         }
 
         public static T ReadFromJson<T>(string filePath) where T : class
         {
-            //JObject result;
             T result;
             try
             {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.TypeNameHandling = TypeNameHandling.All;
+
                 using (StreamReader sr = File.OpenText(filePath))
+                using (JsonReader reader = new JsonTextReader(sr))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    result = (T)serializer.Deserialize(sr, typeof(T));
+                    result = (T)serializer.Deserialize(reader);
                 }
-                /*
-                using (JsonReader jsonReader = new JsonTextReader(sr))
-                {
-                    result = (JObject)JToken.ReadFrom(jsonReader);
-                }*/
             }
             catch (Exception ex)
             {
                 return null;
             }
-            //return result.ToObject<T>();
             return result;
-        }
-
-        public static JObject ConvertToJson<T>(Object obj)
-        {
-            return (JObject)JToken.FromObject((T)obj);
         }
     }
 }

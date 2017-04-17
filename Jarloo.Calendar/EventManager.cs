@@ -13,6 +13,7 @@ namespace Jarloo.Calendar
         public List<CustomEvent> EventDB { get; set; }
         public DateTime NextRefreshingTime { get; set; }
 
+        public IEventHandlerFactory EventHandlerFactory { get; set; }
         public delegate void EventIsAddedEventHandler(IEvent evnt);
         public event EventIsAddedEventHandler EventIsAddedEvent;
         public delegate void EventIsDeletedEventHandler(IEvent evnt);
@@ -24,8 +25,9 @@ namespace Jarloo.Calendar
             /* TODO: set {...} */
         }
 
-        public EventManager()
+        public EventManager(IEventHandlerFactory handlerFacotry)
         {
+            EventHandlerFactory = handlerFacotry;
             ActivatedEvents = new List<CustomEvent>();
 
             ecdb = new EventCollection();
@@ -36,24 +38,13 @@ namespace Jarloo.Calendar
             UpdateEventDB();
             InitRefreshTimer();     // Timer used to refresh ActivatedEvents list
 
-            /*
-            ecdb.Initialize();
-            ActivatedEvent = new List<CustomEvent>();
-            //ActivatedTimers = new List<DispatcherTimer>();
-            InitRefreshTimer();
-
-            // TODO: update --activated event list-- event database (those events are not expired yet)
-            UpdateEventDB();
-            RefreshTasks();     // Update activated tasks when program is started every time
-            */
+            RefreshTasks();
         }
 
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(CustomEvent evnt)
         {
-            //evnt.SetGUID();
             ecdb.AddEvent(evnt);      // Saved into database
-            //UpdateEventDB();    // TODO: rewrite this. Add a event in EventCollection, fire it when there is a new event added. And then subscribe to it.
 
             // TODO: RefreshTasks should be provided for a single-added task
             RefreshTasks();
@@ -61,22 +52,6 @@ namespace Jarloo.Calendar
             // Fire an event to notify subscribber that event is added successfully
             // TODO: notify calender to update layout
             EventIsAddedEvent(evnt);
-
-
-            /*
-            if (IsEventInRange(evnt))
-            {
-                ActivatedEvents.Add(evnt);
-                if (evnt.AutoDelete)
-                    evnt.DestructMeEvent += DeleteEvent;
-
-                evnt.SetTimer();
-
-                // Add timer to watchlist, and it will be remove when the event is deleted.
-                // If we don't monitor this timer, event will stll execute when it was deleted from database.
-                //ActivatedTimers.Add(evnt.Timer);
-            }
-            */
         }
 
         public void DeleteEvent(Guid targetGUID)
@@ -87,7 +62,6 @@ namespace Jarloo.Calendar
 
             // Delete target in both database and activated list
             ecdb.DeleteEvent(target.GUID);
-            // UpdateEventDB();
 
             IEvent activatedTarget = ActivatedEvents.Find(x => x.GUID == targetGUID);
             if (activatedTarget != null)
@@ -96,14 +70,6 @@ namespace Jarloo.Calendar
                 ActivatedEvents.Remove((CustomEvent)activatedTarget);
             }
 
-            /*
-            activatedTarget.DisposeTimer();
-
-            ActivatedEvent.Remove((CustomEvent)activatedTarget);
-            //ActivatedTimers.Remove(target.Timer);
-            ecdb.DeleteEvent(targetGUID);
-            UpdateEventDB();
-            */
             EventIsDeletedEvent(target);
             target = null;
         }
@@ -116,7 +82,6 @@ namespace Jarloo.Calendar
 
             ActivatedEvents.Remove((CustomEvent)target);
             ecdb.DeleteEvent((CustomEvent)target);
-            //UpdateEventDB();
 
             EventIsDeletedEvent(target);
             target = null;
@@ -144,7 +109,6 @@ namespace Jarloo.Calendar
                 return;
 
             NextRefreshingTime = DateTime.Today.AddDays(1);
-            //NextRefreshingTime = DateTime.Now.AddSeconds(10);  // TEST
             refreshTimer = new DispatcherTimer { Interval = NextRefreshingTime - DateTime.Now };
             refreshTimer.Tick += (sender, args) =>
             {
@@ -164,6 +128,10 @@ namespace Jarloo.Calendar
         //       otherwise, too much works have to be done when there is only one task is added
         public void RefreshTasks()
         {
+            if (EventHandlerFactory == null)
+                return;
+                //throw new Exception("EventHandlerFactory should not be NULL");
+
             // TODO: before refresh tasks, check those activated timers and dispose them
             DisposeActivatedTimers();
 
@@ -174,24 +142,19 @@ namespace Jarloo.Calendar
             foreach (CustomEvent ce in EventDB)
             {
                 SetActivatedTask(ce);
-                /*
-                if (IsEventInRange(ce))
-                {
-                    ActivatedEvents.Add(ce);
-
-                    if (ce.AutoDelete)
-                        ce.DestructMeEvent += DeleteEvent;
-
-                    ce.SetTimer();
-                }
-                */
             }
         }
 
         private void SetActivatedTask(CustomEvent ce)
         {
+            // TODO: check that the beginning time of task is updated, otherwise the task won't be triggered
+            ce.UpdateBeginningTime();
+             
             if (IsEventInRange(ce))
             {
+                ce.EventStartsEvent += EventHandlerFactory.CreateStartingEventHandler(ce);
+                ce.EventEndsEvent += EventHandlerFactory.CreateEndingEventHandler(ce);
+
                 ActivatedEvents.Add(ce);
 
                 if (ce.AutoDelete)

@@ -27,10 +27,13 @@ namespace Jarloo.Calendar
         // If this is a recurring event, set this to true to make the event show up only from the day specified forward
         bool ThisDayForwardOnly { get; set; }
 
-        //CustomRecurringFrequenciesHandler CustomRecurringFunction { get; set; }
+        Type EventArgsType { get; set; }
 
+        CustomEventArgs EventStartsEventArgs { get; set; }
         event TimerElapsedEventHandler EventStartsEvent;
+        CustomEventArgs EventEndsEventArgs { get; set; }
         event TimerElapsedEventHandler EventEndsEvent;
+        event TimerElapsedEventHandler DestructMeEvent;
 
         IEvent Clone();
 
@@ -39,6 +42,11 @@ namespace Jarloo.Calendar
     }
 
     // Used to reset event for recurrsion
-    public delegate bool CustomRecurringFrequenciesHandler(IEvent evnt, DateTime day);
     public delegate void TimerElapsedEventHandler(IEvent evnt);
+
+    public interface IEventHandlerFactory
+    {
+        TimerElapsedEventHandler CreateStartingEventHandler(IEvent source);
+        TimerElapsedEventHandler CreateEndingEventHandler(IEvent source);
+    }
 }

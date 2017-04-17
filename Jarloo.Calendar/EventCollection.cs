@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Jarloo.Calendar
 {
@@ -26,8 +25,6 @@ namespace Jarloo.Calendar
             }
             this.EventList = ec.EventList;
             ec = null;
-
-            //DatabaseIsChanged();
         }
 
         public void AddEvent(CustomEvent target)

@@ -79,21 +79,22 @@ namespace Jarloo.Calendar
             return today.AddDays(1);
         }
 
-        public static Weekday GetNextRecurringWeekday(Weekday wd, RecurringFrequencies rf)
+        public static Weekday GetNextRecurringWeekday(DayOfWeek targetWeekday, RecurringFrequencies rf)
         {
             if (rf == RecurringFrequencies.None)
                 return Weekday.None;    // Or throw exception?
 
-            byte nextRecurringWeekday = (byte)wd;
-            byte target = (byte)rf;
+            byte nextRecurringWeekday = (byte)targetWeekday.ToCustomWeekday();
+            byte targetRF = (byte)rf;
 
             while (nextRecurringWeekday < 0xF0)    // 0x80: Weekday.Unknown (exceeds the range of weekdays)
             {
-                nextRecurringWeekday <<= 1;
+                //nextRecurringWeekday <<= 1;
                 if (nextRecurringWeekday == 0x00)   // Restart from Sunday (first day of the week)
                     nextRecurringWeekday = 0x01;
-                if ((nextRecurringWeekday & target) == 0)
+                if ((nextRecurringWeekday & targetRF) == 0)
                 {
+                    nextRecurringWeekday <<= 1;
                     continue;
                 }
                 else break;
