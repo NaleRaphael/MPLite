@@ -1,8 +1,12 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+=======
+using System.Collections.Generic;
+>>>>>>> rev8d0858e
 
 namespace Jarloo.Calendar
 {
@@ -10,6 +14,12 @@ namespace Jarloo.Calendar
     {
         public List<CustomEvent> EventList { get; set; }
 
+<<<<<<< HEAD
+=======
+        public delegate void DatabaseIsChangedEventHandler();
+        public event DatabaseIsChangedEventHandler DatabaseIsChanged;
+
+>>>>>>> rev8d0858e
         public EventCollection()
         {
         }
@@ -42,6 +52,11 @@ namespace Jarloo.Calendar
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, this);
             ec = null;
+<<<<<<< HEAD
+=======
+
+            DatabaseIsChanged();
+>>>>>>> rev8d0858e
         }
 
         public void DeleteEvent(CustomEvent target)
@@ -58,6 +73,31 @@ namespace Jarloo.Calendar
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, this);
             ec = null;
+<<<<<<< HEAD
+=======
+
+            // Notify subscriber
+            DatabaseIsChanged();
+        }
+
+        public void DeleteEvent(Guid targetGUID)
+        {
+            string dbPath = Properties.Settings.Default.DBPath;
+
+            EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath);
+            if (ec == null)
+            {
+                return;
+            }
+
+            ec.EventList.Remove(ec.EventList.Find(x => x.GUID == targetGUID));
+            this.EventList = ec.EventList;
+            DataControl.SaveData<EventCollection>(dbPath, this);
+            ec = null;
+
+            // Notify subscriber
+            DatabaseIsChanged();
+>>>>>>> rev8d0858e
         }
 
         // TODO: directly overwrite an empty list into database? (without reading the original one)
@@ -75,9 +115,18 @@ namespace Jarloo.Calendar
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, ec);
             ec = null;
+<<<<<<< HEAD
         }
 
         public CustomEvent GetEvent(string eventText)
+=======
+
+            // Notify subscriber
+            DatabaseIsChanged();
+        }
+
+        public CustomEvent GetEvent(Guid targetGUID)
+>>>>>>> rev8d0858e
         {
             string dbPath = Properties.Settings.Default.DBPath;
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath);
@@ -89,7 +138,11 @@ namespace Jarloo.Calendar
             CustomEvent result;
             try
             {
+<<<<<<< HEAD
                 result = ec.EventList.Find(x => x.EventText == eventText);
+=======
+                result = ec.EventList.Find(x => x.GUID == targetGUID);
+>>>>>>> rev8d0858e
             }
             catch
             {

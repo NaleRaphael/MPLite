@@ -8,9 +8,12 @@
 */
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
+using Jarloo.Calendar.Themes;
 
 namespace Jarloo.Calendar
 {
@@ -26,14 +29,27 @@ namespace Jarloo.Calendar
         public event PropertyChangedEventHandler CurrentlyViewingInfoChanged; // used to update currently viewing year & month
         public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler<DayChangedEventArgs> DayChanged;
+<<<<<<< HEAD
         //public event EventHandler<>
         #endregion
         
         #region Properties
+=======
+        #endregion
+        
+        #region Properties
+        // TODO: monthly view, weekly view (, daily view)
+        public CalenderViewingMode ViewingMode { get; set; }
+
+>>>>>>> rev8d0858e
         public ObservableCollection<Day> Days { get; set; }
         public ObservableCollection<string> DayNames { get; set; }
 
         public EventManager EventManager { get; set; }
+<<<<<<< HEAD
+=======
+        public IEventHandlerFactory EventHandlerFacotry { get; set; }
+>>>>>>> rev8d0858e
 
         public DateTime CurrentDate
         {
@@ -92,11 +108,40 @@ namespace Jarloo.Calendar
             //this won't work in Australia where they start the week with Monday. So remember to test in other 
             //places if you plan on using it. 
             DayNames = new ObservableCollection<string> {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
-
             Days = new ObservableCollection<Day>();
+<<<<<<< HEAD
             EventManager = new EventManager();
+=======
+
+            ViewingMode = CalenderViewingMode.Monthly;
+        }
+
+        // Workaround: controls cannot be initialized with parameters, so that EventManager is created after Calendar has been initilized.
+        public void OnInitialization(IEventHandlerFactory handlerFactory)
+        {
+            EventManager = new EventManager(handlerFactory);
+            EventManager.EventIsAddedEvent += AddEventsToCalendar; // update layout when there is a new event added
+            EventManager.EventIsDeletedEvent += DeleteEventsToCalendar;
+>>>>>>> rev8d0858e
 
             BuildCalendar(DateTime.Today);
+
+            Generic.DayContentSelectionEvent += EventManager.DeleteEvent;
+        }
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            // TODO: use command instead?
+            /*
+            var lb = this.Template.FindName("icDays", this);
+            if (lb != null) lb.MouseDoubleClick += (s, a) =>
+            {
+               CustomEvent evnt = (CustomEvent)((ListBoxItem)s).Content;
+               MessageBox.Show(evnt.GUID.ToString());
+            };
+            */
         }
 
         public void BuildCalendar(DateTime targetDate)
@@ -121,6 +166,8 @@ namespace Jarloo.Calendar
                 Days.Add(day);
                 d = d.AddDays(1);
             }
+
+            AddEventsToCalendar(null);
         }
 
         private void Day_Changed(object sender, PropertyChangedEventArgs e)
@@ -150,9 +197,68 @@ namespace Jarloo.Calendar
             this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
         }
 
+<<<<<<< HEAD
         private void UpdateEventsToCalendar()
         {
             
+=======
+        // TODO: rewrite this (parameter IEvent is not used)
+        private void AddEventsToCalendar(IEvent evnt)
+        {
+            RefreshEventsToCalenderEntry(evnt, true);
+        }
+
+        private void DeleteEventsToCalendar(IEvent evnt)
+        {
+            RefreshEventsToCalenderEntry(evnt, false);
+        }
+
+        private void RefreshEventsToCalenderEntry(IEvent evnt, bool addOrDelete)
+        {
+            switch (ViewingMode)
+            {
+                case CalenderViewingMode.Daily:
+                    break;
+                case CalenderViewingMode.Weekly:
+                    break;
+                case CalenderViewingMode.Monthly:
+                    if (evnt == null)   // No event is given, read from database
+                    {
+                        foreach (IEvent e in EventManager.EventDB)
+                        {
+                            UpdateEventsMonthlyView(e, addOrDelete);
+                        }
+                    }
+                    else
+                    {
+                        UpdateEventsMonthlyView(evnt, addOrDelete);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void UpdateEventsMonthlyView(IEvent target, bool addOrDel)
+        {
+            int offset = DateTime.DaysInMonth(Days[0].Date.Year, Days[0].Date.Month) - Days[0].Date.Day;
+
+            // TODO: improve this
+            List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, CurrentViewingDate, ViewingMode);
+            foreach(DateTime dt in recurringDates)
+            {
+                if (addOrDel)
+                    Days[dt.Day + offset].Events.Add(target);
+                else
+                {
+                    var temp = Days[dt.Day + offset].Events;
+                    temp.Remove(temp.Where(x => x.GUID == target.GUID).FirstOrDefault());
+                }
+                    
+            }
+
+            // TODO: add a event for remove / gray out those events have ended already
+>>>>>>> rev8d0858e
         }
 
         #region Public methods for user
@@ -183,5 +289,12 @@ namespace Jarloo.Calendar
         {
             this.Day = day;
         }
+    }
+
+    public enum CalenderViewingMode
+    {
+        Daily = 0,
+        Weekly = 1,
+        Monthly = 2
     }
 }

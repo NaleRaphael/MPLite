@@ -88,10 +88,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EventRouter.cs" />
+<<<<<<< HEAD
     <Compile Include="SchedulerEventBase.cs" />
+=======
+>>>>>>> rev8d0858e
     <Compile Include="ProxyWindow.xaml.cs">
       <DependentUpon>ProxyWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SchedulerEventBase.cs" />
     <Compile Include="TrackInfo.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />

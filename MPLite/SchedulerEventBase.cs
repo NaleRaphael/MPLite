@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿using System;
+=======
+﻿using Jarloo.Calendar;
+>>>>>>> rev8d0858e
 
 namespace MPLite
 {
@@ -11,7 +15,11 @@ namespace MPLite
         Pause = 2
     }
 
+<<<<<<< HEAD
     public class SchedulerEventArgs : EventArgs
+=======
+    public class SchedulerEventArgs : Jarloo.Calendar.CustomEventArgs
+>>>>>>> rev8d0858e
     {
         public PlaybackCommands Command { get; set; }
         public string Playlist { get; set; }
@@ -26,4 +34,37 @@ namespace MPLite
             Mode = MPLiteConstant.PlaybackMode.None;
         }
     }
+<<<<<<< HEAD
+=======
+
+    public class SchedulerEventHandlerFactory : Jarloo.Calendar.IEventHandlerFactory
+    {
+        public event SchedulerEventHandler SchedulerEvent;
+
+        public SchedulerEventHandlerFactory(SchedulerEventHandler handler)
+        {
+            SchedulerEvent = handler;
+        }
+
+        public TimerElapsedEventHandler CreateStartingEventHandler(IEvent source)
+        {
+            TimerElapsedEventHandler handler;
+            handler = (args) =>
+            {
+                SchedulerEvent(source.EventStartsEventArgs as SchedulerEventArgs);
+            };
+            return handler;
+        }
+
+        public TimerElapsedEventHandler CreateEndingEventHandler(IEvent source)
+        {
+            TimerElapsedEventHandler handler;
+            handler = (args) =>
+            {
+                SchedulerEvent(source.EventEndsEventArgs as SchedulerEventArgs);
+            };
+            return handler;
+        }
+    }
+>>>>>>> rev8d0858e
 }

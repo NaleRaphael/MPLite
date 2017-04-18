@@ -6,12 +6,16 @@ namespace MPLite
 {
     public partial class PageCalendar : Page
     {
+<<<<<<< HEAD
         // TEST
         private int count = 0;
 
         #region Event
         public static event SchedulerEventHandler SchedulerEvent;
         #endregion
+=======
+        public static event SchedulerEventHandler SchedulerEvent;
+>>>>>>> rev8d0858e
 
         public PageCalendar()
         {
@@ -21,7 +25,11 @@ namespace MPLite
 
         private void InitializeCalendar()
         {
+<<<<<<< HEAD
             // TODO: show events on calendar
+=======
+            calendar.OnInitialization(new SchedulerEventHandlerFactory(SchedulerEvent));
+>>>>>>> rev8d0858e
         }
 
         #region Calendar control
@@ -33,6 +41,7 @@ namespace MPLite
         private void gridLeftContainer_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             btnMoveToPrevMonth.Visibility = Visibility.Hidden;
+<<<<<<< HEAD
         }
 
         private void gridRightContainer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -40,6 +49,15 @@ namespace MPLite
             btnMoveToNextMonth.Visibility = Visibility.Visible;
         }
 
+=======
+        }
+
+        private void gridRightContainer_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnMoveToNextMonth.Visibility = Visibility.Visible;
+        }
+
+>>>>>>> rev8d0858e
         private void gridRightContainer_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             btnMoveToNextMonth.Visibility = Visibility.Hidden;
@@ -78,6 +96,7 @@ namespace MPLite
         // TEST
         private void btnCalendarTester_Click(object sender, RoutedEventArgs e)
         {
+<<<<<<< HEAD
             calendar.Days[6].EventTexts.Add("TEST" + count++);
         }
 
@@ -153,6 +172,143 @@ namespace MPLite
 
             DateTime nextWeekday = Jarloo.Calendar.Utils.DateTimeOfNextWeekday(DateTime.Now, DayOfWeek.Thursday);
             MessageBox.Show(nextWeekday.ToString());
+=======
+            //calendar.Days[6].EventTexts.Add("TEST" + count++);
+        }
+
+        // TEST
+        private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
+        {
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent() {
+                BeginningTime = DateTime.Now.AddSeconds(5),
+                Duration = TimeSpan.FromSeconds(5),
+                Enabled = true,
+                EventText = "Test event",
+                Rank = 1,
+                ReadOnlyEvent = false,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekday,
+                ThisDayForwardOnly = true,
+                IgnoreTimeComponent = false,
+            };
+
+            evnt.EventStartsEvent += (args) =>
+            {
+                SchedulerEventArgs se = new SchedulerEventArgs
+                {
+                    Playlist = "New Playlist",
+                    Command = PlaybackCommands.Play,
+                    Mode = MPLiteConstant.PlaybackMode.Default,
+                    TrackIndex = -1
+                };
+                SchedulerEvent(se);
+            };
+
+            evnt.EventEndsEvent += (args) =>
+            {
+                SchedulerEventArgs se = new SchedulerEventArgs
+                {
+                    Command = PlaybackCommands.Stop
+                };
+                SchedulerEvent(se);
+
+                MessageBox.Show("Event ends.");
+            };
+
+            calendar.EventManager.AddEvent(evnt);
+        }
+
+        // TEST
+        private void btnStopPlayerEventTester_Click(object sender, RoutedEventArgs e)
+        {
+            SchedulerEventArgs se = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Stop
+            };
+            SchedulerEvent(se);
+        }
+
+        // TEST
+        private void btnPausePlayerEventTester_Click(object sender, RoutedEventArgs e)
+        {
+            SchedulerEventArgs se = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Pause
+            };
+            SchedulerEvent(se);
+        }
+
+        private void btnWeekdayConvert_Click(object sender, RoutedEventArgs e)
+        {
+            var result = Jarloo.Calendar.Utils.ConvertToCustomWeekday(DateTime.Now.AddDays(3));
+            byte temp = (byte)result;
+            MessageBox.Show(result.ToString());
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            /*
+            var rf = Jarloo.Calendar.RecurringFrequencies.EveryWeekend;
+            var result = Jarloo.Calendar.Utils.GetNextRecurringWeekday(Jarloo.Calendar.Weekday.Sunday, rf);
+            MessageBox.Show(result.ToString());
+            */
+
+            /*
+            DateTime nextWeekday = Jarloo.Calendar.Utils.DateTimeOfNextWeekday(DateTime.Now, DayOfWeek.Thursday);
+            MessageBox.Show(nextWeekday.ToString());
+            */
+
+            /*
+            // Find the range of week by given date
+            DateTime wkb;
+            DateTime wke;
+            DateTime source = DateTime.Today.AddDays(-5);
+            Jarloo.Calendar.Utils.FindRangeOfWeek(source, out wkb, out wke);
+            MessageBox.Show(source.ToString() + "\n" + wkb.ToString() + ", " + wke.ToString());
+            */
+
+            DateTime source = DateTime.Today;
+            bool result = Jarloo.Calendar.Utils.IsDayInRange(source, source.AddDays(-5), Jarloo.Calendar.CalenderViewingMode.Weekly);
+            MessageBox.Show(result.ToString());
+        }
+
+        private void btnAddNewEvent_Click(object sender, RoutedEventArgs e)
+        {
+            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
+            {
+                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(600),
+                Duration = TimeSpan.FromSeconds(5),
+                Enabled = true,
+                EventText = "Test event2",
+                Rank = 1,
+                ReadOnlyEvent = false,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.None,
+                ThisDayForwardOnly = true,
+                IgnoreTimeComponent = true,
+                AutoDelete = true,
+            };
+            
+            evnt.EventStartsEventArgs = new SchedulerEventArgs
+            {
+                Playlist = "New Playlist",
+                Command = PlaybackCommands.Play,
+                Mode = MPLiteConstant.PlaybackMode.Default,
+                TrackIndex = -1
+            };
+            
+            evnt.EventEndsEventArgs = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Stop
+            };
+
+            try
+            {
+                calendar.EventManager.AddEvent(evnt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+>>>>>>> rev8d0858e
         }
     }
 }

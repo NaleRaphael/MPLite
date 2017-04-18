@@ -8,10 +8,15 @@
 -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<<<<<<< HEAD
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
     xmlns:Jarloo="clr-namespace:Jarloo.Calendar"
     xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
+=======
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"    
+    xmlns:Jarloo="clr-namespace:Jarloo.Calendar" xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
+>>>>>>> rev8d0858e
     x:Class="Jarloo.Calendar.Themes.Generic">
 
     <Image x:Key="MoveNext" Source="../Images/move_next.png" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -19,6 +24,7 @@
 
     <Converters:DateConverter x:Key="DateConverter"></Converters:DateConverter>
     <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter>
+<<<<<<< HEAD
     <Converters:DayContentConverter x:Key="DayContentConverter"></Converters:DayContentConverter>
 
     
@@ -27,6 +33,9 @@
     </Style>
     
     
+=======
+
+>>>>>>> rev8d0858e
     <Style x:Key="StyleDayContent" TargetType="{x:Type ListBoxItem}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Height" Value="14"/>
@@ -37,6 +46,10 @@
         <Setter Property="BorderThickness" Value="0"/>
 
         <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
+<<<<<<< HEAD
+=======
+        <EventSetter Event="MouseRightButtonUp" Handler="ListBoxItem_MouseRightButtonUp" />
+>>>>>>> rev8d0858e
 
         <!--<Setter Property="VerticalContentAlignment" Value="Top"/>-->
 
@@ -77,12 +90,22 @@
         </Style.Triggers>
 
         <!-- Override these key to modify the color of "SelectedUnfucoused" ListBoxItem -->
+<<<<<<< HEAD
+=======
+        <!--
+>>>>>>> rev8d0858e
         <Style.Resources>
             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey }" Color="#FFB28E50"/>
             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey }" Color="Transparent"/>
         </Style.Resources>
+<<<<<<< HEAD
     </Style>
 
+=======
+        -->
+    </Style>
+    
+>>>>>>> rev8d0858e
     <Style x:Key="Style_FlatImageButton" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
@@ -103,6 +126,15 @@
         </Setter>
     </Style>
 
+<<<<<<< HEAD
+=======
+    <Style x:Key="StyleDockPanel" TargetType="{x:Type DockPanel}">
+        <!--
+        <EventSetter Event="PreviewMouseDown" Handler="PreviewMouseDown" />
+        -->
+    </Style>
+    
+>>>>>>> rev8d0858e
     <Style TargetType="{x:Type Jarloo:Calendar}">
         <Setter Property="Template">
             <Setter.Value>
@@ -112,6 +144,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
 
+<<<<<<< HEAD
                         <DockPanel>
                             <Grid Height="30" DockPanel.Dock="Top" Background="Black">
                                 <!-- Original: <TextBlock Text="{Binding Date}" /> -->
@@ -125,6 +158,11 @@
                                 
                                 <!-- TODO: change `Month` according to currently showing month -->
                                 <!-- Text="{MultiBinding StringFormat='{}{0} - {1}'}" -->
+=======
+                        <DockPanel x:Name="dpOutterContainer">
+                            <Grid Height="30" DockPanel.Dock="Top" Background="Black">
+                                <TextBlock Text="{Binding CurrentDate_Short, StringFormat='Today: \{0\}'}" FontFamily="Segoe UI" HorizontalAlignment="Left"/>
+>>>>>>> rev8d0858e
                                 <TextBlock x:Name="txtblockCurrentViewingMonth" FontFamily="Segoe UI" FontSize="16" HorizontalAlignment="Center" >
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="{}{0}/{1}">
@@ -155,13 +193,19 @@
                                 </ItemsControl.ItemsPanel>
                             </ItemsControl>
 
-                            <ItemsControl ItemsSource="{Binding Days}">                               
+                            <ItemsControl x:Name="icDays" ItemsSource="{Binding Days}">                               
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>                                        
                                         <!--Box-->
                                         <Border BorderBrush="Black" BorderThickness="1" Padding="0">
+<<<<<<< HEAD
 
                                             <Border Name="InnerBorder" BorderBrush="{Binding Notes, Converter={StaticResource DayBorderColorConverter}}" BorderThickness="2">                                                
+=======
+                                            
+                                            <!-- TODO: rebinding the property Notes -->
+                                            <Border Name="InnerBorder" BorderBrush="{Binding Path=Notes, Converter={StaticResource DayBorderColorConverter}}" BorderThickness="2">                                                
+>>>>>>> rev8d0858e
                                                 
                                                 <Border.Style>
                                                     <Style TargetType="{x:Type Border}">
@@ -181,7 +225,11 @@
                                                     </Style>
                                                 </Border.Style>
 
+<<<<<<< HEAD
                                                 <DockPanel PreviewMouseDown="DockPanel_PreviewMouseDown">
+=======
+                                                <DockPanel Style="{StaticResource StyleDockPanel}">
+>>>>>>> rev8d0858e
                                                     <!--Day Number-->
                                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" FlowDirection="RightToLeft">
                                                         <TextBlock TextAlignment="Right" Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=DAY}" 
@@ -199,6 +247,7 @@
                                                     </StackPanel>
 
                                                     <!-- Content of a day -->
+<<<<<<< HEAD
                                                     <ListBox IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
                                                              ItemsSource="{Binding EventTexts}" ItemContainerStyle="{StaticResource StyleDayContent}">
                                                         <!-- ItemContainerStyle="{StaticResource StyleDayContent}" -->
@@ -216,6 +265,19 @@
                                                              AcceptsReturn="True" TextWrapping="Wrap" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Hidden" 
                                                              Background="{x:Null}" Foreground="White" />
                                                     -->
+=======
+                                                    <ListBox x:Name="lbDayContent" IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
+                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}">
+                                                        <ListBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Background="Transparent">
+                                                                    <TextBlock Text="{Binding EventText}"/>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ListBox.ItemTemplate>
+                                                    </ListBox>
+                                                    
+>>>>>>> rev8d0858e
                                                 </DockPanel>
                                             </Border>
                                         </Border>

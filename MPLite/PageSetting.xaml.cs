@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace MPLite
 {
@@ -19,19 +11,22 @@ namespace MPLite
         public PageSetting()
         {
             InitializeComponent();
-            Init_cmb_PlaybackSetting();
+            InitializeControls();
         }
 
-        private void Init_cmb_PlaybackSetting()
+        private void InitializeControls()
         {
+            // cmb_PlaybackSetting
             foreach (string mode in Enum.GetNames(typeof(MPLiteConstant.PlaybackMode)))
             {
                 if (mode == "None")
                     continue;
                 cmb_PlaybackSetting.Items.Add(mode);
             }
-
             cmb_PlaybackSetting.SelectedIndex = Properties.Settings.Default.PlaybackMode;
+
+            // txtPlaylistStoragePath
+            txtPlaylistStoragePath.Text = Path.GetFullPath(Properties.Settings.Default.PlaylistInfoPath);
         }
 
         private void cmb_PlaybackSetting_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -47,6 +42,22 @@ namespace MPLite
                     Properties.Settings.Default.Save();
                 }
             }
+        }
+
+        private void btnSelectPlaylistStoragePath_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = Path.GetDirectoryName(Path.GetFullPath(Properties.Settings.Default.PlaylistInfoPath));
+            if (ofd.ShowDialog() == true)
+            {
+                txtPlaylistStoragePath.Text = ofd.FileName;
+            }
+        }
+
+        private void btnSelectCalenderEventStoragePath_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            //ofd.InitialDirectory = Path.GetDirectoryName(Path.GetFullPath());
         }
     }
 }

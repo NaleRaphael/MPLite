@@ -1,7 +1,10 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+=======
+>>>>>>> rev8d0858e
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,6 +13,7 @@ namespace Jarloo.Calendar.Themes
 {
     public partial class Generic
     {
+<<<<<<< HEAD
         // TODO
         public delegate void DateSelectionEventHandler();
         public event DateSelectionEventHandler DateSelectionEvent;
@@ -18,6 +22,28 @@ namespace Jarloo.Calendar.Themes
         {
             MessageBox.Show("ListBoxItem: Say YO");
             return;
+=======
+        // TODO: show event details when a ListBoxItem is selected
+        public delegate void DayContentSelectionEventHandler(Guid guid);
+        public static event DayContentSelectionEventHandler DayContentSelectionEvent;
+
+        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
+            MessageBox.Show(obj.GUID.ToString());
+            
+            // Notify subscriber which event is selected
+            DayContentSelectionEvent(obj.GUID);
+        }
+
+        private void ListBoxItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
+            MessageBox.Show(obj.EventText);
+
+            // Notify subscriber
+            // TODO: Add an event
+>>>>>>> rev8d0858e
         }
 
         private void ListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)

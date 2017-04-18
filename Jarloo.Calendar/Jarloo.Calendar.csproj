@@ -61,6 +61,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Compile Include="CustomEvent.cs" />
     <Compile Include="DataControl.cs" />
     <Compile Include="Utils.cs" />
@@ -70,6 +71,13 @@
     <Compile Include="Themes\Generic.xaml.cs">
       <DependentUpon>Generic.xaml</DependentUpon>
     </Compile>
+=======
+    <Compile Include="MultiTrigEvent.cs" />
+    <Compile Include="Themes\Generic.xaml.cs">
+      <DependentUpon>Generic.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils.cs" />
+>>>>>>> rev8d0858e
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,8 +89,16 @@
   <ItemGroup>
     <Compile Include="Converters\DateConverter.cs" />
     <Compile Include="Converters\DayBorderColorConverter.cs" />
+<<<<<<< HEAD
     <Compile Include="Converters\DayContentConverter.cs" />
+=======
+    <Compile Include="CustomEvent.cs" />
+    <Compile Include="DataControl.cs" />
+>>>>>>> rev8d0858e
     <Compile Include="Day.cs" />
+    <Compile Include="EventCollection.cs" />
+    <Compile Include="EventManager.cs" />
+    <Compile Include="IEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
