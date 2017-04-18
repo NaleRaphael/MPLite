@@ -24,8 +24,8 @@
             </Grid>
             <Grid x:Name="gridCalendarSetting" HorizontalAlignment="Left" Height="60" Margin="10,130,0,0" VerticalAlignment="Top" Width="350">
                 <Label x:Name="lblCalendarEventStorage" Content="Calendar event storage" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
-                <TextBox x:Name="txtCalenderEventStoragePath" HorizontalAlignment="Left" Height="22" Margin="10,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="308" IsReadOnly="True" Foreground="#FFC8C8C8" Background="{x:Null}"/>
-                <Button x:Name="btnSelectCalenderEventStoragePath" Content="..." HorizontalAlignment="Left" Margin="318,26,0,0" VerticalAlignment="Top" Width="22" Click="btnSelectCalenderEventStoragePath_Click"/>
+                <TextBox x:Name="txtCalendarEventStoragePath" HorizontalAlignment="Left" Height="22" Margin="10,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="308" IsReadOnly="True" Foreground="#FFC8C8C8" Background="{x:Null}"/>
+                <Button x:Name="btnSelectCalendarEventStoragePath" Content="..." HorizontalAlignment="Left" Margin="318,26,0,0" VerticalAlignment="Top" Width="22" Click="btnSelectCalendarEventStoragePath_Click"/>
             </Grid>
         </Grid>
     </Grid>

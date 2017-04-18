@@ -16,6 +16,7 @@ namespace MPLite
 
         private void InitializeCalendar()
         {
+            // Assign custom HandlerEventFactory to Jarloo.Calendar to create handler
             calendar.OnInitialization(new SchedulerEventHandlerFactory(SchedulerEvent));
         }
 
@@ -167,7 +168,7 @@ namespace MPLite
             */
 
             DateTime source = DateTime.Today;
-            bool result = Jarloo.Calendar.Utils.IsDayInRange(source, source.AddDays(-5), Jarloo.Calendar.CalenderViewingMode.Weekly);
+            bool result = Jarloo.Calendar.Utils.IsDayInRange(source, source.AddDays(-5), Jarloo.Calendar.CalendarViewingMode.Weekly);
             MessageBox.Show(result.ToString());
         }
 

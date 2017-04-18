@@ -33,7 +33,7 @@ namespace Jarloo.Calendar
         
         #region Properties
         // TODO: monthly view, weekly view (, daily view)
-        public CalenderViewingMode ViewingMode { get; set; }
+        public CalendarViewingMode ViewingMode { get; set; }
 
         public ObservableCollection<Day> Days { get; set; }
         public ObservableCollection<string> DayNames { get; set; }
@@ -100,7 +100,7 @@ namespace Jarloo.Calendar
             DayNames = new ObservableCollection<string> {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
             Days = new ObservableCollection<Day>();
 
-            ViewingMode = CalenderViewingMode.Monthly;
+            ViewingMode = CalendarViewingMode.Monthly;
         }
 
         // Workaround: controls cannot be initialized with parameters, so that EventManager is created after Calendar has been initilized.
@@ -186,23 +186,23 @@ namespace Jarloo.Calendar
         // TODO: rewrite this (parameter IEvent is not used)
         private void AddEventsToCalendar(IEvent evnt)
         {
-            RefreshEventsToCalenderEntry(evnt, true);
+            RefreshEventsToCalendarEntry(evnt, true);
         }
 
         private void DeleteEventsToCalendar(IEvent evnt)
         {
-            RefreshEventsToCalenderEntry(evnt, false);
+            RefreshEventsToCalendarEntry(evnt, false);
         }
 
-        private void RefreshEventsToCalenderEntry(IEvent evnt, bool addOrDelete)
+        private void RefreshEventsToCalendarEntry(IEvent evnt, bool addOrDelete)
         {
             switch (ViewingMode)
             {
-                case CalenderViewingMode.Daily:
+                case CalendarViewingMode.Daily:
                     break;
-                case CalenderViewingMode.Weekly:
+                case CalendarViewingMode.Weekly:
                     break;
-                case CalenderViewingMode.Monthly:
+                case CalendarViewingMode.Monthly:
                     if (evnt == null)   // No event is given, read from database
                     {
                         foreach (IEvent e in EventManager.EventDB)
@@ -271,7 +271,7 @@ namespace Jarloo.Calendar
         }
     }
 
-    public enum CalenderViewingMode
+    public enum CalendarViewingMode
     {
         Daily = 0,
         Weekly = 1,

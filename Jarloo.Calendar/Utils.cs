@@ -122,15 +122,15 @@ namespace Jarloo.Calendar
             endingDate = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
         }
 
-        public static bool IsDayInRange(DateTime source, DateTime target, CalenderViewingMode mode)
+        public static bool IsDayInRange(DateTime source, DateTime target, CalendarViewingMode mode)
         {
             if (source.Year != target.Year) return false;
 
-            if (mode == CalenderViewingMode.Monthly)
+            if (mode == CalendarViewingMode.Monthly)
                 return (source.Month == target.Month) ? true : false;
-            else if (mode == CalenderViewingMode.Daily)
+            else if (mode == CalendarViewingMode.Daily)
                 return (source.Day == target.Day) ? true : false;
-            else if (mode == CalenderViewingMode.Weekly)
+            else if (mode == CalendarViewingMode.Weekly)
             {
                 DateTime wkb;
                 DateTime wke;
@@ -139,10 +139,10 @@ namespace Jarloo.Calendar
                 // or compare them by converting into OADate
                 return (target >= wkb && target < wke) ? true : false;
             }
-            else return false;      // or throw exception (Invalid CalenderViewingMode)
+            else return false;      // or throw exception (Invalid CalendarViewingMode)
         }
 
-        public static List<DateTime> FindAllRecurringDate(IEvent target, DateTime ViewingDate, CalenderViewingMode mode)
+        public static List<DateTime> FindAllRecurringDate(IEvent target, DateTime ViewingDate, CalendarViewingMode mode)
         {
             List<DateTime> result = new List<DateTime>();
             DateTime rngb = DateTime.MinValue;   // beginning of range
@@ -158,10 +158,10 @@ namespace Jarloo.Calendar
 
             switch (mode)
             {
-                case CalenderViewingMode.Monthly:
+                case CalendarViewingMode.Monthly:
                     FindRangeOfMonth(ViewingDate, out rngb, out rnge);
                     break;
-                case CalenderViewingMode.Weekly:
+                case CalendarViewingMode.Weekly:
                     FindRangeOfWeek(ViewingDate, out rngb, out rnge);
                     break;
                 default:

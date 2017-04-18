@@ -62,7 +62,7 @@ namespace Jarloo.Calendar
             RefreshTasks();
 
             // Fire an event to notify subscribber that event is added successfully
-            // TODO: notify calender to update layout
+            // TODO: notify calendar to update layout
             EventIsAddedEvent(evnt);
         }
 

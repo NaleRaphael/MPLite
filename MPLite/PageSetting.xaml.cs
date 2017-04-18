@@ -54,7 +54,7 @@ namespace MPLite
             }
         }
 
-        private void btnSelectCalenderEventStoragePath_Click(object sender, RoutedEventArgs e)
+        private void btnSelectCalendarEventStoragePath_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             //ofd.InitialDirectory = Path.GetDirectoryName(Path.GetFullPath());
