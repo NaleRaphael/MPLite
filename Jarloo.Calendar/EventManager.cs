@@ -47,7 +47,7 @@ namespace Jarloo.Calendar
             // Check
             try
             {
-                CheckEventPropertyConflict(evnt);
+                CheckEventProperty(evnt);
             }
             catch
             {
@@ -108,12 +108,14 @@ namespace Jarloo.Calendar
             else return true;
         }
 
-        private void CheckEventPropertyConflict(CustomEvent target)
+        private void CheckEventProperty(CustomEvent target)
         {
-            if (target.AutoDelete && (target.RecurringFrequency != RecurringFrequencies.None))
+            if (target.AutoDelete && target.RecurringFrequency != RecurringFrequencies.None)
                 throw new EventPropertyConflictException("Property `AutoDelete` should be \"false\" if `RecurringFreqeuncy` is not \"None\".");
             if (target.BeginningTime < DateTime.Now && target.RecurringFrequency == RecurringFrequencies.None)
                 throw new EventPropertyConflictException("This is not a recurring event, so that its `BeginningTime` should be later than `DateTime.Now`.");
+            if (target.ActionStartsEventArgs == null)
+                throw new EmptyEventArgsException("EventArgs for beginning action is required, please check `ActionStartsEventArgs` of this event.");
         }
 
         private void UpdateEventDB()
@@ -172,13 +174,17 @@ namespace Jarloo.Calendar
              
             if (IsEventInRange(ce))
             {
-                ce.EventStartsEvent += EventHandlerFactory.CreateStartingEventHandler(ce);
-                ce.EventEndsEvent += EventHandlerFactory.CreateEndingEventHandler(ce);
+                if (ce.ActionEndsEventArgs != null)
+                {
+                    ce.ActionStartsEvent += EventHandlerFactory.CreateStartingEventHandler(ce);
+                    if (ce.ActionEndsEventArgs != null)
+                        ce.ActionEndsEvent += EventHandlerFactory.CreateEndingEventHandler(ce);
+                }
 
                 ActivatedEvents.Add(ce);
 
                 if (ce.AutoDelete)
-                    ce.DestructMeEvent += DeleteEvent;
+                    ce.SelfDestructEvent += DeleteEvent;
 
                 ce.SetTimer();
             }

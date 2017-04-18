@@ -23,12 +23,11 @@ namespace Jarloo.Calendar
         public bool ReadOnlyEvent { get; set; }
         public bool ThisDayForwardOnly { get; set; }
 
-        public CustomEventArgs EventStartsEventArgs { get; set; }
-        public event TimerElapsedEventHandler EventStartsEvent;
-        public CustomEventArgs EventEndsEventArgs { get; set; }
-        public event TimerElapsedEventHandler EventEndsEvent;
-        public CustomEventArgs DestructMeEventArgs { get; set; }
-        public event TimerElapsedEventHandler DestructMeEvent;  // workaround: try to implement `AutoDelete`
+        public CustomEventArgs ActionStartsEventArgs { get; set; }
+        public event TimerElapsedEventHandler ActionStartsEvent;
+        public CustomEventArgs ActionEndsEventArgs { get; set; }
+        public event TimerElapsedEventHandler ActionEndsEvent;
+        public event TimerElapsedEventHandler SelfDestructEvent;  // workaround: try to implement `AutoDelete`
 
         public CustomEvent()
         {
@@ -84,7 +83,7 @@ namespace Jarloo.Calendar
                 Timer = null;
 
                 // Notify subscribers that this event starts
-                EventStartsEvent(this);
+                ActionStartsEvent(this);
 
                 // Update the next beginningTime of this event if it is a recurring event
                 UpdateBeginningTime();
@@ -102,10 +101,10 @@ namespace Jarloo.Calendar
                         Timer = null;
 
                         // Notify subscribers that this event ends
-                        EventEndsEvent(this);
+                        ActionEndsEvent(this);
 
                         if (AutoDelete)
-                            DestructMeEvent(this);
+                            SelfDestructEvent(this);
                     };
                     Timer.Tick += timerEventHandler;
                     timerEventHandler = null;
@@ -163,6 +162,13 @@ namespace Jarloo.Calendar
     public class EventPropertyConflictException : Exception
     {
         public EventPropertyConflictException(string message) : base(message)
+        {
+        }
+    }
+
+    public class EmptyEventArgsException : Exception
+    {
+        public EmptyEventArgsException(string message) : base(message)
         {
         }
     }

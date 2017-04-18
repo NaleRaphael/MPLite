@@ -28,11 +28,11 @@ namespace Jarloo.Calendar
         // If this is a recurring event, set this to true to make the event show up only from the day specified forward
         bool ThisDayForwardOnly { get; set; }
 
-        CustomEventArgs EventStartsEventArgs { get; set; }
-        event TimerElapsedEventHandler EventStartsEvent;
-        CustomEventArgs EventEndsEventArgs { get; set; }
-        event TimerElapsedEventHandler EventEndsEvent;
-        event TimerElapsedEventHandler DestructMeEvent;
+        CustomEventArgs ActionStartsEventArgs { get; set; }
+        event TimerElapsedEventHandler ActionStartsEvent;
+        CustomEventArgs ActionEndsEventArgs { get; set; }
+        event TimerElapsedEventHandler ActionEndsEvent;
+        event TimerElapsedEventHandler SelfDestructEvent;
 
         IEvent Clone();
 

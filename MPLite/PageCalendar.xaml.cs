@@ -92,30 +92,27 @@ namespace MPLite
                 IgnoreTimeComponent = false,
             };
 
-            evnt.EventStartsEvent += (args) =>
+            evnt.ActionStartsEventArgs = new SchedulerEventArgs
             {
-                SchedulerEventArgs se = new SchedulerEventArgs
-                {
-                    Playlist = "New Playlist",
-                    Command = PlaybackCommands.Play,
-                    Mode = MPLiteConstant.PlaybackMode.Default,
-                    TrackIndex = -1
-                };
-                SchedulerEvent(se);
+                Playlist = "New Playlist",
+                Command = PlaybackCommands.Play,
+                Mode = MPLiteConstant.PlaybackMode.Default,
+                TrackIndex = -1
             };
 
-            evnt.EventEndsEvent += (args) =>
+            evnt.ActionEndsEventArgs = new SchedulerEventArgs
             {
-                SchedulerEventArgs se = new SchedulerEventArgs
-                {
-                    Command = PlaybackCommands.Stop
-                };
-                SchedulerEvent(se);
-
-                MessageBox.Show("Event ends.");
+                Command = PlaybackCommands.Stop
             };
 
-            calendar.EventManager.AddEvent(evnt);
+            try
+            {
+                calendar.EventManager.AddEvent(evnt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         // TEST
@@ -176,19 +173,19 @@ namespace MPLite
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
             {
-                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(600),
+                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(10),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event2",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.None,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryTuesday,
                 ThisDayForwardOnly = true,
                 IgnoreTimeComponent = true,
-                AutoDelete = true,
+                AutoDelete = false,
             };
             
-            evnt.EventStartsEventArgs = new SchedulerEventArgs
+            evnt.ActionStartsEventArgs = new SchedulerEventArgs
             {
                 Playlist = "New Playlist",
                 Command = PlaybackCommands.Play,
@@ -196,7 +193,7 @@ namespace MPLite
                 TrackIndex = -1
             };
             
-            evnt.EventEndsEventArgs = new SchedulerEventArgs
+            evnt.ActionEndsEventArgs = new SchedulerEventArgs
             {
                 Command = PlaybackCommands.Stop
             };

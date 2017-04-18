@@ -115,21 +115,6 @@ namespace Jarloo.Calendar
             Generic.DayContentSelectionEvent += EventManager.DeleteEvent;
         }
 
-        public override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-
-            // TODO: use command instead?
-            /*
-            var lb = this.Template.FindName("icDays", this);
-            if (lb != null) lb.MouseDoubleClick += (s, a) =>
-            {
-               CustomEvent evnt = (CustomEvent)((ListBoxItem)s).Content;
-               MessageBox.Show(evnt.GUID.ToString());
-            };
-            */
-        }
-
         public void BuildCalendar(DateTime targetDate)
         {
             Days.Clear();
@@ -199,8 +184,10 @@ namespace Jarloo.Calendar
             switch (ViewingMode)
             {
                 case CalendarViewingMode.Daily:
+                    // TODO
                     break;
                 case CalendarViewingMode.Weekly:
+                    // TODO
                     break;
                 case CalendarViewingMode.Monthly:
                     if (evnt == null)   // No event is given, read from database

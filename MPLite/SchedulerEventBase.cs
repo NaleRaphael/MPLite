@@ -41,7 +41,7 @@ namespace MPLite
             TimerElapsedEventHandler handler;
             handler = (args) =>
             {
-                SchedulerEvent(source.EventStartsEventArgs as SchedulerEventArgs);
+                SchedulerEvent(source.ActionStartsEventArgs as SchedulerEventArgs);
             };
             return handler;
         }
@@ -51,7 +51,7 @@ namespace MPLite
             TimerElapsedEventHandler handler;
             handler = (args) =>
             {
-                SchedulerEvent(source.EventEndsEventArgs as SchedulerEventArgs);
+                SchedulerEvent(source.ActionEndsEventArgs as SchedulerEventArgs);
             };
             return handler;
         }
