@@ -22,6 +22,7 @@ namespace MPLite
         {
             string errorMessage = string.Format("An unhandled exception occurred: {0}", e.Exception.Message);
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(e.Exception.StackTrace);
             e.Handled = true;
         }
     }

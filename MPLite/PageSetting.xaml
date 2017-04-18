@@ -27,6 +27,7 @@
                 <TextBox x:Name="txtCalendarEventStoragePath" HorizontalAlignment="Left" Height="22" Margin="10,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="308" IsReadOnly="True" Foreground="#FFC8C8C8" Background="{x:Null}"/>
                 <Button x:Name="btnSelectCalendarEventStoragePath" Content="..." HorizontalAlignment="Left" Margin="318,26,0,0" VerticalAlignment="Top" Width="22" Click="btnSelectCalendarEventStoragePath_Click"/>
             </Grid>
+            <Label x:Name="lbl_HotkeySetting" Content="Hotkey Setting" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8"/>
         </Grid>
     </Grid>
 </Page>

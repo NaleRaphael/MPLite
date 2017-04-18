@@ -72,9 +72,6 @@ namespace MPLite
             // Menu_Setting
             ShowMenuSetting(false);
 
-            // Default page
-            PageSwitchControl<PagePlaylist>(ref pagePlaylist);
-
             // Music player
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += this.StartPlayingTrack;
@@ -110,8 +107,12 @@ namespace MPLite
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackName;
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackProgress;
 
-            // Scheduler
-            PageCalendar.SchedulerEvent += pagePlaylist.RunPlaylist;
+            // Set default page
+            // NOTE: PagePlaylist have to be created early than PageCalendar, so that PageCalendar.SchedulerEvent can be assigned.
+            pagePlaylist = new PagePlaylist();
+            PageCalendar.SchedulerEvent += pagePlaylist.RunPlaylist;    
+            pageCalendar = new PageCalendar();      // workaround: create PageCalendar to load EventManager
+            PageSwitchControl<PagePlaylist>(ref pagePlaylist);
 
             UpdateLayout();
         }
@@ -149,7 +150,6 @@ namespace MPLite
             {
                 ShowMenuSetting(true);
             }
-                
         }
 
         private void btnSetting_MouseLeave(object sender, MouseEventArgs e)
