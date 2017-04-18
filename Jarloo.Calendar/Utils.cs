@@ -149,6 +149,13 @@ namespace Jarloo.Calendar
             DateTime rnge = DateTime.MinValue;   // ending of range
             RecurringFrequencies rf = target.RecurringFrequency;
 
+            // Target is not a recurring event
+            if (target.RecurringFrequency == RecurringFrequencies.None)
+            {
+                result.Add(target.OriginalBeginningTime);
+                return result;
+            }
+
             switch (mode)
             {
                 case CalenderViewingMode.Monthly:

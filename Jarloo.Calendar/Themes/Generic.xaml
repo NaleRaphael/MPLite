@@ -28,6 +28,7 @@
         <Setter Property="BorderThickness" Value="0"/>
 
         <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
+        <EventSetter Event="MouseRightButtonUp" Handler="ListBoxItem_MouseRightButtonUp" />
 
         <!--<Setter Property="VerticalContentAlignment" Value="Top"/>-->
 

@@ -44,6 +44,16 @@ namespace Jarloo.Calendar
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(CustomEvent evnt)
         {
+            // Check
+            try
+            {
+                CheckEventPropertyConflict(evnt);
+            }
+            catch
+            {
+                throw;
+            }
+
             // workaround: if event is created by object initializer, `OriginalBeginningTime` won't be set properly.
             evnt.OriginalBeginningTime = evnt.BeginningTime;
             ecdb.AddEvent(evnt);      // Saved into database
@@ -75,7 +85,7 @@ namespace Jarloo.Calendar
             EventIsDeletedEvent(target);
             target = null;
         }
-
+        
         private void DeleteEvent(IEvent target)
         {
             if (target == null) return;
@@ -96,6 +106,14 @@ namespace Jarloo.Calendar
             if (target.BeginningTime <= DateTime.Now)
                 return false;
             else return true;
+        }
+
+        private void CheckEventPropertyConflict(CustomEvent target)
+        {
+            if (target.AutoDelete && (target.RecurringFrequency != RecurringFrequencies.None))
+                throw new EventPropertyConflictException("Property `AutoDelete` should be \"false\" if `RecurringFreqeuncy` is not \"None\".");
+            if (target.BeginningTime < DateTime.Now && target.RecurringFrequency == RecurringFrequencies.None)
+                throw new EventPropertyConflictException("This is not a recurring event, so that its `BeginningTime` should be later than `DateTime.Now`.");
         }
 
         private void UpdateEventDB()
@@ -164,7 +182,6 @@ namespace Jarloo.Calendar
 
                 ce.SetTimer();
             }
-
         }
 
         private void DisposeActivatedTimers()

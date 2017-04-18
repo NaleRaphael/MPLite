@@ -88,7 +88,7 @@ namespace MPLite
                 ReadOnlyEvent = false,
                 RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekday,
                 ThisDayForwardOnly = true,
-                IgnoreTimeComponent = true,
+                IgnoreTimeComponent = false,
             };
 
             evnt.EventStartsEvent += (args) =>
@@ -175,13 +175,13 @@ namespace MPLite
         {
             Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
             {
-                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(10),
+                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(600),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event2",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekend,
+                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.None,
                 ThisDayForwardOnly = true,
                 IgnoreTimeComponent = true,
                 AutoDelete = true,
@@ -200,7 +200,14 @@ namespace MPLite
                 Command = PlaybackCommands.Stop
             };
 
-            calendar.EventManager.AddEvent(evnt);
+            try
+            {
+                calendar.EventManager.AddEvent(evnt);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

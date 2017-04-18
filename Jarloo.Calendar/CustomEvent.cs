@@ -41,7 +41,7 @@ namespace Jarloo.Calendar
             Rank = 1;
             IsTriggered = false;
             Enabled = true;
-            AutoDelete = true;
+            AutoDelete = false;
             IgnoreTimeComponent = false;
             ReadOnlyEvent = false;
             ThisDayForwardOnly = true;
@@ -145,7 +145,8 @@ namespace Jarloo.Calendar
                 BeginningTime = Utils.DateTimeOfNextWeekday(beginningDateTime, nextRecurringWeekday.ToSystemWeekday());
         }
 
-        private void CheckPropertyConflict()
+        // TODO: this method cannot be called if this object is created by object initializer, try another method
+        private void CheckEventPropertyConflict()
         {
             if (AutoDelete && RecurringFrequency != RecurringFrequencies.None)
                 throw new Exception("Property `AutoDelete` should be false if `RecurringFreqeuncy` is not \"None\".");
@@ -155,6 +156,13 @@ namespace Jarloo.Calendar
     public class CustomEventArgs : EventArgs
     {
         public CustomEventArgs() : base()
+        {
+        }
+    }
+
+    public class EventPropertyConflictException : Exception
+    {
+        public EventPropertyConflictException(string message) : base(message)
         {
         }
     }

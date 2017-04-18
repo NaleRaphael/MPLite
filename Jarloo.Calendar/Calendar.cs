@@ -220,7 +220,7 @@ namespace Jarloo.Calendar
             }
         }
 
-        private void UpdateEventsMonthlyView(IEvent target, bool addEvent)
+        private void UpdateEventsMonthlyView(IEvent target, bool addOrDel)
         {
             int offset = DateTime.DaysInMonth(Days[0].Date.Year, Days[0].Date.Month) - Days[0].Date.Day;
 
@@ -228,7 +228,7 @@ namespace Jarloo.Calendar
             List<DateTime> recurringDates = Utils.FindAllRecurringDate(target, CurrentViewingDate, ViewingMode);
             foreach(DateTime dt in recurringDates)
             {
-                if (addEvent)
+                if (addOrDel)
                     Days[dt.Day + offset].Events.Add(target);
                 else
                 {

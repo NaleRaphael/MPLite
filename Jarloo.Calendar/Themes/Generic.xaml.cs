@@ -20,6 +20,15 @@ namespace Jarloo.Calendar.Themes
             DayContentSelectionEvent(obj.GUID);
         }
 
+        private void ListBoxItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
+            MessageBox.Show(obj.EventText);
+
+            // Notify subscriber
+            // TODO: Add an event
+        }
+
         private void ListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.RightButton == MouseButtonState.Pressed && e.LeftButton == MouseButtonState.Released)
