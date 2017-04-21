@@ -2,6 +2,7 @@
 
 namespace MPLite
 {
+    using PlaybackMode = Core.PlaybackMode;
     public delegate void SchedulerEventHandler(SchedulerEventArgs e);
 
     public enum PlaybackCommands
@@ -16,14 +17,14 @@ namespace MPLite
         public PlaybackCommands Command { get; set; }
         public string Playlist { get; set; }
         public int TrackIndex { get; set; }
-        public MPLiteConstant.PlaybackMode Mode { get; set; }
+        public PlaybackMode Mode { get; set; }
 
         public SchedulerEventArgs()
         {
             Command = PlaybackCommands.Stop;
             Playlist = "";
             TrackIndex = -1;
-            Mode = MPLiteConstant.PlaybackMode.None;
+            Mode = PlaybackMode.None;
         }
     }
 

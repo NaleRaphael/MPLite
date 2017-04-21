@@ -2,6 +2,8 @@
 
 namespace MPLite
 {
+    using PlayTrackEventArgs = Core.PlayTrackEventArgs;
+
     public class TrackStatusDispModule
     {
         public Label TrackProgress;

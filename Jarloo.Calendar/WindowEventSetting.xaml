@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Jarloo.Calendar"
+        xmlns:mplitecore="clr-namespace:MPLite.Core;assembly=MPLite.Core"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="WindowEventSetting" Height="350" Width="230" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="#FF323232" Closing="Window_Closing">
@@ -16,6 +17,12 @@
             <ObjectDataProvider x:Key="enumRecurringFrequencies" ObjectType="{x:Type System:Enum}" MethodName="GetValues">
                 <ObjectDataProvider.MethodParameters>
                     <x:Type TypeName="local:RecurringFrequencies"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
+            <ObjectDataProvider x:Key="enumPlaybackMode" ObjectType="{x:Type System:Enum}" MethodName="GetValues">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="mplitecore:PlaybackMode"/>
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
@@ -137,22 +144,25 @@
                         </Grid>
                     </DockPanel>
                 </Grid>
-                <Separator Margin="5,0,5,0" Background="#FF000000"/>
-                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
-                    <Label x:Name="lblTrackIndex" Content="Beginning track index" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <ComboBox x:Name="cmbTrackIndex" Height="20" ItemsSource="{Binding Source={StaticResource enumRecurringFrequencies}}" SelectedIndex="0" VerticalAlignment="Top" Margin="129,5,10,0" SelectionChanged="cmbRecurringFreq_SelectionChanged"/>
-                </Grid>
-                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
-                    <Label x:Name="lblPlaylistName" Content="Playlist" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <ComboBox x:Name="cmbPlaylistName" Height="20" ItemsSource="{Binding Source={StaticResource enumRecurringFrequencies}}" SelectedIndex="0" VerticalAlignment="Top" Margin="77,5,10,0" SelectionChanged="cmbRecurringFreq_SelectionChanged"/>
-                </Grid>
                 <Grid Height="30" Style="{StaticResource FocusableGrid_Basic}">
                     <CheckBox x:Name="chkAutoDelete" Content="Auto delete event" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
                 </Grid>
                 <Grid Height="30" Style="{StaticResource FocusableGrid_Basic}">
                     <CheckBox x:Name="chkThisDayForwardOnly" Content="This day forward only" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
                 </Grid>
-                
+                <Separator Margin="5,0,5,0" Background="#FFC8C8C8"/>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
+                    <Label x:Name="lblPlaylistName" Content="Playlist" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <ComboBox x:Name="cmbPlaylistName" Height="20" SelectedIndex="0" VerticalAlignment="Top" Margin="77,5,10,0" SelectionChanged="cmbPlaylistName_SelectionChanged"/>
+                </Grid>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
+                    <Label x:Name="lblTrackIndex" Content="Beginning track index" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <ComboBox x:Name="cmbTrackIndex" Height="20" SelectedIndex="0" VerticalAlignment="Top" Margin="129,5,10,0"/>
+                </Grid>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
+                    <Label x:Name="lblPlaybackMode" Content="Playback mode" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <ComboBox x:Name="cmbPlaybackMode" Height="20" ItemsSource="{Binding Source={StaticResource enumPlaybackMode}}" SelectedIndex="0" VerticalAlignment="Top" Margin="95,5,10,0"/>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
         

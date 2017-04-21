@@ -41,6 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SDKs\Expression\Blend\.NETFramework\v4.0\Libraries\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
+    <Reference Include="MPLite.Core">
+      <HintPath>dll\MPLite.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -153,6 +156,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\exit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dll\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

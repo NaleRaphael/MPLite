@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace MPLite
 {
+    using PlayTrackEventArgs = Core.PlayTrackEventArgs;
+    using PlaybackMode = Core.PlaybackMode;
+
     public partial class MainWindow : Window
     {
         // Window control
@@ -28,7 +31,7 @@ namespace MPLite
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
         public delegate PlayTrackEventArgs GetTrackEventHandler(MusicPlayer player, string selectedPlaylist = null, 
-            int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None);
+            int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None);
         public static event GetTrackEventHandler GetTrackEvent; // subscriber: MainWindow_GetTrackEvent @ PagePlaylist.xaml.cs
         public delegate void TrackIsPalyingEventHandler(PlayTrackEventArgs e);
         public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;  // subscriber: MainWindow_TrackIsPlayedEvent @ PagePlaylist.xaml.cs
@@ -264,7 +267,7 @@ namespace MPLite
 
         #region Music player control
         private void StartPlayingTrack(string selectedPlaylist = null, int selectedTrackIndex = -1,
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+            PlaybackMode mode = PlaybackMode.None)
         {
             PlayTrack(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode));
         }

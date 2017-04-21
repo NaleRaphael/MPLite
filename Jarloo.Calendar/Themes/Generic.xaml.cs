@@ -12,8 +12,6 @@ namespace Jarloo.Calendar.Themes
         public delegate void DayContentSelectionEventHandler(IEvent evnt, SelectedDayContentActions action);
         public static event DayContentSelectionEventHandler DayContentSelectionEvent;
 
-        private WindowEventSetting winEventSetting;
-
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
@@ -21,21 +19,6 @@ namespace Jarloo.Calendar.Themes
             
             // Notify subscriber which event is selected
             DayContentSelectionEvent(obj, SelectedDayContentActions.ShowInfo);
-        }
-
-        private void ListBoxItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
-            //MessageBox.Show(obj.EventText);
-
-            /*
-            ContextMenu cm = new ContextMenu();
-            cm.PlacementTarget = sender as ListBoxItem;
-            cm.Items.Add(new TextBlock { Text = "Yo" });
-            cm.IsOpen = true;*/
-
-            // Notify subscriber
-            // TODO: Add an event
         }
 
         private void ListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -75,10 +58,10 @@ namespace Jarloo.Calendar.Themes
             ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
             DockPanel dp = cm.PlacementTarget as DockPanel;
             if (dp == null) return;
-            Day obj = dp.DataContext as Day;
-
             
-            winEventSetting = new WindowEventSetting();
+            Day obj = dp.DataContext as Day;
+            WindowEventSetting winEventSetting = new WindowEventSetting(obj.Date);
+
             // TODO: set parent window of WindowEventSetting
             //winEventSetting.Owner;
             winEventSetting.PassingDataEvent += ShowDataFromWinEventSetting;

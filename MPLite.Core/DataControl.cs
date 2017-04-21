@@ -3,7 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace MPLite
+namespace MPLite.Core
 {
     public static class DataControl
     {

@@ -148,7 +148,6 @@
         </Setter>
 
         <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
-        <EventSetter Event="MouseRightButtonUp" Handler="ListBoxItem_MouseRightButtonUp" />
 
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="true">

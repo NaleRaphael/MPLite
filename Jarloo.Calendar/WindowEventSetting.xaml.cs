@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,10 +7,15 @@ using System.Windows.Input;
 
 namespace Jarloo.Calendar
 {
+    using Playlist = MPLite.Core.Playlist;
+    using PlaylistCollection = MPLite.Core.PlaylistCollection;
+
     public partial class WindowEventSetting : Window
     {
         private SolidColorBrush focusedGridBackground = new SolidColorBrush(Color.FromArgb(0xFF, 0x82, 0x65, 0x3F));
         private SolidColorBrush focusedPlayerSettingGridBackground = new SolidColorBrush(Color.FromArgb(0xFF, 0x2A, 0x4F, 0x75));
+
+        private PlaylistCollection plc;
 
         public DateTime InitialBeginningTime;
 
@@ -26,6 +31,13 @@ namespace Jarloo.Calendar
         public WindowEventSetting()
         {
             InitializeComponent();
+            InitializeControls();
+        }
+
+        public WindowEventSetting(DateTime selectedDateTime)
+        {
+            InitializeComponent();
+            InitialBeginningTime = selectedDateTime;
             InitializeControls();
         }
 
@@ -57,11 +69,24 @@ namespace Jarloo.Calendar
             // gridRecurringFreq
             gridRecurringFreq.Height = 50;
             dpRecurringDate.Visibility = Visibility.Hidden;
+
+            // cmbPlaylist & cmbTrackIndex
+            plc = PlaylistCollection.GetDatabase();
+            if (plc != null)
+            {
+                List<string> plNames = new List<string>(plc.TrackLists.Count);
+                foreach (Playlist pl in plc.TrackLists)
+                {
+                    plNames.Add(pl.ListName);
+                }
+                cmbPlaylistName.ItemsSource = plNames;
+            }
         }
 
-        private void CreateEvent()
+        #region Window control
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            CustomEvent ce = null;
+            this.PassingDataEvent = null;
         }
 
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)
@@ -71,11 +96,14 @@ namespace Jarloo.Calendar
                 this.DragMove();
             }
         }
+        #endregion
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void CreateEvent()
         {
-            this.PassingDataEvent = null;
+            CustomEvent ce = null;
         }
+
+        
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
@@ -118,7 +146,6 @@ namespace Jarloo.Calendar
                 recurringFreq = (int)cmbRecurringFreq.SelectedItem;
             }
 
-
             //MessageBox.Show(((RecurringFrequencies)recurringFreq).ToString());
             Console.WriteLine(((RecurringFrequencies)recurringFreq).ToString());
 
@@ -135,6 +162,8 @@ namespace Jarloo.Calendar
                 IgnoreTimeComponent = true,
                 ReadOnlyEvent = false
             };
+
+            //ce.ActionStartsEventArgs;
 
             // TODO: create event args
 
@@ -179,6 +208,18 @@ namespace Jarloo.Calendar
             bool showing = (cmbRecurringFreq.SelectedItem.ToString() == "Custom");
             gridRecurringFreq.Height = showing ? 90 : 50;
             dpRecurringDate.Visibility = showing ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void cmbPlaylistName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string plName = cmbPlaylistName.SelectedItem.ToString();
+            int trackAmount = plc.TrackLists.Find(x => x.ListName == plName).TrackAmount;
+            int[] trackIndices = new int[trackAmount];
+            for (int i = 0; i < trackAmount; i++)
+            {
+                trackIndices[i] = i;
+            }
+            cmbTrackIndex.ItemsSource = trackIndices;
         }
 
         private void btnCloseWindow_Click(object sender, RoutedEventArgs e)

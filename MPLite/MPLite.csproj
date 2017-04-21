@@ -48,6 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dll\Microsoft.Expression.Interactions.dll</HintPath>
     </Reference>
+    <Reference Include="MPLite.Core">
+      <HintPath>dll\MPLite.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -87,11 +90,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EventRouter.cs" />
-    <Compile Include="ProxyWindow.xaml.cs">
-      <DependentUpon>ProxyWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SchedulerEventBase.cs" />
-    <Compile Include="TrackInfo.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
@@ -102,7 +101,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataControl.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -116,10 +114,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PageSetting.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ProxyWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -141,7 +135,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MPLiteConstant.cs" />
     <Compile Include="MusicPlayer.cs" />
     <Compile Include="PageCalendar.xaml.cs">
       <DependentUpon>PageCalendar.xaml</DependentUpon>
@@ -153,7 +146,6 @@
       <DependentUpon>PageSetting.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageSwitcher.cs" />
-    <Compile Include="PlaylistCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

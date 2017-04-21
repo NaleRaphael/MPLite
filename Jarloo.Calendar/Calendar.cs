@@ -39,7 +39,7 @@ namespace Jarloo.Calendar
         public ObservableCollection<string> DayNames { get; set; }
 
         public EventManager EventManager { get; set; }
-        public IEventHandlerFactory EventHandlerFacotry { get; set; }
+        //public IEventHandlerFactory EventHandlerFacotry { get; set; }
 
         public DateTime CurrentDate
         {

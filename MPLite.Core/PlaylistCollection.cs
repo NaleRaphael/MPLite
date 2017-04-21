@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MPLite
+namespace MPLite.Core
 {
     public class PlaylistCollection
     {
@@ -167,7 +167,7 @@ namespace MPLite
             foreach (string filePath in filePaths)
             {
                 string trackName = System.IO.Path.GetFileNameWithoutExtension(filePath);
-                this.Soundtracks.Add(TrackInfo.ParseSource(filePath));
+                this.Soundtracks.Add(Core.TrackInfo.ParseSource(filePath));
             }
         }
 
@@ -212,24 +212,24 @@ namespace MPLite
         public int CurrTrackIndex { get; set; }
         public TrackInfo CurrTrack { get; set; }
         public TrackInfo PrevTrack { get; set; }
-        public MPLiteConstant.TrackStatus PrevTrackStatus { get; set; }
-        public MPLiteConstant.TrackStatus CurrTrackStatus { get; set; }
-        public MPLiteConstant.PlaybackMode PlaybackMode { get; set; }
+        public TrackStatus PrevTrackStatus { get; set; }
+        public TrackStatus CurrTrackStatus { get; set; }
+        public PlaybackMode PlaybackMode { get; set; }
 
         // Default value of playlistName should be `null` so that music play can selected playlist automatically.
         public PlayTrackEventArgs(string playlistName = null, int trackIdx = -1, TrackInfo track = null,
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None, 
-            MPLiteConstant.TrackStatus trackStatus = MPLiteConstant.TrackStatus.None)
+            PlaybackMode mode = PlaybackMode.None, 
+            TrackStatus trackStatus = TrackStatus.None)
         {
             PlaylistName = (playlistName == null) ? Properties.Settings.Default.LastSelectedPlaylist : playlistName;
             PrevTrack = null;
             CurrTrack = track;
             PrevTrackIndex = -1;
             CurrTrackIndex = trackIdx;
-            PrevTrackStatus = MPLiteConstant.TrackStatus.None;
-            CurrTrackStatus = (trackStatus == MPLiteConstant.TrackStatus.None) ? MPLiteConstant.TrackStatus.None : trackStatus;
-            PlaybackMode = (mode == MPLiteConstant.PlaybackMode.None) ? 
-                (MPLiteConstant.PlaybackMode)Properties.Settings.Default.PlaybackMode : mode;
+            PrevTrackStatus = TrackStatus.None;
+            CurrTrackStatus = (trackStatus == TrackStatus.None) ? TrackStatus.None : trackStatus;
+            PlaybackMode = (mode == PlaybackMode.None) ? 
+                (PlaybackMode)Properties.Settings.Default.PlaybackMode : mode;
 
             // Use TaskPlaybackMode as a global variable to handle PlayTrackEvent whether it comes from user-clicked or scheduler-triggered.
             Properties.Settings.Default.TaskPlaybackMode = (int)PlaybackMode;
@@ -243,7 +243,7 @@ namespace MPLite
             PrevTrackIndex = CurrTrackIndex;
             CurrTrackIndex = newTrackIdx;
             PrevTrackStatus = CurrTrackStatus;
-            CurrTrackStatus = MPLiteConstant.TrackStatus.None;
+            CurrTrackStatus = TrackStatus.None;
         }
     }
 }

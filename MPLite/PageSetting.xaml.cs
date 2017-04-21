@@ -6,6 +6,7 @@ using Microsoft.Win32;
 
 namespace MPLite
 {
+    using PlaybackMode = Core.PlaybackMode;
     public partial class PageSetting : Page
     {
         public PageSetting()
@@ -17,7 +18,7 @@ namespace MPLite
         private void InitializeControls()
         {
             // cmb_PlaybackSetting
-            foreach (string mode in Enum.GetNames(typeof(MPLiteConstant.PlaybackMode)))
+            foreach (string mode in Enum.GetNames(typeof(PlaybackMode)))
             {
                 if (mode == "None")
                     continue;
@@ -32,9 +33,9 @@ namespace MPLite
         private void cmb_PlaybackSetting_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string selectedMode = cmb_PlaybackSetting.SelectedItem.ToString();
-            MPLiteConstant.PlaybackMode mode;
+            PlaybackMode mode;
 
-            if (Enum.TryParse<MPLiteConstant.PlaybackMode>(selectedMode, out mode))
+            if (Enum.TryParse<PlaybackMode>(selectedMode, out mode))
             {
                 if ((int)mode != Properties.Settings.Default.PlaybackMode)
                 {

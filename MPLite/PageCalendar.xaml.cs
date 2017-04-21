@@ -4,6 +4,7 @@ using System.Windows.Controls;
 
 namespace MPLite
 {
+    using PlaybackMode = Core.PlaybackMode;
     public partial class PageCalendar : Page
     {
         public static event SchedulerEventHandler SchedulerEvent;
@@ -65,7 +66,7 @@ namespace MPLite
             {
                 Playlist = "New Playlist",
                 Command = PlaybackCommands.Play,
-                Mode = MPLiteConstant.PlaybackMode.Default,
+                Mode = PlaybackMode.Default,
                 TrackIndex = -1
             };
             SchedulerEvent(se);
@@ -96,7 +97,7 @@ namespace MPLite
             {
                 Playlist = "New Playlist",
                 Command = PlaybackCommands.Play,
-                Mode = MPLiteConstant.PlaybackMode.Default,
+                Mode = PlaybackMode.Default,
                 TrackIndex = -1
             };
 
@@ -189,7 +190,7 @@ namespace MPLite
             {
                 Playlist = "New Playlist",
                 Command = PlaybackCommands.Play,
-                Mode = MPLiteConstant.PlaybackMode.Default,
+                Mode = PlaybackMode.Default,
                 TrackIndex = -1
             };
             

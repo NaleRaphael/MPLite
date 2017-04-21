@@ -7,11 +7,18 @@ using System.Windows.Input;
 
 namespace MPLite
 {
+    using TrackInfo = Core.TrackInfo;
+    using MPLiteConstant = Core.MPLiteConstant;
+    using Playlist = Core.Playlist;
+    using PlaylistCollection = Core.PlaylistCollection;
+    using PlayTrackEventArgs = Core.PlayTrackEventArgs;
+    using PlaybackMode = Core.PlaybackMode;
+
     public partial class PagePlaylist : Page
     {
         #region Event
         public delegate void PlayTrackEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1, 
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None);
+            PlaybackMode mode = PlaybackMode.None);
         public static event PlayTrackEventHandler PlayTrackEvent;
         public delegate void NewSelectionEventHandler();    // User selected a track as a new entry of trackQueue
         public static event NewSelectionEventHandler NewSelectionEvent;
@@ -151,6 +158,7 @@ namespace MPLite
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             string selectedPlaylist = ((ListBoxItem)lb_PlaylistMenu.SelectedValue).Content.ToString();
             int cnt = 0;    // Counter for preventing unnesaccery update of database
+            List<string> flist = files.ToList();
 
             // Update lv_Playlist
             foreach (string filePath in files)
@@ -158,13 +166,25 @@ namespace MPLite
                 if (!MPLiteConstant.validFileType.Contains(System.IO.Path.GetExtension(filePath)))
                     continue;
 
-                lv_Playlist.Items.Add(TrackInfo.ParseSource(filePath));
-                cnt++;
+                try
+                {
+                    lv_Playlist.Items.Add(TrackInfo.ParseSource(filePath));
+                    cnt++;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    flist.Remove(filePath);
+                }
             }
 
             // Update database
+            // TODO: update by List<TrackInfo>, instead of filePaths
             if (cnt != 0)
-                PlaylistCollection.AddPlaylist(files, selectedPlaylist);
+                PlaylistCollection.AddPlaylist(flist.ToArray(), selectedPlaylist);
         }
 
         private void lv_Playlist_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -211,7 +231,7 @@ namespace MPLite
         }
 
         private void PlaySoundtrack(string selectedPlaylist = null, int selectedTrackIndex = -1, 
-            MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+            PlaybackMode mode = PlaybackMode.None)
         {
             try
             {
@@ -225,7 +245,7 @@ namespace MPLite
         }
 
         private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
-            int selectedTrackIndex = -1, MPLiteConstant.PlaybackMode mode = MPLiteConstant.PlaybackMode.None)
+            int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None)
         {
             if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
             {
