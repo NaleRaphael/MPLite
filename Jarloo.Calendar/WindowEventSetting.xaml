@@ -1,0 +1,163 @@
+﻿<Window x:Class="Jarloo.Calendar.WindowEventSetting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:Jarloo.Calendar"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="WindowEventSetting" Height="350" Width="230" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="#FF323232" Closing="Window_Closing">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/AppleScrollViewer.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <ObjectDataProvider x:Key="enumRecurringFrequencies" ObjectType="{x:Type System:Enum}" MethodName="GetValues">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="local:RecurringFrequencies"/>
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+
+            <Image x:Key="ImagExitWindow" Source="Images\exit.png"/>
+
+            <Style x:Key="FocusableGrid_Basic" TargetType="{x:Type Grid}">
+                <EventSetter Event="MouseEnter" Handler="BasicGrid_MouseEnter"/>
+                <EventSetter Event="MouseLeave" Handler="BasicGrid_MouseLeave"/>
+            </Style>
+
+            <Style x:Key="FocusableGrid_PlayerSetting" TargetType="{x:Type Grid}">
+                <EventSetter Event="MouseEnter" Handler="PlayerSettingGrid_MouseEnter"/>
+                <EventSetter Event="MouseLeave" Handler="PlayerSettingGrid_MouseLeave"/>
+            </Style>
+
+            <Style x:Key="FlatButton" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="Transparent" BorderThickness="0">
+                                <ContentPresenter Name="content" Content="{TemplateBinding Button.Content}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#FF2A2A2A" TargetName="border"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#FF252525" TargetName="border"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="VerticalCheckBox" TargetType="{x:Type CheckBox}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type CheckBox}">
+                            <DockPanel x:Name="dockPanel">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock x:Name="boxName" Grid.Row="0" Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontFamily="{TemplateBinding FontFamily}" 
+                                               FontSize="{TemplateBinding FontSize}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Rectangle x:Name="box" Grid.Row="1" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" Margin="1,0,1,0"/>
+                                </Grid>
+                            </DockPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="box" Property="Fill" Value="#FF40823E"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter TargetName="box" Property="Fill" Value="Transparent"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="gridContainer">
+        <StackPanel Height="30" VerticalAlignment="Top" MouseDown="StackPanel_MouseDown">
+            <Grid Height="30" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0">
+                <Border BorderBrush="#FFAFAFAF" BorderThickness="0,0,0,1" Margin="5,0,5,0">
+                    <Grid>
+                        <Button x:Name="btnCloseWindow" Width="30" Style="{StaticResource FlatButton}" Margin="0,0,190,0" Click="btnCloseWindow_Click">
+                            <Image Source="Images\exit.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Button>
+                        <TextBlock Text="Event setting" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFC8C8C8" FontFamily="Segoe UI" FontSize="16"/>
+                    </Grid>
+                </Border>
+            </Grid>
+        </StackPanel>
+        <ScrollViewer x:Name="scrollViewer" Margin="0,30,0,35" Style="{StaticResource AppleScrollViewer}">
+            <StackPanel Height="Auto" MouseDown="StackPanel_MouseDown" Margin="0,0,0,0">
+                <Grid Height="30" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
+                    <Label x:Name="lblEventName" Content="Event name" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <TextBox x:Name="txtEventName" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right"/>
+                </Grid>
+                <Grid Height="30" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
+                    <Label x:Name="lblRank" Content="Rank" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <TextBox x:Name="txtRank" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right"/>
+                </Grid>
+                <Grid Height="50" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
+                    <Label x:Name="lblBeginningTime" Content="Beginning time" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <xctk:DateTimePicker x:Name="dateTimePicker" Margin="10,0,10,10" Height="20" VerticalAlignment="Bottom"/>
+                </Grid>
+                <Grid Height="50" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
+                    <Label x:Name="lblDuration" Content="Duration (HH:mm:ss)" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <xctk:TimeSpanUpDown x:Name="timeSpanUpDown" Height="20" VerticalAlignment="Bottom" Margin="28,0,10,10"/>
+                    <CheckBox x:Name="chkSetDuration" HorizontalAlignment="Left" Margin="10,23,0,0" VerticalAlignment="Top" IsChecked="True"/>
+                </Grid>
+                <Grid x:Name="gridRecurringFreq" Height="90" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
+                    <Label x:Name="lblRecurringFreq" Content="Recurring frequency" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <ComboBox x:Name="cmbRecurringFreq" Height="20" ItemsSource="{Binding Source={StaticResource enumRecurringFrequencies}}" SelectedIndex="0" VerticalAlignment="Top" Margin="10,20,10,0" SelectionChanged="cmbRecurringFreq_SelectionChanged"/>
+                    <DockPanel x:Name="dpRecurringDate" Margin="10,40,10,0">
+                        <Grid x:Name="gridRecurringDate" Height="40">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Grid.Column="0" Style="{StaticResource VerticalCheckBox}" Content="Sun" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                            <CheckBox Grid.Column="1" Style="{StaticResource VerticalCheckBox}" Content="Mon" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                            <CheckBox Grid.Column="2" Style="{StaticResource VerticalCheckBox}" Content="Tue" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                            <CheckBox Grid.Column="3" Style="{StaticResource VerticalCheckBox}" Content="Wen" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                            <CheckBox Grid.Column="4" Style="{StaticResource VerticalCheckBox}" Content="Thu" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                            <CheckBox Grid.Column="5" Style="{StaticResource VerticalCheckBox}" Content="Fri" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                            <CheckBox Grid.Column="6" Style="{StaticResource VerticalCheckBox}" Content="Sat" Foreground="#FFC8C8C8" FontSize="12" FontFamily="Segoe UI"/>
+                        </Grid>
+                    </DockPanel>
+                </Grid>
+                <Separator Margin="5,0,5,0" Background="#FF000000"/>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
+                    <Label x:Name="lblTrackIndex" Content="Beginning track index" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <ComboBox x:Name="cmbTrackIndex" Height="20" ItemsSource="{Binding Source={StaticResource enumRecurringFrequencies}}" SelectedIndex="0" VerticalAlignment="Top" Margin="129,5,10,0" SelectionChanged="cmbRecurringFreq_SelectionChanged"/>
+                </Grid>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
+                    <Label x:Name="lblPlaylistName" Content="Playlist" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
+                    <ComboBox x:Name="cmbPlaylistName" Height="20" ItemsSource="{Binding Source={StaticResource enumRecurringFrequencies}}" SelectedIndex="0" VerticalAlignment="Top" Margin="77,5,10,0" SelectionChanged="cmbRecurringFreq_SelectionChanged"/>
+                </Grid>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_Basic}">
+                    <CheckBox x:Name="chkAutoDelete" Content="Auto delete event" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
+                </Grid>
+                <Grid Height="30" Style="{StaticResource FocusableGrid_Basic}">
+                    <CheckBox x:Name="chkThisDayForwardOnly" Content="This day forward only" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
+                </Grid>
+                
+            </StackPanel>
+        </ScrollViewer>
+        
+        <Button x:Name="btnOK" Click="btnOK_Click" Height="35" VerticalAlignment="Bottom" Style="{StaticResource FlatButton}">
+            <TextBlock Text="OK" VerticalAlignment="Center" HorizontalAlignment="Center" Background="Transparent" Foreground="#FFC8C8C8" FontSize="16" FontFamily="Segoe UI"/>
+        </Button>
+    </Grid>
+</Window>

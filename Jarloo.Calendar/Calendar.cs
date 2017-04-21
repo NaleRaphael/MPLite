@@ -112,7 +112,7 @@ namespace Jarloo.Calendar
 
             BuildCalendar(DateTime.Today);
 
-            Generic.DayContentSelectionEvent += EventManager.DeleteEvent;
+            Generic.DayContentSelectionEvent += SelectedDayContentActionEntry;
         }
 
         public void BuildCalendar(DateTime targetDate)
@@ -226,6 +226,26 @@ namespace Jarloo.Calendar
             }
 
             // TODO: add a event for remove / gray out those events have ended already
+        }
+
+        private void SelectedDayContentActionEntry(IEvent evnt, SelectedDayContentActions action)
+        {
+            if (evnt == null) return;
+
+            switch (action)
+            {
+                case SelectedDayContentActions.ShowInfo:
+                    MessageBox.Show(evnt.EventText);
+                    break;
+                case SelectedDayContentActions.AddEvent:
+                    EventManager.AddEvent((CustomEvent)evnt);
+                    break;
+                case SelectedDayContentActions.DeleteEvent:
+                    EventManager.DeleteEvent(evnt.GUID);
+                    break;
+                default:
+                    break;
+            }
         }
 
         #region Public methods for user

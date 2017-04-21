@@ -12,12 +12,123 @@
     xmlns:Jarloo="clr-namespace:Jarloo.Calendar" xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
     x:Class="Jarloo.Calendar.Themes.Generic">
 
+    <LinearGradientBrush x:Key="CheckedBlue" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FF285AB3" Offset="0" />
+        <GradientStop Color="#FF4184EC" Offset="0.5" />
+        <GradientStop Color="#FF558BED" Offset="0.5" />
+        <GradientStop Color="#FF7DACF0" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="CheckedOrange" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#FFCA6A13" Offset="0" />
+        <GradientStop Color="#FFF67D0C" Offset="0.2" />
+        <GradientStop Color="#FFFE7F0C" Offset="0.2" />
+        <GradientStop Color="#FFFA8E12" Offset="0.5" />
+        <GradientStop Color="#FFFF981D" Offset="0.5" />
+        <GradientStop Color="#FFFCBC5A" Offset="1" />
+    </LinearGradientBrush>
+    <SolidColorBrush x:Key="CheckedOrangeBorder" Color="#FF8E4A1B" />
+    <SolidColorBrush x:Key="CheckedBlueBorder" Color="#FF143874" />
+    
+    <Style x:Key="OrangeSwitchStyle" TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="OnChecking">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="30" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="OnUnchecking">
+                            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="slider" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.1000000" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <DockPanel x:Name="dockPanel">
+                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" ContentTemplate="{TemplateBinding ContentTemplate}" RecognizesAccessKey="True" VerticalAlignment="Center" />
+                        <Grid>
+                            <Border x:Name="BackgroundBorder" BorderBrush="#FF939393" BorderThickness="1" CornerRadius="3" Height="Auto" Width="Auto">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#FFB5B5B5" Offset="0" />
+                                        <GradientStop Color="#FFDEDEDE" Offset="0.1" />
+                                        <GradientStop Color="#FFEEEEEE" Offset="0.5" />
+                                        <GradientStop Color="#FFFAFAFA" Offset="0.5" />
+                                        <GradientStop Color="#FFFEFEFE" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+                                    <Ellipse x:Name="Off" Width="14" Height="14" Stroke="#FF7A7A7A" StrokeThickness="2" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <Line x:Name="On" X1="0" Y1="0" X2="0" Y2="14" Stroke="#FF7A7A7A" StrokeThickness="2" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Grid>
+                            </Border>
+                            <Border BorderBrush="#FF939393" HorizontalAlignment="Left" x:Name="slider" Width="31" Height="Auto" BorderThickness="1" CornerRadius="3" RenderTransformOrigin="0.5,0.5" Margin="0">
+                                <Border.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                        <SkewTransform AngleX="0" AngleY="0" />
+                                        <RotateTransform Angle="0" />
+                                        <TranslateTransform X="0" Y="0" />
+                                    </TransformGroup>
+                                </Border.RenderTransform>
+                                <Border.Background>
+                                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                        <GradientStop Color="#FFF0F0F0" Offset="0" />
+                                        <GradientStop Color="#FFCDCDCD" Offset="0.1" />
+                                        <GradientStop Color="#FFFBFBFB" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                        </Grid>
+                    </DockPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Trigger.ExitActions>
+                                <BeginStoryboard Storyboard="{StaticResource OnUnchecking}" x:Name="OnUnchecking_BeginStoryboard" />
+                            </Trigger.ExitActions>
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Storyboard="{StaticResource OnChecking}" x:Name="OnChecking_BeginStoryboard" />
+                            </Trigger.EnterActions>
+                            <Setter TargetName="On" Property="Stroke" Value="White" />
+                            <Setter TargetName="Off" Property="Stroke" Value="White" />
+                            <!-- Change Orange or Blue color here -->
+                            <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedOrange}" />
+                            <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedOrangeBorder}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <!-- ToDo: Add Style for Isenabled == False -->
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Image x:Key="MoveNext" Source="../Images/move_next.png" RenderOptions.BitmapScalingMode="HighQuality"/>
     <Image x:Key="MovePrev" Source="../Images/move_prev.png" RenderOptions.BitmapScalingMode="HighQuality"/>
 
     <Converters:DateConverter x:Key="DateConverter"></Converters:DateConverter>
     <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"></Converters:DayBorderColorConverter>
 
+    <Style x:Key="StyleMenuItemShowInfo" TargetType="{x:Type MenuItem}">
+        <EventSetter Event="Click" Handler="miShowInfo_Click"/>
+    </Style>
+
+    <Style x:Key="StyleMenuItemAddEvent" TargetType="{x:Type MenuItem}">
+        <EventSetter Event="Click" Handler="miAddEvent_Click"/>
+    </Style>
+
+    <Style x:Key="StyleMenuItemDeleteEvent" TargetType="{x:Type MenuItem}">
+        <EventSetter Event="Click" Handler="miDeleteEvent_Click"/>
+    </Style>
+    
     <Style x:Key="StyleDayContent" TargetType="{x:Type ListBoxItem}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Height" Value="14"/>
@@ -26,37 +137,18 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Padding" Value="0,0,0,0"/>
         <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <CheckBox x:Name="chkEnable" Style="{StaticResource OrangeSwitchStyle}" Width="60" IsChecked="{Binding Enabled}"/>
+                    <MenuItem x:Name="miShowInfo" Style="{StaticResource StyleMenuItemShowInfo}" Header="Event info"/>
+                    <MenuItem x:Name="miDeleteEvent" Style="{StaticResource StyleMenuItemDeleteEvent}" Header="Delete event"/>
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
 
         <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
         <EventSetter Event="MouseRightButtonUp" Handler="ListBoxItem_MouseRightButtonUp" />
-
-        <!--<Setter Property="VerticalContentAlignment" Value="Top"/>-->
-
-
-        <!--
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListBoxItem">
-                    <Border x:Name="bd" Background="{TemplateBinding Background}" BorderThickness="0">
-                        <Label Content="{Binding UpdateSourceTrigger=PropertyChanged, diag:PresentationTraceSources.TraceLevel=High}"/>
-                        
-                        <ContentPresenter x:Name="contentPresenter" Content="{TemplateBinding ListBoxItem.Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Top" Margin="{TemplateBinding Padding}"/>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Foreground" Value="#FFC8C8C8"/>
-                            <Setter Property="Background" Value="#FFB28E50"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="false">
-                            <Setter Property="Foreground" Value="#FFC8C8C8"/>
-                            <Setter Property="Background" Value="Transparent"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        -->
 
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="true">
@@ -97,12 +189,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="StyleDockPanel" TargetType="{x:Type DockPanel}">
-        <!--
-        <EventSetter Event="PreviewMouseDown" Handler="PreviewMouseDown" />
-        -->
-    </Style>
-    
     <Style TargetType="{x:Type Jarloo:Calendar}">
         <Setter Property="Template">
             <Setter.Value>
@@ -147,7 +233,7 @@
 
                             <ItemsControl x:Name="icDays" ItemsSource="{Binding Days}">                               
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate>                                        
+                                    <DataTemplate>
                                         <!--Box-->
                                         <Border BorderBrush="Black" BorderThickness="1" Padding="0">
                                             
@@ -172,9 +258,9 @@
                                                     </Style>
                                                 </Border.Style>
 
-                                                <DockPanel Style="{StaticResource StyleDockPanel}">
+                                                <DockPanel>
                                                     <!--Day Number-->
-                                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" FlowDirection="RightToLeft">
+                                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" FlowDirection="RightToLeft" Background="Transparent">
                                                         <TextBlock TextAlignment="Right" Text="{Binding Date, Converter={StaticResource DateConverter}, ConverterParameter=DAY}" FontSize="14" Margin="5,5,5,5">
                                                             <TextBlock.Style>
                                                                 <Style TargetType="{x:Type TextBlock}">
@@ -185,7 +271,7 @@
                                                                     </Style.Triggers>
                                                                 </Style>
                                                             </TextBlock.Style>
-                                                        </TextBlock>                                                                                                      
+                                                        </TextBlock>
                                                     </StackPanel>
 
                                                     <!-- Content of a day -->
@@ -199,7 +285,14 @@
                                                             </DataTemplate>
                                                         </ListBox.ItemTemplate>
                                                     </ListBox>
-                                                    
+
+                                                    <DockPanel.ContextMenu>
+                                                        <ContextMenu>
+                                                            <!--<MenuItem x:Name="miShowInfo" Style="{StaticResource StyleMenuItemShowInfo}" Header="Event info"/>-->
+                                                            <MenuItem x:Name="miAddEvent" Style="{StaticResource StyleMenuItemAddEvent}" Header="Add event"/>
+                                                            <!--<MenuItem x:Name="miDeleteEvent" Style="{StaticResource StyleMenuItemDeleteEvent}" Header="Delete event"/>-->
+                                                        </ContextMenu>
+                                                    </DockPanel.ContextMenu>
                                                 </DockPanel>
                                             </Border>
                                         </Border>

@@ -2,14 +2,17 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Forms.Integration;
 
 namespace Jarloo.Calendar.Themes
 {
     public partial class Generic
     {
         // TODO: show event details when a ListBoxItem is selected
-        public delegate void DayContentSelectionEventHandler(Guid guid);
+        public delegate void DayContentSelectionEventHandler(IEvent evnt, SelectedDayContentActions action);
         public static event DayContentSelectionEventHandler DayContentSelectionEvent;
+
+        private WindowEventSetting winEventSetting;
 
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -17,13 +20,19 @@ namespace Jarloo.Calendar.Themes
             MessageBox.Show(obj.GUID.ToString());
             
             // Notify subscriber which event is selected
-            DayContentSelectionEvent(obj.GUID);
+            DayContentSelectionEvent(obj, SelectedDayContentActions.ShowInfo);
         }
 
         private void ListBoxItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
-            MessageBox.Show(obj.EventText);
+            //MessageBox.Show(obj.EventText);
+
+            /*
+            ContextMenu cm = new ContextMenu();
+            cm.PlacementTarget = sender as ListBoxItem;
+            cm.Items.Add(new TextBlock { Text = "Yo" });
+            cm.IsOpen = true;*/
 
             // Notify subscriber
             // TODO: Add an event
@@ -50,5 +59,55 @@ namespace Jarloo.Calendar.Themes
             }
             return;
         }
+
+        private void miShowInfo_Click(object sender, RoutedEventArgs e)
+        {
+            ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
+            ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
+
+            if (lbi == null) return;
+            CustomEvent obj = lbi.DataContext as CustomEvent;
+            DayContentSelectionEvent(obj, SelectedDayContentActions.ShowInfo);
+        }
+
+        private void miAddEvent_Click(object sender, RoutedEventArgs e)
+        {
+            ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
+            DockPanel dp = cm.PlacementTarget as DockPanel;
+            if (dp == null) return;
+            Day obj = dp.DataContext as Day;
+
+            
+            winEventSetting = new WindowEventSetting();
+            // TODO: set parent window of WindowEventSetting
+            //winEventSetting.Owner;
+            winEventSetting.PassingDataEvent += ShowDataFromWinEventSetting;
+            winEventSetting.WindowStartupLocation = WindowStartupLocation.CenterScreen;     // TODO: try to set startupLocation to center of MPLite
+            winEventSetting.Show();
+            
+            //DayContentSelectionEvent(obj, SelectedDayContentActions.AddEvent);
+        }
+
+        private void ShowDataFromWinEventSetting(string data)
+        {
+            MessageBox.Show("Generic:" + data);
+        }
+
+        private void miDeleteEvent_Click(object sender, RoutedEventArgs e)
+        {
+            ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
+            ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
+            if (lbi == null) return;
+
+            CustomEvent obj = (CustomEvent)lbi.DataContext;
+            DayContentSelectionEvent(obj, SelectedDayContentActions.DeleteEvent);
+        }
+    }
+
+    public enum SelectedDayContentActions
+    {
+        ShowInfo = 1,
+        AddEvent = 2,
+        DeleteEvent = 3
     }
 }
