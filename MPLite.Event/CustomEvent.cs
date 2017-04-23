@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace Jarloo.Calendar
+namespace MPLite.Event
 {
     public class CustomEvent : IEvent
     {

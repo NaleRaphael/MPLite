@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Jarloo.Calendar
+namespace MPLite.Event
 {
+    using DataControl = Core.DataControl;
     public class EventCollection
     {
         public List<CustomEvent> EventList { get; set; }

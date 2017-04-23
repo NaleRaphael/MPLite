@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Jarloo.Calendar
+namespace MPLite.Event
 {
     public static class WeekdayExtension
     {

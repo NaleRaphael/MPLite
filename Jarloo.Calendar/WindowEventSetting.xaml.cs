@@ -7,8 +7,14 @@ using System.Windows.Input;
 
 namespace Jarloo.Calendar
 {
+    using IEvent = MPLite.Event.IEvent;
+    using RecurringFrequencies = MPLite.Event.RecurringFrequencies;
+    using CustomEvent = MPLite.Event.CustomEvent;
+    using SchedulerEventArgs = MPLite.Event.SchedulerEventArgs;
     using Playlist = MPLite.Core.Playlist;
     using PlaylistCollection = MPLite.Core.PlaylistCollection;
+    using PlaybackCommands = MPLite.Event.PlaybackCommands;
+    using PlaybackMode = MPLite.Core.PlaybackMode;
 
     public partial class WindowEventSetting : Window
     {
@@ -16,8 +22,6 @@ namespace Jarloo.Calendar
         private SolidColorBrush focusedPlayerSettingGridBackground = new SolidColorBrush(Color.FromArgb(0xFF, 0x2A, 0x4F, 0x75));
 
         private PlaylistCollection plc;
-
-        public DateTime InitialBeginningTime;
 
         public delegate IEvent NewlyAddedEventHandler();
         public event NewlyAddedEventHandler NewlyAddedEvent;
@@ -27,6 +31,8 @@ namespace Jarloo.Calendar
 
         public delegate void NewEventIsCreatedEventHandler(CustomEvent evnt);
         public event NewEventIsCreatedEventHandler NewEventIsCreatedEvent;
+
+        public DateTime InitialBeginningTime { get; set; }
 
         public WindowEventSetting()
         {
@@ -103,8 +109,6 @@ namespace Jarloo.Calendar
             CustomEvent ce = null;
         }
 
-        
-
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
             PassingDataEvent(timeSpanUpDown.Value.ToString());
@@ -163,9 +167,19 @@ namespace Jarloo.Calendar
                 ReadOnlyEvent = false
             };
 
-            //ce.ActionStartsEventArgs;
-
             // TODO: create event args
+            ce.ActionStartsEventArgs = new SchedulerEventArgs
+            {
+                Playlist = cmbPlaylistName.SelectedItem.ToString(),
+                Command = PlaybackCommands.Play,
+                Mode = (PlaybackMode)cmbPlaybackMode.SelectedItem,
+                TrackIndex = cmbTrackIndex.SelectedIndex
+            };
+
+            ce.ActionEndsEventArgs = new SchedulerEventArgs
+            {
+                Command = PlaybackCommands.Stop
+            };
 
             NewEventIsCreatedEvent(ce);
         }

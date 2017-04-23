@@ -89,12 +89,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums.cs" />
     <Compile Include="MultiTrigEvent.cs" />
     <Compile Include="Themes\Generic.xaml.cs">
       <DependentUpon>Generic.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Utils.cs" />
     <Compile Include="WindowEventSetting.xaml.cs" />
     <Page Include="Resources\AppleScrollViewer.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -119,12 +117,7 @@
   <ItemGroup>
     <Compile Include="Converters\DateConverter.cs" />
     <Compile Include="Converters\DayBorderColorConverter.cs" />
-    <Compile Include="CustomEvent.cs" />
-    <Compile Include="DataControl.cs" />
     <Compile Include="Day.cs" />
-    <Compile Include="EventCollection.cs" />
-    <Compile Include="EventManager.cs" />
-    <Compile Include="IEvent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -157,8 +150,9 @@
   <ItemGroup>
     <Resource Include="Images\exit.png" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="dll\" />
+    <Content Include="dll\MPLite.Core.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

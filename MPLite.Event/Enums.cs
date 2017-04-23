@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace Jarloo.Calendar
+namespace MPLite.Event
 {
     [Flags]
     public enum RecurringFrequencies
@@ -36,5 +33,12 @@ namespace Jarloo.Calendar
         Friday = 0x20,
         Saturday = 0x40,
         Unknown = 0x80
+    }
+
+    public enum CalendarViewingMode
+    {
+        Daily = 0,
+        Weekly = 1,
+        Monthly = 2
     }
 }

@@ -18,7 +18,7 @@ namespace MPLite.Core
         public static void AddPlaylist(string[] filePaths, string selectedPlaylist)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
-            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
             {
@@ -32,13 +32,13 @@ namespace MPLite.Core
                 Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
                 pl.UpdateTracks(filePaths);
             }
-            DataControl.SaveData<PlaylistCollection>(configPath, plc);
+            DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
         }
 
         public static void AddPlaylist(List<TrackInfo> tracks, string selectedPlaylist)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
-            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
             {
@@ -52,13 +52,13 @@ namespace MPLite.Core
                 Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
                 pl.UpdateTracks(tracks);
             }
-            DataControl.SaveData<PlaylistCollection>(configPath, plc);
+            DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
         }
 
         public static void DeleteTracksByIndices(int[] indices, string selectedPlaylist)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
-            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
             {
@@ -68,13 +68,13 @@ namespace MPLite.Core
             Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
             pl.DeleteTracksByIndices(indices);
 
-            DataControl.SaveData<PlaylistCollection>(configPath, plc);
+            DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
         }
 
         public static PlaylistCollection GetDatabase()
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
-            return DataControl.ReadFromJson<PlaylistCollection>(configPath);
+            return DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
         }
 
         public static Playlist GetPlaylist(string listName)
@@ -83,7 +83,7 @@ namespace MPLite.Core
             Playlist pl;
             try
             {
-                pl = DataControl.ReadFromJson<PlaylistCollection>(configPath).TrackLists.Find(x => x.ListName == listName);
+                pl = DataControl.ReadFromJson<PlaylistCollection>(configPath, false).TrackLists.Find(x => x.ListName == listName);
             }
             catch
             {
@@ -97,13 +97,13 @@ namespace MPLite.Core
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             try
             {
-                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
                 plc = (plc == null) ? new PlaylistCollection() : plc;
 
                 string newlistName = AddSerialNum(plc.TrackLists, listName);
                 Playlist pl = new Playlist(newlistName);
                 plc.TrackLists.Add(pl);
-                DataControl.SaveData<PlaylistCollection>(configPath, plc);
+                DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
 
                 return newlistName;
             }
@@ -118,9 +118,9 @@ namespace MPLite.Core
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             try
             {
-                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath);
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
                 plc.TrackLists.Remove(plc.TrackLists.Find(x => x.ListName == listName));
-                DataControl.SaveData<PlaylistCollection>(configPath, plc);
+                DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
             }
             catch
             {

@@ -12,7 +12,9 @@ namespace MPLite
     using Playlist = Core.Playlist;
     using PlaylistCollection = Core.PlaylistCollection;
     using PlayTrackEventArgs = Core.PlayTrackEventArgs;
+    using SchedulerEventArgs = Event.SchedulerEventArgs;
     using PlaybackMode = Core.PlaybackMode;
+    using PlaybackCommands = Event.PlaybackCommands;
 
     public partial class PagePlaylist : Page
     {
@@ -174,10 +176,6 @@ namespace MPLite
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    flist.Remove(filePath);
                 }
             }
 

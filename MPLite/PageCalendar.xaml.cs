@@ -4,7 +4,15 @@ using System.Windows.Controls;
 
 namespace MPLite
 {
+    using CalendarViewingMode = Event.CalendarViewingMode;
     using PlaybackMode = Core.PlaybackMode;
+    using PlaybackCommands = Event.PlaybackCommands;
+    using RecurringFrequencies = Event.RecurringFrequencies;
+    using CustomEvent = Event.CustomEvent;
+    using SchedulerEventArgs = Event.SchedulerEventArgs;
+    using SchedulerEventHandler = Event.SchedulerEventHandler;
+    using SchedulerEventHandlerFactory = Event.SchedulerEventHandlerFactory;
+
     public partial class PageCalendar : Page
     {
         public static event SchedulerEventHandler SchedulerEvent;
@@ -81,14 +89,14 @@ namespace MPLite
         // TEST
         private void btnEventManagerTester_Click(object sender, RoutedEventArgs e)
         {
-            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent() {
+            CustomEvent evnt = new CustomEvent() {
                 BeginningTime = DateTime.Now.AddSeconds(5),
                 Duration = TimeSpan.FromSeconds(5),
                 Enabled = true,
                 EventText = "Test event",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryWeekday,
+                RecurringFrequency = RecurringFrequencies.EveryWeekday,
                 ThisDayForwardOnly = true,
                 IgnoreTimeComponent = false,
             };
@@ -138,7 +146,7 @@ namespace MPLite
 
         private void btnWeekdayConvert_Click(object sender, RoutedEventArgs e)
         {
-            var result = Jarloo.Calendar.Utils.ConvertToCustomWeekday(DateTime.Now.AddDays(3));
+            var result = MPLite.Event.Utils.ConvertToCustomWeekday(DateTime.Now.AddDays(3));
             byte temp = (byte)result;
             MessageBox.Show(result.ToString());
         }
@@ -166,13 +174,13 @@ namespace MPLite
             */
 
             DateTime source = DateTime.Today;
-            bool result = Jarloo.Calendar.Utils.IsDayInRange(source, source.AddDays(-5), Jarloo.Calendar.CalendarViewingMode.Weekly);
+            bool result = MPLite.Event.Utils.IsDayInRange(source, source.AddDays(-5), CalendarViewingMode.Weekly);
             MessageBox.Show(result.ToString());
         }
 
         private void btnAddNewEvent_Click(object sender, RoutedEventArgs e)
         {
-            Jarloo.Calendar.CustomEvent evnt = new Jarloo.Calendar.CustomEvent
+            CustomEvent evnt = new CustomEvent
             {
                 BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(10),
                 Duration = TimeSpan.FromSeconds(5),
@@ -180,7 +188,7 @@ namespace MPLite
                 EventText = "Test event2",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = Jarloo.Calendar.RecurringFrequencies.EveryTuesday,
+                RecurringFrequency = RecurringFrequencies.EveryTuesday,
                 ThisDayForwardOnly = true,
                 IgnoreTimeComponent = true,
                 AutoDelete = false,

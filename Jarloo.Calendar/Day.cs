@@ -13,6 +13,7 @@ using System.Collections.ObjectModel;
 
 namespace Jarloo.Calendar
 {
+    using IEvent = MPLite.Event.IEvent;
     public class Day : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

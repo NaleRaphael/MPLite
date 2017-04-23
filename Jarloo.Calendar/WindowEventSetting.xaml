@@ -6,6 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Jarloo.Calendar"
         xmlns:mplitecore="clr-namespace:MPLite.Core;assembly=MPLite.Core"
+        xmlns:mpliteevent="clr-namespace:MPLite.Event;assembly=MPLite.Core"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="WindowEventSetting" Height="350" Width="230" WindowStyle="None" AllowsTransparency="True" ResizeMode="NoResize" Background="#FF323232" Closing="Window_Closing">
@@ -16,7 +17,7 @@
             </ResourceDictionary.MergedDictionaries>
             <ObjectDataProvider x:Key="enumRecurringFrequencies" ObjectType="{x:Type System:Enum}" MethodName="GetValues">
                 <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="local:RecurringFrequencies"/>
+                    <x:Type TypeName="mpliteevent:RecurringFrequencies"/>
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 

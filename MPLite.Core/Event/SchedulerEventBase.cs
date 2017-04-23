@@ -1,8 +1,7 @@
-﻿using Jarloo.Calendar;
-
-namespace MPLite
+﻿namespace MPLite.Event
 {
     using PlaybackMode = Core.PlaybackMode;
+
     public delegate void SchedulerEventHandler(SchedulerEventArgs e);
 
     public enum PlaybackCommands
@@ -12,7 +11,7 @@ namespace MPLite
         Pause = 2
     }
 
-    public class SchedulerEventArgs : Jarloo.Calendar.CustomEventArgs
+    public class SchedulerEventArgs : CustomEventArgs
     {
         public PlaybackCommands Command { get; set; }
         public string Playlist { get; set; }
@@ -28,7 +27,7 @@ namespace MPLite
         }
     }
 
-    public class SchedulerEventHandlerFactory : Jarloo.Calendar.IEventHandlerFactory
+    public class SchedulerEventHandlerFactory : IEventHandlerFactory
     {
         public event SchedulerEventHandler SchedulerEvent;
 

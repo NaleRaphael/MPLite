@@ -20,5 +20,8 @@
     <Setting Name="LastSelectedPlaylist" Type="System.String" Scope="User">
       <Value Profile="(Default)">New Playlist</Value>
     </Setting>
+    <Setting Name="DBPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">eventDB.json</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

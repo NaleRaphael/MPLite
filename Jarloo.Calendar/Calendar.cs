@@ -17,6 +17,13 @@ using Jarloo.Calendar.Themes;
 
 namespace Jarloo.Calendar
 {
+    using CustomEvent = MPLite.Event.CustomEvent;
+    using EventManager = MPLite.Event.EventManager;
+    using Utils = MPLite.Event.Utils;
+    using CalendarViewingMode = MPLite.Event.CalendarViewingMode;
+    using IEvent = MPLite.Event.IEvent;
+    using IEventHandlerFactory = MPLite.Event.IEventHandlerFactory;
+    
     public class Calendar : Control, INotifyPropertyChanged
     {
         private int currentViewingYear;
@@ -103,7 +110,7 @@ namespace Jarloo.Calendar
             ViewingMode = CalendarViewingMode.Monthly;
         }
 
-        // Workaround: controls cannot be initialized with parameters, so that EventManager is created after Calendar has been initilized.
+        // Workaround: controls cannot be initialized with parameters, so that EventManager is created after Calendar has been initialized.
         public void OnInitialization(IEventHandlerFactory handlerFactory)
         {
             EventManager = new EventManager(handlerFactory);
@@ -113,6 +120,7 @@ namespace Jarloo.Calendar
             BuildCalendar(DateTime.Today);
 
             Generic.DayContentSelectionEvent += SelectedDayContentActionEntry;
+            Generic.NewEventIsCreatedEvent += OnRecievingNewEventObject;
         }
 
         public void BuildCalendar(DateTime targetDate)
@@ -159,6 +167,11 @@ namespace Jarloo.Calendar
         private static int DayOfWeekNumber(DayOfWeek dow)
         {
             return Convert.ToInt32(dow.ToString("D"));
+        }
+
+        private void OnRecievingNewEventObject(CustomEvent ce)
+        {
+            EventManager.AddEvent(ce);
         }
 
         private void RefreshCalendar(int offset)
@@ -277,11 +290,11 @@ namespace Jarloo.Calendar
             this.Day = day;
         }
     }
-
+    /*
     public enum CalendarViewingMode
     {
         Daily = 0,
         Weekly = 1,
         Monthly = 2
-    }
+    }*/
 }
