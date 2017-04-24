@@ -15,47 +15,47 @@ namespace MPLite.Core
         // TODO: Update by given playlist? (necessary?)
 
         // TODO: Update listview then update database (according to the order of playlist)
-        public static void AddPlaylist(string[] filePaths, string selectedPlaylist)
+        public static void AddPlaylist(string[] filePaths, string listName)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
             {
-                Playlist pl = new Playlist(selectedPlaylist);
+                Playlist pl = new Playlist(listName);
                 pl.UpdateTracks(filePaths);
                 plc = new PlaylistCollection();
                 plc.TrackLists.Add(pl);
             }
             else
             {
-                Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
+                Playlist pl = plc.TrackLists.Find(x => x.ListName == listName);
                 pl.UpdateTracks(filePaths);
             }
             DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
         }
 
-        public static void AddPlaylist(List<TrackInfo> tracks, string selectedPlaylist)
+        public static void AddPlaylist(List<TrackInfo> tracks, string listName)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
             {
-                Playlist pl = new Playlist(selectedPlaylist);
+                Playlist pl = new Playlist(listName);
                 pl.UpdateTracks(tracks);
                 plc = new PlaylistCollection();
                 plc.TrackLists.Add(pl);
             }
             else
             {
-                Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
+                Playlist pl = plc.TrackLists.Find(x => x.ListName == listName);
                 pl.UpdateTracks(tracks);
             }
             DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
         }
 
-        public static void DeleteTracksByIndices(int[] indices, string selectedPlaylist)
+        public static void DeleteTracksByIndices(int[] indices, string listName)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
@@ -65,7 +65,23 @@ namespace MPLite.Core
                 throw new EmptyJsonFileException("No track can be deleted from database. Please check your config file.");
             }
 
-            Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
+            Playlist pl = plc.TrackLists.Find(x => x.ListName == listName);
+            pl.DeleteTracksByIndices(indices);
+
+            DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
+        }
+
+        public static void DeleteTracksByIndices(int[] indices, Guid guid)
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
+
+            if (plc == null)
+            {
+                throw new EmptyJsonFileException("No track can be deleted from database. Please check your config file.");
+            }
+
+            Playlist pl = plc.TrackLists.Find(x => x.GUID == guid);
             pl.DeleteTracksByIndices(indices);
 
             DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
@@ -77,6 +93,12 @@ namespace MPLite.Core
             return DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
         }
 
+        public void SaveToDatabase()
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            DataControl.SaveData<PlaylistCollection>(configPath, this, false);
+        }
+
         public static Playlist GetPlaylist(string listName)
         {
             string configPath = Properties.Settings.Default.PlaylistInfoPath;
@@ -84,6 +106,21 @@ namespace MPLite.Core
             try
             {
                 pl = DataControl.ReadFromJson<PlaylistCollection>(configPath, false).TrackLists.Find(x => x.ListName == listName);
+            }
+            catch
+            {
+                throw;
+            }
+            return pl;
+        }
+
+        public static Playlist GetPlaylist(Guid guid)
+        {
+            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            Playlist pl;
+            try
+            {
+                pl = DataControl.ReadFromJson<PlaylistCollection>(configPath, false).TrackLists.Find(x => x.GUID == guid);
             }
             catch
             {
@@ -128,36 +165,38 @@ namespace MPLite.Core
             }
         }
 
-        private static string AddSerialNum(List<Playlist> collection, string target)
+        private static string AddSerialNum(List<Playlist> collection, string listName)
         {
             int serialNum = 0;
-            string temp = target;
+            string temp = listName;
 
             while (collection.Find(x => x.ListName == temp) != null)
             {
                 serialNum++;
-                temp = target + serialNum.ToString();
+                temp = listName + serialNum.ToString();
             }
 
             if (serialNum == 0)
             {
-                return target;
+                return listName;
             }
             else
             {
-                return target + serialNum.ToString();
+                return listName + serialNum.ToString();
             }
         }
     }
 
     public class Playlist
     {
+        public Guid GUID { get; set; }
         public string ListName { get; set; }
         public List<TrackInfo> Soundtracks { get; set; }
         public int TrackAmount { get { return Soundtracks.Count; } }
 
         public Playlist(string listName)
         {
+            GUID = Guid.NewGuid();
             ListName = listName;
             Soundtracks = new List<TrackInfo>();
         }

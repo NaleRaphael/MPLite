@@ -53,12 +53,15 @@ namespace MPLite
             {
                 txtPlaylistStoragePath.Text = ofd.FileName;
             }
+
+            // save config
         }
 
         private void btnSelectCalendarEventStoragePath_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             //ofd.InitialDirectory = Path.GetDirectoryName(Path.GetFullPath());
+            
         }
     }
 }

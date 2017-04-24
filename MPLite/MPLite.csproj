@@ -90,6 +90,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="EventRouter.cs" />
+    <Compile Include="PagePlaylist.xaml.cs">
+      <DependentUpon>PagePlaylist.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TrackStatusDisplayer.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
@@ -137,9 +140,6 @@
     <Compile Include="MusicPlayer.cs" />
     <Compile Include="PageCalendar.xaml.cs">
       <DependentUpon>PageCalendar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PagePlaylist.xaml.cs">
-      <DependentUpon>PagePlaylist.xaml</DependentUpon>
     </Compile>
     <Compile Include="PageSetting.xaml.cs">
       <DependentUpon>PageSetting.xaml</DependentUpon>

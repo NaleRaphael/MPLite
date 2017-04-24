@@ -14,8 +14,46 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/StylePlaylist.xaml"/>
                 <ResourceDictionary Source="Resources/ResMainWindow.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
+            
+            <Style x:Key="StyleListBoxItem" TargetType="{x:Type ListBoxItem}">
+                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                <Setter Property="BorderBrush" Value="#FF4B4B4B"/>
+                <Setter Property="Height" Value="30"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="Padding" Value="5,0,0,0"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Border Background="#FF323232" BorderThickness="0,0,0,1" BorderBrush="#FF4B4B4B" Height="30">
+                                <Grid x:Name="gd" Background="#FF414141">
+                                    <TextBlock x:Name="txtItemName" Text="{Binding ListName}" Foreground="Black" Background="Transparent" FontSize="12" 
+                                       FontFamily="Segoe UI" Padding="5,0,0,0" Visibility="Visible" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="txtEditBox" Text="{Binding ListName}" Foreground="Black" Background="Transparent" FontSize="12" 
+                                     FontFamily="Segoe UI" Padding="5,0,0,0" VerticalContentAlignment="Center" Visibility="Hidden" LostFocus="txtEditBox_LostFocus"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="true">
+                                    <Setter Property="Background" Value="#FFB28E50" TargetName="gd"/>
+                                    <Setter Property="Foreground" Value="Black" TargetName="txtItemName"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="false">
+                                    <Setter Property="Foreground" Value="#FFC8C8C8" TargetName="txtItemName"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <EventSetter Event="KeyDown" Handler="MenuListBox_KeyDown"/>
+                <EventSetter Event="MouseUp" Handler="MenuListBox_MouseUp"/>
+            </Style>
+            
         </ResourceDictionary>
+
     </Page.Resources>
 
     <Grid Background="#FF323232">
@@ -24,8 +62,8 @@
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" PreviewMouseUp="lb_PlaylistMenu_PreviewMouseUp" 
-                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" FontFamily="Segoe UI"/>
+            <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" 
+                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" FontFamily="Segoe UI" Foreground="Black"/>
             <ListView Grid.Row="0" x:Name="lv_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
                   lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="lv_Playlist_DragEnter" Drop="lv_Playlist_Drop" MouseDoubleClick="lv_Playlist_MouseDoubleClick" 
                       KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI">
