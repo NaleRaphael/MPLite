@@ -52,8 +52,6 @@ namespace MPLite
             lb_PlaylistMenu.SelectedIndex = Properties.Settings.Default.LastSelectedPlaylistIndex;  // select default list
             currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
-            lb_PlaylistMenu.ItemsSource = MenuPlaylist;
-
             MainWindow.GetTrackEvent += GetTrack;
             MainWindow.TrackIsPlayedEvent += SetTrackStatus;
             MainWindow.TrackIsStoppedEvent += ResetTrackStatus;
@@ -78,6 +76,9 @@ namespace MPLite
             {
                 MenuPlaylist.Add(pl);
             }
+
+            if (lb_PlaylistMenu.ItemsSource == null)
+                lb_PlaylistMenu.ItemsSource = MenuPlaylist;
         }
 
         private void RefreshPlaylistContent(string selectedPlaylist, int selectedPlaylistIndex)
