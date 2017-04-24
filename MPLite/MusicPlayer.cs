@@ -23,6 +23,7 @@ namespace MPLite
         private int error;
 
         private Queue<int> trackQueue;
+        private Stack<int> trackStack;  // storing played track
 
         // String that holds the MCI command
         // format: "s1 s2 s3 s4"
@@ -353,6 +354,7 @@ namespace MPLite
         }
         #endregion
 
+        // Called by PagePlaylist. Because it needs to know the index of playing track to set playing sign.
         public PlayTrackEventArgs GetNextTrack(string playlistName, int selectedIdx, PlaybackMode mode, out int trackIdx)
         {
             Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
@@ -366,7 +368,13 @@ namespace MPLite
             e.SetNextTrack(track, trackIdx);
             return e;
         }
+        
+        public PlayTrackEventArgs GetPrevTrack()
+        {
 
+            return new PlayTrackEventArgs();
+        }
+        
         private int GetTrackIdxFromQueue(Playlist playlist, int beginningIdx, PlaybackMode mode)
         {
             int trackIdx = 0;
@@ -376,14 +384,13 @@ namespace MPLite
                 mode = (mode == PlaybackMode.None) ? (PlaybackMode)Properties.Settings.Default.PlaybackMode : mode;
                 SetTrackQueue(playlist.TrackAmount, beginningIdx, mode);
             }
+
             switch (mode)
             {
                 case PlaybackMode.Default:
                 case PlaybackMode.ShuffleOnce:
                     if (trackQueue.Count > 0)
-                    {
                         trackIdx = trackQueue.Dequeue();
-                    }
                     else
                     {
                         trackIdx = -1;
@@ -435,22 +442,17 @@ namespace MPLite
         {
             trackQueue = new Queue<int>(trackAmount);
             for (int i = beginningIdx; i < trackAmount; i++)
-            {
                 trackQueue.Enqueue(i);
-            }
         }
 
         private void _SetTrackQueue_RepeatList(int trackAmount, int beginningIdx)
         {
             trackQueue = new Queue<int>(trackAmount);
+
             for (int i = beginningIdx; i < trackAmount; i++)
-            {
                 trackQueue.Enqueue(i);
-            }
             for (int i = 0; i < beginningIdx; i++)
-            {
                 trackQueue.Enqueue(i);
-            }
         }
 
         private void _SetTrackQueue_Shuffle(int trackAmount, int beginningIdx)
@@ -462,13 +464,9 @@ namespace MPLite
 
             // Initialize array
             for (int i = 0; i < beginningIdx; i++)
-            {
                 ary[i] = i;
-            }
             for (int i = beginningIdx + 1; i < trackAmount; i++)
-            {
                 ary[i - 1] = i;
-            }
 
             // Swap randomly
             for (int i = 0; i < trackAmount - 1; i++)
@@ -481,9 +479,7 @@ namespace MPLite
 
             trackQueue.Enqueue(beginningIdx);
             for (int i = 0; i < trackAmount - 1; i++)
-            {
                 trackQueue.Enqueue(ary[i]);
-            }
         }
 
         private void _SetTrackQueue_Single(int trackAmount, int beginningIdx)

@@ -316,7 +316,7 @@ namespace MPLite
                 // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
                 TrackIsPlayedEvent(e);
             }
-            catch (InvalidFilePathException ex_InvaildPath)
+            catch (InvalidFilePathException ex_InvaildPath)     // Track is not found. Skip it and play the next track
             {
                 // Set status of the problematic track (!)
                 FailedToPlayTrackEvent(e);
@@ -558,5 +558,24 @@ namespace MPLite
         }
 
         #endregion
+
+        private void btnBackward_Click(object sender, RoutedEventArgs e)
+        {
+            /*
+            PlayTrackEventArgs pe = new PlayTrackEventArgs
+            {
+                PlaybackMode
+            };
+            StopPlayerOrPlayNextTrack();
+            */
+            
+        }
+
+        private void btnForward_Click(object sender, RoutedEventArgs e)
+        {
+            //PlayTrack(GetTrackEvent(_musicPlayer));
+
+            //PlayTrack(_musicPlayer.GetPrevTrack());
+        }
     }
 }

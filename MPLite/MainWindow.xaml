@@ -26,13 +26,13 @@
             </ContentControl>
             <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
                 <Grid x:Name="gridPlaybackControl" Width="120" HorizontalAlignment="Left" Margin="20,10,0,10" >
-                    <Button x:Name="btnBackward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="0,0,90,0">
+                    <Button x:Name="btnBackward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnBackward_Click" Margin="0,0,90,0">
                         <Image Source="images/icons/backward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                     <Button x:Name="btnStartPlayback" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}"  Click="btnStartPlayback_Click" Margin="30,0,60,0">
                         <Image Source="images/icons/play.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="60,0,30,0">
+                    <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnForward_Click" Margin="60,0,30,0">
                         <Image Source="images/icons/forward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
                     <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="90,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
