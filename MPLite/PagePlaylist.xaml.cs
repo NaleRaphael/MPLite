@@ -154,7 +154,7 @@ namespace MPLite
         }
         #endregion
 
-        #region lb_Playlist controls
+        #region lv_Playlist controls
         private void lv_Playlist_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -300,7 +300,21 @@ namespace MPLite
         #region Playlist menu control
         private void MenuListBox_MouseUp(object sender, MouseEventArgs e)
         {
+            /*
             string listName = ((Playlist)(((ListBoxItem)sender).Content)).ListName;
+            SetPrevAndCurrShowingPlaylist(listName);
+            RefreshPlaylistContent(listName, lb_PlaylistMenu.SelectedIndex);
+
+            if (lv_Playlist.Visibility == Visibility.Hidden)
+                lv_Playlist.Visibility = Visibility.Visible;
+            */
+
+            lb_PlaylistMenu_SelectionChanged(null, null);
+        }
+
+        private void lb_PlaylistMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
             SetPrevAndCurrShowingPlaylist(listName);
             RefreshPlaylistContent(listName, lb_PlaylistMenu.SelectedIndex);
 

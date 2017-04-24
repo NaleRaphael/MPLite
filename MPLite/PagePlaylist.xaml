@@ -14,9 +14,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/StylePlaylist.xaml"/>
                 <ResourceDictionary Source="Resources/ResMainWindow.xaml"/>
-
+                <ResourceDictionary Source="Resources/AppleScrollViewer.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            
+
             <Style x:Key="StyleListBoxItem" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="BorderThickness" Value="0,0,0,1"/>
                 <Setter Property="BorderBrush" Value="#FF4B4B4B"/>
@@ -62,49 +62,19 @@
         </Grid.RowDefinitions>
 
         <DockPanel>
-            <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" 
-                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" FontFamily="Segoe UI" Foreground="Black"/>
+            <!--
+            <ScrollViewer Width="150" VerticalScrollBarVisibility="Visible" CanContentScroll="True">
+                <ListBox x:Name="lb_PlaylistMenu" Background="#FF414141" BorderThickness="0" FontFamily="Segoe UI" Foreground="Black"
+                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" SelectionChanged="lb_PlaylistMenu_SelectionChanged"/>
+            </ScrollViewer>
+            -->
+            
+            <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" FontFamily="Segoe UI" Foreground="Black"
+                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            
             <ListView Grid.Row="0" x:Name="lv_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
                   lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="lv_Playlist_DragEnter" Drop="lv_Playlist_Drop" MouseDoubleClick="lv_Playlist_MouseDoubleClick" 
-                      KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="TextBlock.Foreground" Value="#FFC8C8C8"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                    <Border CornerRadius="0" SnapsToDevicePixels="True" BorderThickness="0" BorderBrush="#dcdbd5" Background="{TemplateBinding Background}">
-                                        <Border Name="InnerBorder" CornerRadius="0" BorderThickness="0">
-                                            <Grid>
-                                                <Rectangle Name="UpperHighlight" Visibility="Collapsed" Fill="Transparent" />
-                                                <GridViewRowPresenter Grid.RowSpan="0" Height="20"
-                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"   
-                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                            </Grid>
-                                        </Border>
-                                    </Border>
-
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Foreground" Value="Black"/>
-                                            <Setter Property="Background" Value="DarkGray"/>
-                                            <Setter Property="BorderBrush" Value="Transparent"/>
-                                            <Setter TargetName="UpperHighlight" Property="Visibility" Value="Hidden"/>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Foreground" Value="Black"/>
-                                            <Setter Property="Background" Value="DarkGray"/>
-                                            <Setter Property="BorderBrush" Value="Transparent"/>
-                                            <Setter TargetName="UpperHighlight" Property="Visibility" Value="Hidden"/>
-                                        </Trigger>
-
-                                    </ControlTemplate.Triggers>
-
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
+                  KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI" ItemContainerStyle="{StaticResource StyleListViewItem}">
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}" AllowsColumnReorder="False">
                         <GridViewColumn Header="" lvctrl:ProportionalColumn.Width="3" DisplayMemberBinding="{Binding Path=PlayingSign}"/>

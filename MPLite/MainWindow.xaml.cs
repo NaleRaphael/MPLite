@@ -306,7 +306,10 @@ namespace MPLite
 
                 if (e.CurrTrack == null)
                     return;
+
+                int volume = Properties.Settings.Default.IsMuted ? 0 : Properties.Settings.Default.Volume;
                 _musicPlayer.Play(e);
+                _musicPlayer.SetVolume(volume);
 
                 // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
                 TrackIsPlayedEvent(e);
