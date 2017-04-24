@@ -113,8 +113,10 @@ namespace MPLite
             // Set default page
             // NOTE: PagePlaylist have to be created early than PageCalendar, so that PageCalendar.SchedulerEvent can be assigned.
             pagePlaylist = new PagePlaylist();
-            PageCalendar.SchedulerEvent += pagePlaylist.RunPlaylist;    
+            PageCalendar.SchedulerEvent += pagePlaylist.RunPlaylist;
+            PageCalendar.Owner = this;
             pageCalendar = new PageCalendar();      // workaround: create PageCalendar to load EventManager
+            
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
 
             UpdateLayout();

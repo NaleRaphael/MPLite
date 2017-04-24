@@ -15,6 +15,7 @@ namespace MPLite
 
     public partial class PageCalendar : Page
     {
+        public static Window Owner { get; set; }
         public static event SchedulerEventHandler SchedulerEvent;
 
         public PageCalendar()
@@ -26,7 +27,7 @@ namespace MPLite
         private void InitializeCalendar()
         {
             // Assign custom HandlerEventFactory to Jarloo.Calendar to create handler
-            calendar.OnInitialization(new SchedulerEventHandlerFactory(SchedulerEvent));
+            calendar.OnInitialization(new SchedulerEventHandlerFactory(SchedulerEvent), Window.GetWindow(Owner));
         }
 
         #region Calendar control

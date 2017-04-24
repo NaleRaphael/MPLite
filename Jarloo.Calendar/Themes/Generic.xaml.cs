@@ -73,9 +73,9 @@ namespace Jarloo.Calendar.Themes
 
             WindowEventSetting winEventSetting = new WindowEventSetting(initialDateTime);
             // TODO: set parent window of WindowEventSetting
-            //winEventSetting.Owner;
+            winEventSetting.Owner = Calendar.Owner;     // workaround: store owner info by static property
             winEventSetting.PassingDataEvent += ShowDataFromWinEventSetting;
-            winEventSetting.NewEventIsCreatedEvent += RefireEvent;      // 
+            winEventSetting.NewEventIsCreatedEvent += RefireEvent;
             winEventSetting.WindowStartupLocation = WindowStartupLocation.CenterScreen;     // TODO: try to set startupLocation to center of MPLite
             winEventSetting.Show();
             

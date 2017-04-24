@@ -39,6 +39,8 @@ namespace Jarloo.Calendar
         #endregion
         
         #region Properties
+        public static Window Owner { get; set; }
+
         // TODO: monthly view, weekly view (, daily view)
         public CalendarViewingMode ViewingMode { get; set; }
 
@@ -111,7 +113,7 @@ namespace Jarloo.Calendar
         }
 
         // Workaround: controls cannot be initialized with parameters, so that EventManager is created after Calendar has been initialized.
-        public void OnInitialization(IEventHandlerFactory handlerFactory)
+        public void OnInitialization(IEventHandlerFactory handlerFactory, Window owner)
         {
             EventManager = new EventManager(handlerFactory);
             EventManager.EventIsAddedEvent += AddEventsToCalendar; // update layout when there is a new event added
@@ -121,6 +123,8 @@ namespace Jarloo.Calendar
 
             Generic.DayContentSelectionEvent += SelectedDayContentActionEntry;
             Generic.NewEventIsCreatedEvent += OnRecievingNewEventObject;
+
+            Owner = owner;  // workaround: set owner for WindowEventSetting
         }
 
         public void BuildCalendar(DateTime targetDate)
