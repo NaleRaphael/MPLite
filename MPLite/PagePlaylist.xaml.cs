@@ -25,10 +25,17 @@ namespace MPLite
         public static event PlayTrackEventHandler PlayTrackEvent;
         public delegate void NewSelectionEventHandler();    // User selected a track as a new entry of trackQueue
         public static event NewSelectionEventHandler NewSelectionEvent;
-        public delegate void StopPlayerRequestEventHandler(PlayTrackEventArgs e);
+
+        //public delegate void StopPlayerRequestEventHandler(PlayTrackEventArgs e);
+        //public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
+        //public delegate void PausePlayerRequestEventHandler();
+        //public static event PausePlayerRequestEventHandler PausePlayerRequestEvent;
+
+        public delegate void StopPlayerRequestEventHandler();
         public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
         public delegate void PausePlayerRequestEventHandler();
         public static event PausePlayerRequestEventHandler PausePlayerRequestEvent;
+
         #endregion
 
         #region Field
@@ -139,6 +146,11 @@ namespace MPLite
                 SetPlayingStateOfTrack(e.CurrTrackIndex, MPLiteConstant.TrackStatusSign[(int)e.CurrTrackStatus]);
         }
 
+        public void SetTrackStatus()
+        {
+            string listName = Properties.Settings.Default.TaskPlaylist;
+        }
+
         private void SetPlayingStateOfTrack(int trackIdx, string status)
         {
             if (trackIdx == -1) return;
@@ -194,8 +206,13 @@ namespace MPLite
             SetPrevAndCurrShowingPlaylist(listName);
 
             NewSelectionEvent();    // Notify MusicPlayer to reset queue
-            StopPlayerRequestEvent(new PlayTrackEventArgs());
-            PlaySoundtrack(listName, selIdx);
+            //StopPlayerRequestEvent(new PlayTrackEventArgs());
+            StopPlayerRequestEvent();
+
+            Properties.Settings.Default.TaskPlaybackMode = Properties.Settings.Default.PlaybackMode;
+            Properties.Settings.Default.Save();
+            PlayTrackEvent(listName, selIdx, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
+            //PlaySoundtrack(listName, selIdx, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
         }
 
         private void lv_Playlist_KeyDown(object sender, KeyEventArgs e)
@@ -240,8 +257,11 @@ namespace MPLite
             }
         }
 
-        private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
-            int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None)
+        // TODO: add a parameter: get prev/next
+        //private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
+        //    int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true)
+        private TrackInfo GetTrack(MusicPlayer player, string selectedPlaylist = null,
+            int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true)
         {
             if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
             {
@@ -252,9 +272,19 @@ namespace MPLite
             {
                 // If no playlist is selected (user click btn_StartPlayback to play music)
                 selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
+                if (mode == PlaybackMode.None)
+                    throw new Exception("Invalid playback mode");
 
-                prevTrackIdx = currTrackIdx;    // workaround
-                return player.GetNextTrack(selectedPlaylist, selectedTrackIndex, mode, out currTrackIdx);
+                if (selectNext)
+                {
+                    prevTrackIdx = currTrackIdx;    // workaround
+                    return player.GetTrack(selectedPlaylist, selectedTrackIndex, mode);
+                }
+                else
+                {
+                    currTrackIdx = prevTrackIdx;
+                    return player.GetPrevTrack(selectedPlaylist, selectedTrackIndex, mode);
+                }
             }
             catch
             {
@@ -402,10 +432,10 @@ namespace MPLite
                     PausePlayerRequestEvent();
                     break;
                 case PlaybackCommands.Stop:
-                    StopPlayerRequestEvent(new PlayTrackEventArgs());
+                    StopPlayerRequestEvent();
                     break;
                 case PlaybackCommands.Play:
-                    StopPlayerRequestEvent(new PlayTrackEventArgs());
+                    StopPlayerRequestEvent();
                     PlaySoundtrack(e.Playlist, e.TrackIndex, e.Mode);
                     break;
                 default:

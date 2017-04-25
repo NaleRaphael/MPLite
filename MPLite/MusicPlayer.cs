@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;   //DllImport
 
@@ -22,8 +23,9 @@ namespace MPLite
         private StringBuilder returnData;  // MCI return data
         private int error;
 
-        private Queue<int> trackQueue;
-        private Stack<int> trackStack;  // storing played track
+        //private Queue<int> trackQueue;
+        //private CircularQueue<int> trackQueue;
+        private TrackQueue trackQueue;
 
         // String that holds the MCI command
         // format: "s1 s2 s3 s4"
@@ -47,15 +49,24 @@ namespace MPLite
         #endregion
 
         #region Event
-        public delegate void PlayerStoppedEventHandler(PlayTrackEventArgs e);
-        public event PlayerStoppedEventHandler PlayerStoppedEvent;
-        public delegate void PlayerStartedEventHandker(PlayTrackEventArgs e);
-        public event PlayerStartedEventHandker PlayerStartedEvent;
+        //public delegate void PlayerStoppedEventHandler(PlayTrackEventArgs e);
+        //public event PlayerStoppedEventHandler PlayerStoppedEvent;
+        //public delegate void PlayerStartedEventHandker(PlayTrackEventArgs e);
+        //public event PlayerStartedEventHandker PlayerStartedEvent;
+        //public delegate void PlayerPausedEventHandler();
+        //public event PlayerPausedEventHandler PlayerPausedEvent;
+        //public delegate void TrackEndsEventHandler(PlayTrackEventArgs e);
+        //public event TrackEndsEventHandler TrackEndsEvent;
+        //public delegate void MissingTrackEventHandler(PlayTrackEventArgs e);
+
+        public delegate void PlayerStartedEventHandler(TrackInfo track);
+        public event PlayerStartedEventHandler PlayerStartedEvent;
         public delegate void PlayerPausedEventHandler();
         public event PlayerPausedEventHandler PlayerPausedEvent;
-        public delegate void TrackEndsEventHandler(PlayTrackEventArgs e);
+        public delegate void PlayerStoppedEventHandler();
+        public event PlayerStoppedEventHandler PlayerStoppedEvent;
+        public delegate void TrackEndsEventHandler();
         public event TrackEndsEventHandler TrackEndsEvent;
-        public delegate void MissingTrackEventHandler(PlayTrackEventArgs e);
         #endregion
 
         #region MCI API calls
@@ -124,18 +135,99 @@ namespace MPLite
             else return true;
         }
 
-        public bool Play(PlayTrackEventArgs e)
+        public bool Open(TrackInfo track)
+        {
+            Close();
+            string cmd = "open \"" + track.TrackPath + "\" type mpegvideo alias MediaFile";
+            error = mciSendString(cmd, msg, 0, IntPtr.Zero);
+
+            if (error == 277)
+                throw new FailedToOpenFileException("There might be some unacceptable characters " +
+                    "in the path of this file, you can rename it and try again.");
+
+            if (error != 0)
+            {
+                // Cannot open file in the format ".mpeg", let MCI decide the file extension itself
+                cmd = "open \"" + track.TrackPath + "\"alias Mediafile";
+                error = mciSendString(cmd, msg, 0, IntPtr.Zero);
+                if (error == 305)
+                    throw new InvalidFilePathException("Cannot find this file. Maybe it was moved to another path.");
+                return (error == 0) ? true : false;
+            }
+            else return true;
+        }
+
+        //public bool Play(PlayTrackEventArgs e)
+        //{
+        //    bool trackIsOpened = false;
+        //    CurrentTrack = e.CurrTrack;
+        //    CurrentTrackIndex = e.CurrTrackIndex;
+        //    PlaybackMode = e.PlaybackMode;
+        //    Properties.Settings.Default.TaskPlaylist = e.PlaylistName;
+        //    Properties.Settings.Default.Save();
+
+        //    try
+        //    {
+        //        trackIsOpened = Open(e);
+        //    }
+        //    catch (FailedToOpenFileException ex_FailedToOpen)  // Unacceptable chars in file path
+        //    {
+        //        throw ex_FailedToOpen;
+        //    }
+        //    catch (InvalidFilePathException ex_InvaildPath)
+        //    {
+        //        this.CurrentTrackStatus = TrackStatus.IncorrectPath;
+        //        e.CurrTrackStatus = this.CurrentTrackStatus;
+
+        //        throw ex_InvaildPath;
+        //    }
+
+        //    if (trackIsOpened)
+        //    {
+        //        string cmd = "play MediaFile";
+        //        error = mciSendString(cmd, null, 0, IntPtr.Zero);
+
+        //        if (error == 0)
+        //        {
+        //            // Save the trackInfo that is playing currently
+        //            PlayerStatus = PlaybackState.Playing;
+
+        //            this.CurrentTrackStatus = TrackStatus.Playing;
+        //            e.CurrTrackStatus = this.CurrentTrackStatus;
+
+        //            // Fire event to notify subscribers
+        //            PlayerStartedEvent(e);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            Close();
+        //            return false;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        // TODO: Exception handling
+        //        return false;
+        //    }
+        //}
+
+        public bool Play(TrackInfo track)
         {
             bool trackIsOpened = false;
-            CurrentTrack = e.CurrTrack;
-            CurrentTrackIndex = e.CurrTrackIndex;
-            PlaybackMode = e.PlaybackMode;
-            Properties.Settings.Default.TaskPlaylist = e.PlaylistName;
-            Properties.Settings.Default.Save();
+            if (this.IsPlaying())
+                this.Stop();
+
+            if (track == null)
+            {
+                Console.WriteLine("No track is avalible.");
+                PlayerStoppedEvent();
+                return false;
+            }
 
             try
             {
-                trackIsOpened = Open(e);
+                trackIsOpened = Open(track);
             }
             catch (FailedToOpenFileException ex_FailedToOpen)  // Unacceptable chars in file path
             {
@@ -143,9 +235,10 @@ namespace MPLite
             }
             catch (InvalidFilePathException ex_InvaildPath)
             {
+                /*
                 this.CurrentTrackStatus = TrackStatus.IncorrectPath;
                 e.CurrTrackStatus = this.CurrentTrackStatus;
-
+                */
                 throw ex_InvaildPath;
             }
 
@@ -159,11 +252,11 @@ namespace MPLite
                     // Save the trackInfo that is playing currently
                     PlayerStatus = PlaybackState.Playing;
 
-                    this.CurrentTrackStatus = TrackStatus.Playing;
-                    e.CurrTrackStatus = this.CurrentTrackStatus;
+                    //this.CurrentTrackStatus = TrackStatus.Playing;
+                    //e.CurrTrackStatus = this.CurrentTrackStatus;
 
                     // Fire event to notify subscribers
-                    PlayerStartedEvent(e);
+                    PlayerStartedEvent(track);
                     return true;
                 }
                 else
@@ -178,7 +271,7 @@ namespace MPLite
                 return false;
             }
         }
-
+        /*
         public void Pause()
         {
             if (PlayerStatus == PlaybackState.Paused)
@@ -202,8 +295,29 @@ namespace MPLite
                 // Fire event
                 PlayerPausedEvent();
             }
-        }
+        }*/
 
+        public void Pause()
+        {
+            if (PlayerStatus == PlaybackState.Paused)
+            {
+                Resume();
+                PlayerStatus = PlaybackState.Playing;
+
+                // Fire event
+                PlayerStartedEvent(trackQueue.GetCurrentTrack());
+            }
+            else if (PlayerStatus == PlaybackState.Playing)
+            {
+                string cmd = "pause MediaFile";
+                error = mciSendString(cmd, null, 0, IntPtr.Zero);
+                PlayerStatus = PlaybackState.Paused;
+
+                // Fire event
+                PlayerPausedEvent();
+            }
+        }
+        /*
         public void Stop(PlayTrackEventArgs e = null)
         {
             string cmd = "stop MediaFile";
@@ -221,8 +335,20 @@ namespace MPLite
             
             // Fire event to notify subscribers
             PlayerStoppedEvent(e);
-        }
+        }*/
 
+        public void Stop()
+        {
+            string cmd = "stop MediaFile";
+            error = mciSendString(cmd, null, 0, IntPtr.Zero);
+            PlayerStatus = PlaybackState.Stopped;
+
+            Close();
+
+            // Fire event to notify subscribers
+            PlayerStoppedEvent();
+        }
+        /*
         public void Resume()
         {
             string cmd = "play MediaFile";
@@ -235,6 +361,15 @@ namespace MPLite
             e.CurrTrack = CurrentTrack;
             e.CurrTrackStatus = TrackStatus.Playing;
             PlayerStartedEvent(e);
+        }*/
+        public void Resume()
+        {
+            string cmd = "play MediaFile";
+            error = mciSendString(cmd, null, 0, IntPtr.Zero);
+            PlayerStatus = PlaybackState.Playing;
+
+            // Fire event
+            PlayerStartedEvent(trackQueue.GetCurrentTrack());
         }
         #endregion
 
@@ -292,9 +427,10 @@ namespace MPLite
 
             if (current >= CurrentTrackLength)
             {
-                this.CurrentTrackStatus = TrackStatus.Stopped;
-                PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
-                TrackEndsEvent(new PlayTrackEventArgs(CurrPlaylist.ListName, CurrentTrackIndex, null, mode, this.CurrentTrackStatus));
+                //this.CurrentTrackStatus = TrackStatus.Stopped;
+                //PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
+                //TrackEndsEvent(new PlayTrackEventArgs(CurrPlaylist.ListName, CurrentTrackIndex, null, mode, this.CurrentTrackStatus));
+                TrackEndsEvent();
                 return 0;
             }
             return current;
@@ -357,135 +493,58 @@ namespace MPLite
         // Called by PagePlaylist. Because it needs to know the index of playing track to set playing sign.
         public PlayTrackEventArgs GetNextTrack(string playlistName, int selectedIdx, PlaybackMode mode, out int trackIdx)
         {
-            Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
+            if (trackQueue == null)
+            {
+                Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
+                if (pl == null || pl.TrackAmount == 0)
+                    throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", playlistName));
+                trackQueue = new TrackQueue(pl, selectedIdx, mode);
+            }
+
+            TrackInfo currentTrack;
+            int currentTrackIdx = trackQueue.Current(out currentTrack);
+            TrackInfo nextTrack;
+            trackIdx = trackQueue.Next(out nextTrack);
+
+            PlayTrackEventArgs e = new PlayTrackEventArgs(trackQueue.ListName, currentTrackIdx, currentTrack, trackQueue.Mode, this.CurrentTrackStatus);
+            e.SetNextTrack(nextTrack, trackIdx);
+
+            return e;
+
+            /*Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
             if (pl == null || pl.TrackAmount == 0)
                 throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", playlistName));
 
-            trackIdx = GetTrackIdxFromQueue(pl, selectedIdx, mode);
+            trackIdx = GetTrackIdxFromQueue(pl, selectedIdx, mode, true);
             TrackInfo track = (trackIdx == -1) ? null : CurrPlaylist.Soundtracks[trackIdx];
             
             PlayTrackEventArgs e = new PlayTrackEventArgs(playlistName, this.CurrentTrackIndex, this.CurrentTrack, mode, this.CurrentTrackStatus);
             e.SetNextTrack(track, trackIdx);
-            return e;
+            return e;*/
         }
-        
-        public PlayTrackEventArgs GetPrevTrack()
-        {
 
-            return new PlayTrackEventArgs();
-        }
-        
-        private int GetTrackIdxFromQueue(Playlist playlist, int beginningIdx, PlaybackMode mode)
+        public TrackInfo GetTrack(string listName, int selIdx, PlaybackMode mode)
         {
-            int trackIdx = 0;
-            if (trackQueue == null || playlist.ListName != CurrPlaylist.ListName)
+            if (trackQueue == null)
             {
-                CurrPlaylist = playlist;
-                mode = (mode == PlaybackMode.None) ? (PlaybackMode)Properties.Settings.Default.PlaybackMode : mode;
-                SetTrackQueue(playlist.TrackAmount, beginningIdx, mode);
+                Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == listName);
+                if (pl == null || pl.TrackAmount == 0)
+                    throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", listName));
+                trackQueue = new TrackQueue(pl, selIdx, mode);
             }
 
-            switch (mode)
-            {
-                case PlaybackMode.Default:
-                case PlaybackMode.ShuffleOnce:
-                    if (trackQueue.Count > 0)
-                        trackIdx = trackQueue.Dequeue();
-                    else
-                    {
-                        trackIdx = -1;
-                        trackQueue = null;
-                    }
-                    break;
-                case PlaybackMode.PlaySingle:
-                    // No need to enqueue again
-                    trackIdx = (trackQueue.Count > 0) ? trackQueue.Dequeue() : -1;
-                    break;
-                case PlaybackMode.RepeatTrack:
-                case PlaybackMode.RepeatList:
-                case PlaybackMode.Shuffle:
-                    trackIdx = trackQueue.Dequeue();
-                    trackQueue.Enqueue(trackIdx);
-                    break;
-            }
-            return trackIdx;
+            TrackInfo nextTrack;
+            int nextTrackIdx = trackQueue.Next(out nextTrack);
+
+            return nextTrack;
         }
 
-        private void SetTrackQueue(int trackAmount, int beginningIdx, PlaybackMode mode)
+        public TrackInfo GetPrevTrack(string listName, int selIdx, PlaybackMode mode)
         {
-            ClearQueue();
+            TrackInfo prevTrack;
+            int prevTrackIdx = trackQueue.Previous(out prevTrack);
 
-            // Reset beginningIdx if no track is selected
-            beginningIdx = (beginningIdx == -1) ? 0 : beginningIdx;
-            switch (mode)
-            {
-                case PlaybackMode.Default:
-                    _SetTrackQueue_Default(trackAmount, beginningIdx);
-                    break;
-                case PlaybackMode.RepeatList:
-                    _SetTrackQueue_RepeatList(trackAmount, beginningIdx);
-                    break;
-                case PlaybackMode.Shuffle:
-                case PlaybackMode.ShuffleOnce:
-                    _SetTrackQueue_Shuffle(trackAmount, beginningIdx);
-                    break;
-                case PlaybackMode.PlaySingle:
-                case PlaybackMode.RepeatTrack:
-                    _SetTrackQueue_Single(trackAmount, beginningIdx);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        private void _SetTrackQueue_Default(int trackAmount, int beginningIdx)
-        {
-            trackQueue = new Queue<int>(trackAmount);
-            for (int i = beginningIdx; i < trackAmount; i++)
-                trackQueue.Enqueue(i);
-        }
-
-        private void _SetTrackQueue_RepeatList(int trackAmount, int beginningIdx)
-        {
-            trackQueue = new Queue<int>(trackAmount);
-
-            for (int i = beginningIdx; i < trackAmount; i++)
-                trackQueue.Enqueue(i);
-            for (int i = 0; i < beginningIdx; i++)
-                trackQueue.Enqueue(i);
-        }
-
-        private void _SetTrackQueue_Shuffle(int trackAmount, int beginningIdx)
-        {
-            // TODO: improve this
-            Random rand = new Random();
-            trackQueue = new Queue<int>(trackAmount);
-            int[] ary = new int[trackAmount - 1];
-
-            // Initialize array
-            for (int i = 0; i < beginningIdx; i++)
-                ary[i] = i;
-            for (int i = beginningIdx + 1; i < trackAmount; i++)
-                ary[i - 1] = i;
-
-            // Swap randomly
-            for (int i = 0; i < trackAmount - 1; i++)
-            {
-                int tempIdx = rand.Next(trackAmount - 1);
-                int temp = ary[tempIdx];
-                ary[tempIdx] = ary[i];
-                ary[i] = temp;
-            }
-
-            trackQueue.Enqueue(beginningIdx);
-            for (int i = 0; i < trackAmount - 1; i++)
-                trackQueue.Enqueue(ary[i]);
-        }
-
-        private void _SetTrackQueue_Single(int trackAmount, int beginningIdx)
-        {
-            trackQueue = new Queue<int>(1);
-            trackQueue.Enqueue(beginningIdx);
+            return prevTrack;
         }
 
         public void ClearQueue()
@@ -494,36 +553,6 @@ namespace MPLite
             {
                 trackQueue.Clear();
                 trackQueue = null;
-            }
-        }
-
-        // Reset queue when playlist is re-ordered
-        // 1. SetTrackQueue(..., idx_of_playing_track, ...)
-        // 2. dequeue (remove first index -> idx_of_playing_track)
-        // NOTE: in the following mode, no need to reset queue
-        //      PlaySingle, RepeatTrack
-        public void ResetQueue(int trackAmount, int beginningIdx, int offset, PlaybackMode mode)
-        {
-            ClearQueue();
-
-            switch (mode)
-            {
-                case PlaybackMode.Default:
-                    _SetTrackQueue_Default(trackAmount, beginningIdx);
-                    trackQueue.Dequeue();
-                    break;
-                case PlaybackMode.RepeatList:
-                    _SetTrackQueue_RepeatList(trackAmount, beginningIdx);
-                    trackQueue.Dequeue();
-                    break;
-                case PlaybackMode.Shuffle:
-                case PlaybackMode.ShuffleOnce:
-                    // TODO
-                    break;
-                case PlaybackMode.PlaySingle:
-                case PlaybackMode.RepeatTrack:
-                default:
-                    break;
             }
         }
     }

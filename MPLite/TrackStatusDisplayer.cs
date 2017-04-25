@@ -3,6 +3,7 @@
 namespace MPLite
 {
     using PlayTrackEventArgs = Core.PlayTrackEventArgs;
+    using TrackInfo = Core.TrackInfo;
 
     public class TrackStatusDispModule
     {
@@ -18,6 +19,32 @@ namespace MPLite
             TrackName.Content = "";
         }
 
+        public void SetTrackLength(TrackInfo track)
+        {
+            trackDuration = track.Duration;
+        }
+
+        public void SetTrackName(TrackInfo track)
+        {
+            TrackName.Content = track.TrackName;
+        }
+
+        public void ResetTrackName()
+        {
+            TrackName.Content = "";
+        }
+
+        public void SetTrackProgress(int miliSecond)
+        {
+            TrackProgress.Content = string.Format("{0:00}", miliSecond / 60000) + ":" + string.Format("{0:00}", miliSecond / 1000 % 60) + "/" + trackDuration;
+        }
+
+        public void ResetTrackProgress()
+        {
+            TrackProgress.Content = "";
+        }
+
+        /*
         public void SetTrackLength(PlayTrackEventArgs e)
         {
             trackDuration = e.CurrTrack.Duration;
@@ -42,5 +69,6 @@ namespace MPLite
         {
             TrackProgress.Content = "";
         }
+        */
     }
 }

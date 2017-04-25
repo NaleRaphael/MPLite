@@ -11,6 +11,7 @@ namespace MPLite
 {
     using PlayTrackEventArgs = Core.PlayTrackEventArgs;
     using PlaybackMode = Core.PlaybackMode;
+    using TrackInfo = Core.TrackInfo;
 
     public partial class MainWindow : Window
     {
@@ -30,9 +31,13 @@ namespace MPLite
 
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
-        public delegate PlayTrackEventArgs GetTrackEventHandler(MusicPlayer player, string selectedPlaylist = null, 
-            int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None);
-        public static event GetTrackEventHandler GetTrackEvent; // subscriber: MainWindow_GetTrackEvent @ PagePlaylist.xaml.cs
+
+        //public delegate PlayTrackEventArgs GetTrackEventHandler(MusicPlayer player, string selectedPlaylist = null, 
+        //    int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = false);
+        //public static event GetTrackEventHandler GetTrackEvent; // subscriber: GetTrack @ PagePlaylist.xaml.cs
+        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player, string selectPlaylist = null, 
+            int selTrackIdx = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true);
+        public static event GetTrackEventHandler GetTrackEvent;
         public delegate void TrackIsPalyingEventHandler(PlayTrackEventArgs e);
         public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;  // subscriber: MainWindow_TrackIsPlayedEvent @ PagePlaylist.xaml.cs
         public delegate void TrackIsStoppedEventHandler(PlayTrackEventArgs e);
@@ -77,7 +82,7 @@ namespace MPLite
 
             // Music player
             _musicPlayer = new MusicPlayer();
-            PagePlaylist.PlayTrackEvent += this.StartPlayingTrack;
+            PagePlaylist.PlayTrackEvent += this.PlayTrackFromPageList;
             PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             PagePlaylist.StopPlayerRequestEvent += _musicPlayer.Stop;
             PagePlaylist.PausePlayerRequestEvent += _musicPlayer.Pause;
@@ -85,7 +90,7 @@ namespace MPLite
             _musicPlayer.PlayerStartedEvent += this.SetTimerAndTrackBar;
             _musicPlayer.PlayerStoppedEvent += this.ResetTimerAndTrackBar;
             _musicPlayer.PlayerPausedEvent += this.PlayerPauseHandler;
-            _musicPlayer.TrackEndsEvent += this.StopPlayerOrPlayNextTrack;
+            _musicPlayer.TrackEndsEvent += this.StopOrPlayNextTrack;
 
             // Timer control
             timer = new DispatcherTimer();
@@ -268,10 +273,9 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        private void StartPlayingTrack(string selectedPlaylist = null, int selectedTrackIndex = -1,
-            PlaybackMode mode = PlaybackMode.None)
+        private void PlayTrackFromPageList(string selectedPlaylist, int selectedTrackIndex, PlaybackMode mode)
         {
-            PlayTrack(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode));
+            _musicPlayer.Play(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode, true));
         }
 
         private void btnStartPlayback_Click(object sender, RoutedEventArgs e)
@@ -283,7 +287,8 @@ namespace MPLite
                 {
                     case MusicPlayer.PlaybackState.Stopped:
                         // Call from MainWindow, so that player will start from the beginning of a list. (-1)
-                        PlayTrack(GetTrackEvent(_musicPlayer));
+                        //PlayTrack(GetTrackEvent(_musicPlayer));
+                        _musicPlayer.Play(GetTrackEvent(_musicPlayer));
                         break;
                     case MusicPlayer.PlaybackState.Playing:
                         _musicPlayer.Pause();
@@ -299,40 +304,41 @@ namespace MPLite
             }
         }
 
-        // Beginning function to fire all events of playing track
-        private void PlayTrack(PlayTrackEventArgs e)
-        {
-            try
-            {
-                _musicPlayer.Stop(e);    // TODO: pass a PlayTrackEventArgs into it
+        
+        //// Beginning function to fire all events of playing track
+        //private void PlayTrack(PlayTrackEventArgs e)
+        //{
+        //    try
+        //    {
+        //        _musicPlayer.Stop(e);    // TODO: pass a PlayTrackEventArgs into it
 
-                if (e.CurrTrack == null)
-                    return;
+        //        if (e.CurrTrack == null)
+        //            return;
 
-                int volume = Properties.Settings.Default.IsMuted ? 0 : Properties.Settings.Default.Volume;
-                _musicPlayer.Play(e);
-                _musicPlayer.SetVolume(volume);
+        //        int volume = Properties.Settings.Default.IsMuted ? 0 : Properties.Settings.Default.Volume;
+        //        _musicPlayer.Play(e);
+        //        _musicPlayer.SetVolume(volume);
 
-                // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
-                TrackIsPlayedEvent(e);
-            }
-            catch (InvalidFilePathException ex_InvaildPath)     // Track is not found. Skip it and play the next track
-            {
-                // Set status of the problematic track (!)
-                FailedToPlayTrackEvent(e);
+        //        // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
+        //        TrackIsPlayedEvent(e);
+        //    }
+        //    catch (InvalidFilePathException ex_InvaildPath)     // Track is not found. Skip it and play the next track
+        //    {
+        //        // Set status of the problematic track (!)
+        //        FailedToPlayTrackEvent(e);
 
-                // TODO: get next track
-                StopPlayerOrPlayNextTrack(e);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                _musicPlayer.Stop(e);
-            }
-        }
+        //        // TODO: get next track
+        //        StopPlayerOrPlayNextTrack(e);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message);
+        //        _musicPlayer.Stop(e);
+        //    }
+        //}
 
         // Subscriber
-        public void ResetTimerAndTrackBar(PlayTrackEventArgs e)
+        public void ResetTimerAndTrackBar()
         {
             timer.Stop();
             // Reset the posotion of thumb
@@ -343,11 +349,11 @@ namespace MPLite
 
             // Fire event to notify subscribber that track has been stopped
             // (reset `TrackInfo.playingSign`, ... etc)
-            TrackIsStoppedEvent(e);
+            //TrackIsStoppedEvent(e);
         }
 
         // Subscriber
-        private void SetTimerAndTrackBar(PlayTrackEventArgs e)
+        private void SetTimerAndTrackBar(TrackInfo track)
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
@@ -369,10 +375,18 @@ namespace MPLite
         }
 
         // Subscriber
-        private void StopPlayerOrPlayNextTrack(PlayTrackEventArgs e)
+        //private void StopPlayerOrPlayNextTrack(PlayTrackEventArgs e)
+        //{
+        //    // Play next track or replay the same track (according to user setting)
+        //    _musicPlayer.Play(GetTrackEvent(_musicPlayer, e.PlaylistName, e.CurrTrackIndex, e.PlaybackMode));
+        //}
+
+        private void StopOrPlayNextTrack()
         {
             // Play next track or replay the same track (according to user setting)
-            PlayTrack(GetTrackEvent(_musicPlayer, e.PlaylistName, e.CurrTrackIndex, e.PlaybackMode));
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
+            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
         }
         #endregion
 
@@ -394,7 +408,7 @@ namespace MPLite
                 }
                 catch (Exception ex)
                 {
-                    _musicPlayer.Stop(null);
+                    _musicPlayer.Stop();
                     MessageBox.Show(ex.Message);
                     MessageBox.Show(ex.StackTrace);
                 }
@@ -568,14 +582,26 @@ namespace MPLite
             };
             StopPlayerOrPlayNextTrack();
             */
-            
+            //PlayTrack(GetTrackEvent(_musicPlayer, null, -1, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode, false));
+
+            if (!_musicPlayer.IsPlaying())
+                return;
+
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
+
+            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, false));
         }
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            //PlayTrack(GetTrackEvent(_musicPlayer));
+            if (!_musicPlayer.IsPlaying())
+                return;
 
-            //PlayTrack(_musicPlayer.GetPrevTrack());
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
+
+            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
         }
     }
 }
