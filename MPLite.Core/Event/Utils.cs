@@ -137,13 +137,6 @@ namespace MPLite.Event
             DateTime rnge = DateTime.MinValue;   // ending of range
             RecurringFrequencies rf = target.RecurringFrequency;
 
-            // Target is not a recurring event
-            if (target.RecurringFrequency == RecurringFrequencies.None)
-            {
-                result.Add(target.OriginalBeginningTime);
-                return result;
-            }
-
             switch (mode)
             {
                 case CalendarViewingMode.Monthly:
@@ -156,7 +149,15 @@ namespace MPLite.Event
                     break;
             }
 
-            if (target.ThisDayForwardOnly && target.BeginningTime > rnge)
+            // Target is not a recurring event
+            if (target.RecurringFrequency == RecurringFrequencies.None)
+            {
+                if (target.OriginalBeginningTime > rngb && target.OriginalBeginningTime < rnge)
+                    result.Add(target.OriginalBeginningTime);
+                return result;
+            }
+
+            if (target.ThisDayForwardOnly && target.OriginalBeginningTime > rnge)
                 return result;
 
             DateTime iter = target.ThisDayForwardOnly ? ((target.OriginalBeginningTime > rngb) ? target.OriginalBeginningTime : rngb) : rngb;

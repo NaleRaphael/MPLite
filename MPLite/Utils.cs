@@ -3,8 +3,32 @@ using System.Runtime.InteropServices;
 
 namespace MPLite
 {
+    using PlaybackMode = Core.PlaybackMode;
+    using TrackStatus = Core.TrackStatus;
+
     public class Utils
     {
+    }
+
+    public static class MPLiteExtension
+    {
+        internal static void SetAppProperties(this Properties.Settings setting, string listName, int trackIdx, TrackStatus status, PlaybackMode mode)
+        {
+            setting.TaskPlaylist = listName;
+            setting.TaskPlayingTrackIndex = trackIdx;
+            setting.TaskPlayingTrackStatus = (int)status;
+            setting.TaskPlaybackMode = (int)mode;
+            setting.Save();
+        }
+
+        internal static void ResetAppProperties(this Properties.Settings setting)
+        {
+            setting.TaskPlaylist = "";
+            setting.TaskPlayingTrackIndex = -1;
+            setting.TaskPlayingTrackStatus = 0;
+            setting.TaskPlaybackMode = 0;
+            setting.Save();
+        }
     }
 
     /// <summary>

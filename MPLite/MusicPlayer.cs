@@ -129,6 +129,16 @@ namespace MPLite
             {
                 Console.WriteLine("No track is avalible.");
                 PlayerStoppedEvent(null);
+
+                // Once there is no more track can be popped out from trackQueue, it means that task is finished.
+                ClearQueue();
+
+                // Reset task info
+                Properties.Settings.Default.TaskPlaylist = "";
+                Properties.Settings.Default.TaskPlayingTrackIndex = -1;
+                Properties.Settings.Default.TaskPlayingTrackStatus = 0;
+                Properties.Settings.Default.TaskPlaybackMode = 0;
+                Properties.Settings.Default.Save();
                 return false;
             }
 
@@ -410,6 +420,8 @@ namespace MPLite
                 if (pl == null || pl.TrackAmount == 0)
                     throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", listName));
                 trackQueue = new TrackQueue(pl, selIdx, mode);
+                Properties.Settings.Default.TaskPlaylist = listName;
+                Properties.Settings.Default.Save();
             }
 
             TrackInfo nextTrack;

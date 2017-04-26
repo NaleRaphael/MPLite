@@ -125,7 +125,9 @@ namespace MPLite
         #region Track status control
         public void SetTrackStatus(TrackStatusEventArgs e)
         {
-            if (e == null || ((Playlist)lb_PlaylistMenu.SelectedItem).ListName != Properties.Settings.Default.TaskPlaylist)
+            if (e == null || ((Playlist)lb_PlaylistMenu.SelectedItem).ListName != e.OwnerList)
+                return;
+            if (e.Index < 0)
                 return;
             OCTrack[e.Index].StatusSign = MPLiteConstant.TrackStatusSign[(int)e.Track.TrackStatus];
         }
@@ -242,6 +244,7 @@ namespace MPLite
             {
                 // If no playlist is selected (user click btn_StartPlayback to play music)
                 selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
+
                 if (mode == PlaybackMode.None)
                     throw new Exception("Invalid playback mode");
 

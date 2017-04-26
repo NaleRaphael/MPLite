@@ -137,6 +137,29 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Padding" Value="0,0,0,0"/>
         <Setter Property="BorderThickness" Value="0"/>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border>
+                        <Grid x:Name="gd" Background="Transparent">
+                            <TextBlock x:Name="txt" Text="{Binding EventText}"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="true">
+                            <Setter Property="Foreground" Value="#FFC8C8C8" TargetName="txt"/>
+                            <Setter Property="Background" Value="#FFB28E50" TargetName="gd"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="false">
+                            <Setter Property="Foreground" Value="#FFC8C8C8" TargetName="txt"/>
+                            <Setter Property="Background" Value="Transparent" TargetName="gd"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -148,16 +171,6 @@
         </Setter>
 
         <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
-
-        <Style.Triggers>
-            <Trigger Property="IsSelected" Value="true">
-                <Setter Property="Foreground" Value="#FFC8C8C8"/>
-                <Setter Property="Background" Value="Transparent"/>
-            </Trigger>
-            <Trigger Property="IsSelected" Value="false">
-                <Setter Property="Foreground" Value="#FFC8C8C8"/>
-            </Trigger>
-        </Style.Triggers>
 
         <!-- Override these key to modify the color of "SelectedUnfucoused" ListBoxItem -->
         <!--
@@ -275,21 +288,11 @@
 
                                                     <!-- Content of a day -->
                                                     <ListBox x:Name="lbDayContent" IsEnabled="{Binding Enabled}" Background="Transparent" BorderThickness="0" BorderBrush="Transparent" 
-                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}">
-                                                        <ListBox.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Border Background="Transparent">
-                                                                    <TextBlock Text="{Binding EventText}"/>
-                                                                </Border>
-                                                            </DataTemplate>
-                                                        </ListBox.ItemTemplate>
-                                                    </ListBox>
+                                                             ItemsSource="{Binding Events}" ItemContainerStyle="{StaticResource StyleDayContent}"/>
 
                                                     <DockPanel.ContextMenu>
                                                         <ContextMenu>
-                                                            <!--<MenuItem x:Name="miShowInfo" Style="{StaticResource StyleMenuItemShowInfo}" Header="Event info"/>-->
                                                             <MenuItem x:Name="miAddEvent" Style="{StaticResource StyleMenuItemAddEvent}" Header="Add event"/>
-                                                            <!--<MenuItem x:Name="miDeleteEvent" Style="{StaticResource StyleMenuItemDeleteEvent}" Header="Delete event"/>-->
                                                         </ContextMenu>
                                                     </DockPanel.ContextMenu>
                                                 </DockPanel>
