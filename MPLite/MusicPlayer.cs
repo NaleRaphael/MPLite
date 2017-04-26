@@ -144,7 +144,7 @@ namespace MPLite
                 {
                     TrackInfo prevTrack;
                     int prevTrackIdx = trackQueue.Current(out prevTrack);
-                    prevTrack.TrackStatus = TrackStatus.Stopped;
+                    prevTrack.TrackStatus = TrackStatus.IncorrectPath;
                     PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylist, prevTrackIdx));
                 }
                 throw ex_FailedToOpen;

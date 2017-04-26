@@ -175,7 +175,7 @@ namespace MPLite
             {
                 case PlaybackMode.Default:
                     _SetTrackQueue_Default(trackAmount, beginningIdx);
-                    playedTrackAmountLimit = trackAmount;
+                    playedTrackAmountLimit = trackAmount - beginningIdx;
                     break;
                 case PlaybackMode.RepeatList:
                     _SetTrackQueue_RepeatList(trackAmount, beginningIdx);
