@@ -32,18 +32,10 @@ namespace MPLite
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
 
-        //public delegate PlayTrackEventArgs GetTrackEventHandler(MusicPlayer player, string selectedPlaylist = null, 
-        //    int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = false);
-        //public static event GetTrackEventHandler GetTrackEvent; // subscriber: GetTrack @ PagePlaylist.xaml.cs
         public delegate TrackInfo GetTrackEventHandler(MusicPlayer player, string selectPlaylist = null, 
             int selTrackIdx = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true);
         public static event GetTrackEventHandler GetTrackEvent;
         public delegate void TrackIsPalyingEventHandler(PlayTrackEventArgs e);
-        public static event TrackIsPalyingEventHandler TrackIsPlayedEvent;  // subscriber: MainWindow_TrackIsPlayedEvent @ PagePlaylist.xaml.cs
-        public delegate void TrackIsStoppedEventHandler(PlayTrackEventArgs e);
-        public static event TrackIsStoppedEventHandler TrackIsStoppedEvent; // subscriber: MainWindow_TrackIsStoppedEvent @ PagePlaylist.xaml.cs
-        public delegate void FailedToPlayTrackEventHandler(PlayTrackEventArgs e);
-        public static event FailedToPlayTrackEventHandler FailedToPlayTrackEvent;
         
         // Timer (tracing track progress)
         private DispatcherTimer timer;
@@ -77,7 +69,7 @@ namespace MPLite
             // Page switcher
             PageSwitcher.pageSwitcher = this.framePageSwitcher;
 
-            // Menu_Setting
+            // Menu_Setting (footer)
             ShowMenuSetting(false);
 
             // Music player
@@ -123,6 +115,11 @@ namespace MPLite
             pageCalendar = new PageCalendar();      // workaround: create PageCalendar to load EventManager
             
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
+
+            _musicPlayer.PlayerStartedEvent += pagePlaylist.SetTrackStatus;
+            _musicPlayer.PlayerStoppedEvent += pagePlaylist.SetTrackStatus;
+
+            PagePlaylist.ListContentIsRefreshedEvent += this.GetPlayingTrackStatus;
 
             UpdateLayout();
         }
@@ -275,7 +272,14 @@ namespace MPLite
         #region Music player control
         private void PlayTrackFromPageList(string selectedPlaylist, int selectedTrackIndex, PlaybackMode mode)
         {
-            _musicPlayer.Play(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode, true));
+            try
+            {
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode, true));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void btnStartPlayback_Click(object sender, RoutedEventArgs e)
@@ -287,8 +291,7 @@ namespace MPLite
                 {
                     case MusicPlayer.PlaybackState.Stopped:
                         // Call from MainWindow, so that player will start from the beginning of a list. (-1)
-                        //PlayTrack(GetTrackEvent(_musicPlayer));
-                        _musicPlayer.Play(GetTrackEvent(_musicPlayer));
+                        _musicPlayer.Play(GetTrackEvent(_musicPlayer, null, -1, (PlaybackMode)Properties.Settings.Default.PlaybackMode, true));
                         break;
                     case MusicPlayer.PlaybackState.Playing:
                         _musicPlayer.Pause();
@@ -303,42 +306,9 @@ namespace MPLite
                 MessageBox.Show(ex.Message);
             }
         }
-
         
-        //// Beginning function to fire all events of playing track
-        //private void PlayTrack(PlayTrackEventArgs e)
-        //{
-        //    try
-        //    {
-        //        _musicPlayer.Stop(e);    // TODO: pass a PlayTrackEventArgs into it
-
-        //        if (e.CurrTrack == null)
-        //            return;
-
-        //        int volume = Properties.Settings.Default.IsMuted ? 0 : Properties.Settings.Default.Volume;
-        //        _musicPlayer.Play(e);
-        //        _musicPlayer.SetVolume(volume);
-
-        //        // Fire an event to notify LV_Playlist in Page_Playlist (change `playingSign` to ">")
-        //        TrackIsPlayedEvent(e);
-        //    }
-        //    catch (InvalidFilePathException ex_InvaildPath)     // Track is not found. Skip it and play the next track
-        //    {
-        //        // Set status of the problematic track (!)
-        //        FailedToPlayTrackEvent(e);
-
-        //        // TODO: get next track
-        //        StopPlayerOrPlayNextTrack(e);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //        _musicPlayer.Stop(e);
-        //    }
-        //}
-
         // Subscriber
-        public void ResetTimerAndTrackBar()
+        public void ResetTimerAndTrackBar(TrackStatusEventArgs e)
         {
             timer.Stop();
             // Reset the posotion of thumb
@@ -353,7 +323,8 @@ namespace MPLite
         }
 
         // Subscriber
-        private void SetTimerAndTrackBar(TrackInfo track)
+        //private void SetTimerAndTrackBar(TrackInfo track)
+        private void SetTimerAndTrackBar(TrackStatusEventArgs e)
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
             timer.Start();
@@ -375,18 +346,17 @@ namespace MPLite
         }
 
         // Subscriber
-        //private void StopPlayerOrPlayNextTrack(PlayTrackEventArgs e)
-        //{
-        //    // Play next track or replay the same track (according to user setting)
-        //    _musicPlayer.Play(GetTrackEvent(_musicPlayer, e.PlaylistName, e.CurrTrackIndex, e.PlaybackMode));
-        //}
-
         private void StopOrPlayNextTrack()
         {
             // Play next track or replay the same track (according to user setting)
             string listName = Properties.Settings.Default.TaskPlaylist;
             PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
             _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
+        }
+
+        private TrackStatusEventArgs GetPlayingTrackStatus()
+        {
+            return new TrackStatusEventArgs(_musicPlayer.CurrentTrack, _musicPlayer.CurrentPlaylistName, _musicPlayer.CurrentTrackIndex);
         }
         #endregion
 
@@ -575,33 +545,39 @@ namespace MPLite
 
         private void btnBackward_Click(object sender, RoutedEventArgs e)
         {
-            /*
-            PlayTrackEventArgs pe = new PlayTrackEventArgs
-            {
-                PlaybackMode
-            };
-            StopPlayerOrPlayNextTrack();
-            */
-            //PlayTrack(GetTrackEvent(_musicPlayer, null, -1, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode, false));
-
-            if (!_musicPlayer.IsPlaying())
+            if (_musicPlayer.IsStopped())
                 return;
 
             string listName = Properties.Settings.Default.TaskPlaylist;
             PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
 
-            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, false));
+            try
+            {
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, false));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
         }
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            if (!_musicPlayer.IsPlaying())
+            if (_musicPlayer.IsStopped())
                 return;
 
             string listName = Properties.Settings.Default.TaskPlaylist;
             PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
 
-            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
+            try
+            {
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

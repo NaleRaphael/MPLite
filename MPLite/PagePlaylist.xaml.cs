@@ -10,6 +10,7 @@ namespace MPLite
 {
     using TrackInfo = Core.TrackInfo;
     using MPLiteConstant = Core.MPLiteConstant;
+    using TrackStatus = Core.TrackStatus;
     using Playlist = Core.Playlist;
     using PlaylistCollection = Core.PlaylistCollection;
     using PlayTrackEventArgs = Core.PlayTrackEventArgs;
@@ -19,17 +20,17 @@ namespace MPLite
 
     public partial class PagePlaylist : Page
     {
+        public ObservableCollection<Playlist> OCPlaylist { get; set; }
+        public ObservableCollection<TrackInfo> OCTrack { get; set; }
+
         #region Event
         public delegate void PlayTrackEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1,
             PlaybackMode mode = PlaybackMode.None);
         public static event PlayTrackEventHandler PlayTrackEvent;
         public delegate void NewSelectionEventHandler();    // User selected a track as a new entry of trackQueue
         public static event NewSelectionEventHandler NewSelectionEvent;
-
-        //public delegate void StopPlayerRequestEventHandler(PlayTrackEventArgs e);
-        //public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
-        //public delegate void PausePlayerRequestEventHandler();
-        //public static event PausePlayerRequestEventHandler PausePlayerRequestEvent;
+        public delegate TrackStatusEventArgs ListContentIsRefreshedEventHandler();
+        public static event ListContentIsRefreshedEventHandler ListContentIsRefreshedEvent;
 
         public delegate void StopPlayerRequestEventHandler();
         public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
@@ -47,9 +48,6 @@ namespace MPLite
         // Workaround of avoid playing wrong song when there are duplicates
         private int prevTrackIdx = -1;
         private int currTrackIdx = -1;
-
-        public ObservableCollection<Playlist> OCPlaylist { get; set; }
-        public ObservableCollection<TrackInfo> OCTrack { get; set; }
         #endregion
 
         public PagePlaylist()
@@ -61,9 +59,6 @@ namespace MPLite
             currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
             MainWindow.GetTrackEvent += GetTrack;
-            MainWindow.TrackIsPlayedEvent += SetTrackStatus;
-            MainWindow.TrackIsStoppedEvent += ResetTrackStatus;
-            MainWindow.FailedToPlayTrackEvent += SetTrackStatus;
         }
 
         #region Initialization
@@ -110,8 +105,10 @@ namespace MPLite
             {
                 string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
 
-                if (Properties.Settings.Default.TaskPlaylist == currShowingPlaylist)
-                    SetPlayingStateOfTrack(currTrackIdx, ">");
+                if (Properties.Settings.Default.TaskPlaylist == listName)
+                {
+                    SetTrackStatus(ListContentIsRefreshedEvent());
+                }
             }
         }
 
@@ -126,35 +123,11 @@ namespace MPLite
         #endregion
 
         #region Track status control
-        public void ResetTrackStatus(PlayTrackEventArgs e)
+        public void SetTrackStatus(TrackStatusEventArgs e)
         {
-            string listName = Properties.Settings.Default.TaskPlaylist;
-
-            // Check whether selected list is the one hosting the playing track.
-            // (NOTE: we don't need to worry about those status wasn't cleared before switch to another playlist.
-            // Because the content of `lv_playlist` will be reloaded from `MPlitePlaylist.json` when selected playlist is changed, 
-            // and `trackInfo.PlayingSign` won't be store into it. 
-            // So we just only have to set `PlayingSign` when the selected playlist is the one hosting playing track.)
-            if (listName == currShowingPlaylist)
-                SetPlayingStateOfTrack(e.PrevTrackIndex, MPLiteConstant.TrackStatusSign[(int)e.PrevTrackStatus]);
-        }
-
-        public void SetTrackStatus(PlayTrackEventArgs e)
-        {
-            string listName = Properties.Settings.Default.TaskPlaylist;
-            if (listName == currShowingPlaylist)
-                SetPlayingStateOfTrack(e.CurrTrackIndex, MPLiteConstant.TrackStatusSign[(int)e.CurrTrackStatus]);
-        }
-
-        public void SetTrackStatus()
-        {
-            string listName = Properties.Settings.Default.TaskPlaylist;
-        }
-
-        private void SetPlayingStateOfTrack(int trackIdx, string status)
-        {
-            if (trackIdx == -1) return;
-            OCTrack[trackIdx].PlayingSign = status;
+            if (e == null || ((Playlist)lb_PlaylistMenu.SelectedItem).ListName != Properties.Settings.Default.TaskPlaylist)
+                return;
+            OCTrack[e.Index].StatusSign = MPLiteConstant.TrackStatusSign[(int)e.Track.TrackStatus];
         }
         #endregion
 
@@ -205,14 +178,13 @@ namespace MPLite
             string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
             SetPrevAndCurrShowingPlaylist(listName);
 
-            NewSelectionEvent();    // Notify MusicPlayer to reset queue
-            //StopPlayerRequestEvent(new PlayTrackEventArgs());
             StopPlayerRequestEvent();
+            NewSelectionEvent();    // Notify MusicPlayer to reset queue
 
             Properties.Settings.Default.TaskPlaybackMode = Properties.Settings.Default.PlaybackMode;
+            Properties.Settings.Default.TaskPlaylist = listName;
             Properties.Settings.Default.Save();
             PlayTrackEvent(listName, selIdx, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
-            //PlaySoundtrack(listName, selIdx, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
         }
 
         private void lv_Playlist_KeyDown(object sender, KeyEventArgs e)
@@ -258,8 +230,6 @@ namespace MPLite
         }
 
         // TODO: add a parameter: get prev/next
-        //private PlayTrackEventArgs GetTrack(MusicPlayer player, string selectedPlaylist = null,
-        //    int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true)
         private TrackInfo GetTrack(MusicPlayer player, string selectedPlaylist = null,
             int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true)
         {
@@ -317,15 +287,6 @@ namespace MPLite
         #region Playlist menu control
         private void MenuListBox_MouseUp(object sender, MouseEventArgs e)
         {
-            /*
-            string listName = ((Playlist)(((ListBoxItem)sender).Content)).ListName;
-            SetPrevAndCurrShowingPlaylist(listName);
-            RefreshPlaylistContent(listName, lb_PlaylistMenu.SelectedIndex);
-
-            if (lv_Playlist.Visibility == Visibility.Hidden)
-                lv_Playlist.Visibility = Visibility.Visible;
-            */
-
             lb_PlaylistMenu_SelectionChanged(null, null);
         }
 
@@ -354,8 +315,8 @@ namespace MPLite
                 // Switch content of lv_playlist to previous one, or hide lv_playlist if there is no remaining items in lb_PlaylistMenu
                 if (lb_PlaylistMenu.Items.Count != 0)
                 {
-                    string prevShowingPlaylist = ((Playlist)(lb_PlaylistMenu.Items[lb_PlaylistMenu.Items.Count - 1])).ListName;
-                    RefreshPlaylistContent(prevShowingPlaylist, lb_PlaylistMenu.Items.Count - 1);
+                    selectedPlaylist = ((Playlist)(lb_PlaylistMenu.Items[lb_PlaylistMenu.Items.Count - 1])).ListName;
+                    RefreshPlaylistContent(selectedPlaylist, lb_PlaylistMenu.Items.Count - 1);
                 }
                 else
                 {

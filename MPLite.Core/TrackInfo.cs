@@ -14,24 +14,24 @@ namespace MPLite.Core
     public class TrackInfo : INotifyPropertyChanged
     {
         [JsonIgnore]
-        private string _playingSign;
-
-        /*[JsonIgnore]
-        private MPLiteConstant.TrackStatus _trackStatus = MPLiteConstant.TrackStatus.None;*/
+        private string _statusSign;
 
         [JsonIgnore]
-        public string PlayingSign
+        private TrackStatus _trackStatus = TrackStatus.None;
+
+        [JsonIgnore]
+        public string StatusSign
         {
-            get { return _playingSign; }
-            set { _playingSign = value; NotifyPropertyChanged("PlayingSign"); }
+            get { return _statusSign; }
+            set { _statusSign = value; NotifyPropertyChanged("StatusSign"); }
         }
 
-        /*[JsonIgnore]
-        public MPLiteConstant.TrackStatus TrackStatus
+        [JsonIgnore]
+        public TrackStatus TrackStatus
         {
             get { return _trackStatus; }
             set { _trackStatus = value; NotifyPropertyChanged("TrackStatus"); }
-        }*/
+        }
 
         public string TrackName { get; set; }
         public string TrackPath { get; set; }

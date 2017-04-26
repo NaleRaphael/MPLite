@@ -19,17 +19,17 @@ namespace MPLite
             TrackName.Content = "";
         }
 
-        public void SetTrackLength(TrackInfo track)
+        public void SetTrackLength(TrackStatusEventArgs e)
         {
-            trackDuration = track.Duration;
+            trackDuration = e.Track.Duration;
         }
 
-        public void SetTrackName(TrackInfo track)
+        public void SetTrackName(TrackStatusEventArgs e)
         {
-            TrackName.Content = track.TrackName;
+            TrackName.Content = e.Track.TrackName;
         }
 
-        public void ResetTrackName()
+        public void ResetTrackName(TrackStatusEventArgs e)
         {
             TrackName.Content = "";
         }
@@ -39,36 +39,9 @@ namespace MPLite
             TrackProgress.Content = string.Format("{0:00}", miliSecond / 60000) + ":" + string.Format("{0:00}", miliSecond / 1000 % 60) + "/" + trackDuration;
         }
 
-        public void ResetTrackProgress()
+        public void ResetTrackProgress(TrackStatusEventArgs e)
         {
             TrackProgress.Content = "";
         }
-
-        /*
-        public void SetTrackLength(PlayTrackEventArgs e)
-        {
-            trackDuration = e.CurrTrack.Duration;
-        }
-
-        public void SetTrackName(PlayTrackEventArgs e)
-        {
-            TrackName.Content = e.CurrTrack.TrackName;
-        }
-
-        public void ResetTrackName(PlayTrackEventArgs e)
-        {
-            TrackName.Content = "";
-        }
-
-        public void SetTrackProgress(int miliSecond)
-        {
-            TrackProgress.Content = string.Format("{0:00}", miliSecond / 60000) + ":" + string.Format("{0:00}", miliSecond / 1000 % 60) + "/" + trackDuration;
-        }
-
-        public void ResetTrackProgress(PlayTrackEventArgs e)
-        {
-            TrackProgress.Content = "";
-        }
-        */
     }
 }

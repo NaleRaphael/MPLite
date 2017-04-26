@@ -10,46 +10,64 @@ namespace MPLite
 
     public class CircularQueue<T> : Queue<T>
     {
-        public int CurrentIndex { get; set; }
+        public int CurrentQueueIndex { get; set; }
+        public int PreviousPointer { get; private set; }
 
         public CircularQueue() : base()
         {
-            CurrentIndex = -1;
+            CurrentQueueIndex = -1;
         }
 
         public CircularQueue(int capacity) : base(capacity)
         {
-            CurrentIndex = -1;
+            CurrentQueueIndex = -1;
         }
 
-        public T Next()
+        public T this[int index]
         {
-            CurrentIndex = (CurrentIndex + 1 >= this.Count) ? 0 : CurrentIndex + 1;
-            T result = this.ElementAt<T>(CurrentIndex);
+            get { return this.ElementAt(index); }
+        }
+
+        protected T Next()
+        {
+            PreviousPointer = CurrentQueueIndex;
+            CurrentQueueIndex = (CurrentQueueIndex + 1 >= this.Count) ? 0 : CurrentQueueIndex + 1;
+            T result = this.ElementAt<T>(CurrentQueueIndex);
             return result;
         }
 
-        public T Previous()
+        public T PeekNext()
         {
-            CurrentIndex = (CurrentIndex - 1 < 0) ? this.Count - 1 : CurrentIndex - 1;
-            T result = this.ElementAt<T>(CurrentIndex);
+            return this.ElementAt<T>((CurrentQueueIndex + 1 >= this.Count) ? 0 : CurrentQueueIndex + 1);
+        }
+
+        protected T Previous()
+        {
+            PreviousPointer = CurrentQueueIndex;
+            CurrentQueueIndex = (CurrentQueueIndex - 1 < 0) ? this.Count - 1 : CurrentQueueIndex - 1;
+            T result = this.ElementAt<T>(CurrentQueueIndex);
             return result;
+        }
+
+        public T PeekPrevious()
+        {
+            return this.ElementAt<T>((CurrentQueueIndex - 1 < 0) ? this.Count - 1 : CurrentQueueIndex - 1);
         }
 
         public T Current()
         {
-            return this.ElementAt<T>(CurrentIndex);
+            return this.ElementAt<T>(CurrentQueueIndex);
         }
 
         public new T Dequeue()
         {
-            CurrentIndex = (CurrentIndex == 0) ? 0 : CurrentIndex - 1;
+            CurrentQueueIndex = (CurrentQueueIndex == 0) ? 0 : CurrentQueueIndex - 1;
             return base.Dequeue();
         }
 
         public new void Clear()
         {
-            CurrentIndex = -1;
+            CurrentQueueIndex = -1;
             base.Clear();
         }
     }
@@ -79,26 +97,16 @@ namespace MPLite
         public int Next(out TrackInfo track)
         {
             int trackIdx = base.Next();
-            track = null;
+            track = GetNextTrackAccordingMode(trackIdx);
 
-            switch (Mode)
-            {
-                case PlaybackMode.Default:
-                case PlaybackMode.ShuffleOnce:
-                case PlaybackMode.PlaySingle:
-                    track = (playedTrackAmount++ >= playedTrackAmountLimit) ? null : this.Soundtracks[trackIdx];
-                    break;
-                case PlaybackMode.RepeatTrack:
-                case PlaybackMode.RepeatList:
-                case PlaybackMode.Shuffle:
-                    track = this.Soundtracks[trackIdx];
-                    playedTrackAmount++;
-                    break;
-                default:
-                    // Throw exception?!
-                    break;
-            }
-            Console.WriteLine("CurrentIndex: " + CurrentIndex);
+            Console.WriteLine("CurrentQueueIndex: " + CurrentQueueIndex);
+            return trackIdx;
+        }
+
+        public int PeekNext(out TrackInfo track)
+        {
+            int trackIdx = base.PeekNext();
+            track = GetNextTrackAccordingMode(trackIdx);
             return trackIdx;
         }
 
@@ -113,7 +121,7 @@ namespace MPLite
         {
             int trackIdx = base.Current();
             track = this.Soundtracks[trackIdx];
-            Console.WriteLine("CurrentIndex: " + CurrentIndex);
+            Console.WriteLine("CurrentQueueIndex: " + CurrentQueueIndex);
             return trackIdx;
         }
 
@@ -125,12 +133,20 @@ namespace MPLite
 
         public int Previous(out TrackInfo track)
         {
-            bool canPlayPreviousTrack = (playedTrackAmount - 1 <= 0);
-            int trackIdx = canPlayPreviousTrack ? base.Current() : base.Previous();
+            bool canPlayPreviousTrack = (playedTrackAmount - 1 > 0);
+            int trackIdx = canPlayPreviousTrack ?  base.Previous() : base.Current();
             track = this.Soundtracks[trackIdx];
-            playedTrackAmount = canPlayPreviousTrack ? playedTrackAmount : playedTrackAmount - 1;
+            playedTrackAmount = canPlayPreviousTrack ? playedTrackAmount - 1 : playedTrackAmount;
 
-            Console.WriteLine("CurrentIndex: " + CurrentIndex);
+            Console.WriteLine("CurrentQueueIndex: " + CurrentQueueIndex);
+            return trackIdx;
+        }
+
+        public int PeekPrevious(out TrackInfo track)
+        {
+            bool canPlayPreviousTrack = (playedTrackAmount - 1 > 0);
+            int trackIdx = canPlayPreviousTrack ? base.PeekPrevious() : base.Current();
+            track = this.Soundtracks[trackIdx];
             return trackIdx;
         }
 
@@ -226,6 +242,31 @@ namespace MPLite
         private void _SetTrackQueue_Single(int trackAmount, int beginningIdx)
         {
             this.Enqueue(beginningIdx);
+        }
+
+        private TrackInfo GetNextTrackAccordingMode(int trackIdx)
+        {
+            TrackInfo track = null;
+
+            switch (Mode)
+            {
+                case PlaybackMode.Default:
+                case PlaybackMode.ShuffleOnce:
+                case PlaybackMode.PlaySingle:
+                    track = (playedTrackAmount++ >= playedTrackAmountLimit) ? null : this.Soundtracks[trackIdx];
+                    break;
+                case PlaybackMode.RepeatTrack:
+                case PlaybackMode.RepeatList:
+                case PlaybackMode.Shuffle:
+                    track = this.Soundtracks[trackIdx];
+                    playedTrackAmount++;
+                    break;
+                default:
+                    // Throw exception?!
+                    break;
+            }
+
+            return track;
         }
     }
 }

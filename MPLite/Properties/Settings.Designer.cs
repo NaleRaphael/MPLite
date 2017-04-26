@@ -154,5 +154,29 @@ namespace MPLite.Properties {
                 this["WindowHeight"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int TaskPlayingTrackIndex {
+            get {
+                return ((int)(this["TaskPlayingTrackIndex"]));
+            }
+            set {
+                this["TaskPlayingTrackIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int TaskPlayingTrackStatus {
+            get {
+                return ((int)(this["TaskPlayingTrackStatus"]));
+            }
+            set {
+                this["TaskPlayingTrackStatus"] = value;
+            }
+        }
     }
 }

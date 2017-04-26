@@ -77,7 +77,7 @@
                   KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI" ItemContainerStyle="{StaticResource StyleListViewItem}">
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}" AllowsColumnReorder="False">
-                        <GridViewColumn Header="" lvctrl:ProportionalColumn.Width="3" DisplayMemberBinding="{Binding Path=PlayingSign}"/>
+                        <GridViewColumn Header="" lvctrl:ProportionalColumn.Width="3" DisplayMemberBinding="{Binding Path=StatusSign}"/>
                         <GridViewColumn Header="Track" lvctrl:ProportionalColumn.Width="15" DisplayMemberBinding="{Binding Path=TrackName}"/>
                         <GridViewColumn Header="Duration" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Duration}"/>
                         <GridViewColumn Header="Artist" lvctrl:ProportionalColumn.Width="10" DisplayMemberBinding="{Binding Path=Artist}"/>
