@@ -191,7 +191,6 @@
     <Resource Include="images\icons\volw_66.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dll\Calendar.NET.dll" />
     <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
     <Content Include="dll\MPLite.Core.dll" />
     <Resource Include="images\icons\add_playlist.png" />

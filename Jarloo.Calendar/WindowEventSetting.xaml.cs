@@ -122,6 +122,7 @@ namespace Jarloo.Calendar
             try
             {
                 ParseEventSetting();
+                this.Close();
             }
             catch (Exception ex)
             {

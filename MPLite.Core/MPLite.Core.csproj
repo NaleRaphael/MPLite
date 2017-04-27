@@ -78,7 +78,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)MPLite\dll"
-copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)MPLite.Event\dll"
 copy "$(TargetDir)$(TargetName).dll" "$(SolutionDir)Jarloo.Calendar\dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

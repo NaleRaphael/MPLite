@@ -1,6 +1,16 @@
 # MPLite
 A simple music player written in C# (.NET 4.0) with a built-in scheduler.
 
+## Screenshots
+![](screenshots/ss_Playlist.png)
+
+## TODO
+- [ ] Rearrange tracks by dragging
+- [ ] Multiple trigger event (For special task, like the class bell. It needs to be tiggered multiple time in a day.)
+- [ ] Smoothly volume control
+- [ ] Window for showing event info
+- [ ] Remote control (through mobile phone)
+
 ## Awesome librarys this project used
 - [Jarloo.Calendar](http://www.jarloo.com/wpf-calendar-control/)
 - [Json.NET (NewtonSoft.Json)](http://www.newtonsoft.com/json)
