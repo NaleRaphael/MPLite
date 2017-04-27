@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
+using System.Text.RegularExpressions;
 
 namespace Jarloo.Calendar
 {
@@ -23,6 +24,12 @@ namespace Jarloo.Calendar
 
         private PlaylistCollection plc;
 
+        private Regex reEscChars = new Regex("[\\\\/:*?\"<>|]");
+        private Regex reDigitOnly = new Regex("^[0-9]+$");
+
+        private System.Windows.Controls.ToolTip tpInvalidInput;
+
+        #region Events
         public delegate IEvent NewlyAddedEventHandler();
         public event NewlyAddedEventHandler NewlyAddedEvent;
 
@@ -31,6 +38,7 @@ namespace Jarloo.Calendar
 
         public delegate void NewEventIsCreatedEventHandler(CustomEvent evnt);
         public event NewEventIsCreatedEventHandler NewEventIsCreatedEvent;
+        #endregion
 
         public DateTime InitialBeginningTime { get; set; }
 
@@ -111,8 +119,18 @@ namespace Jarloo.Calendar
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            PassingDataEvent(timeSpanUpDown.Value.ToString());
+            try
+            {
+                ParseEventSetting();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
+        private void ParseEventSetting()
+        {
             string eventName;
             int rank;
             DateTime beginningTime;
@@ -121,10 +139,13 @@ namespace Jarloo.Calendar
             bool thisDayForwardOnly = (chkThisDayForwardOnly.IsChecked == true) ? true : false;
 
             // Check parameters
-            eventName = txtEventName.Text;
+            if (reEscChars.IsMatch(txtEventName.Text))
+                throw new Exception("Event name shoud not contain the following charaters: \\/:*?\"<>|");
+            eventName = txtEventName.Text.TrimEnd(' ');
 
-            if (!int.TryParse(txtRank.Text, out rank))
+            if (!reDigitOnly.IsMatch(txtRank.Text))
                 throw new Exception("Given value of \"Rank\" is invalid, it should contains digits only.");
+            rank = int.Parse(txtRank.Text);
 
             if (dateTimePicker.Value == null)
                 throw new Exception("Invalid value of DateTimePicker");
@@ -132,7 +153,7 @@ namespace Jarloo.Calendar
 
             if (chkSetDuration.IsChecked == true)
                 duration = timeSpanUpDown.Value.Value;
-            
+
             // Set recurring frequency
             int recurringFreq = 0;
             if (cmbRecurringFreq.SelectedItem.ToString() == RecurringFrequencies.Custom.ToString())
@@ -150,7 +171,6 @@ namespace Jarloo.Calendar
                 recurringFreq = (int)cmbRecurringFreq.SelectedItem;
             }
 
-            //MessageBox.Show(((RecurringFrequencies)recurringFreq).ToString());
             Console.WriteLine(((RecurringFrequencies)recurringFreq).ToString());
 
             CustomEvent ce = new CustomEvent
@@ -239,6 +259,70 @@ namespace Jarloo.Calendar
         private void btnCloseWindow_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void txtEventName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (reEscChars.IsMatch(((TextBox)sender).Text))
+            {
+                SetToolTip((TextBox)sender, "Text shoud not contain the following charaters: \\/:*?\"<>|");
+            }
+            else
+            {
+                RemoveToolTip((TextBox)sender);
+            }
+        }
+
+        private void txtEventName_LostFocus(object sender, RoutedEventArgs e)
+        {
+            RemoveToolTip((TextBox)sender);
+        }
+
+        private void txtRank_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!reDigitOnly.IsMatch(((TextBox)sender).Text))
+            {
+                SetToolTip((TextBox)sender, "Text shoud contain digits only.");
+            }
+            else
+            {
+                RemoveToolTip((TextBox)sender);
+            }
+        }
+
+        private void txtRank_LostFocus(object sender, RoutedEventArgs e)
+        {
+            RemoveToolTip((TextBox)sender);
+        }
+
+        private void SetToolTip<T>(T owner, string msg) where T : System.Windows.Controls.Control
+        {
+            if ((owner).ToolTip == null)
+            {
+                System.Windows.Controls.ToolTip tp = new System.Windows.Controls.ToolTip();
+                tp.Content = msg;
+                tp.PlacementTarget = owner;
+                tp.Placement = System.Windows.Controls.Primitives.PlacementMode.Relative;
+                tp.HorizontalOffset = owner.Width + 5;
+                owner.ToolTip = tp;
+                tp.IsOpen = true;
+            }
+            else
+            {
+                (owner.ToolTip as System.Windows.Controls.ToolTip).IsOpen = true;
+            }
+        }
+
+        private void RemoveToolTip<T>(T owner) where T : System.Windows.Controls.Control
+        {
+            if (owner.ToolTip != null)
+            {
+                System.Windows.Controls.ToolTip tp = owner.ToolTip as System.Windows.Controls.ToolTip;
+                tp.Content = "";
+                tp.IsOpen = false;
+                owner.ToolTip = null;
+                tp = null;
+            }
         }
     }
 }

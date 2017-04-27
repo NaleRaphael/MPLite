@@ -306,24 +306,56 @@ namespace MPLite
                 MessageBox.Show(ex.Message);
             }
         }
-        
+
+        private void btnBackward_Click(object sender, RoutedEventArgs e)
+        {
+            if (_musicPlayer.IsStopped())
+                return;
+
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
+
+            try
+            {
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, false));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void btnForward_Click(object sender, RoutedEventArgs e)
+        {
+            if (_musicPlayer.IsStopped())
+                return;
+
+            string listName = Properties.Settings.Default.TaskPlaylist;
+            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
+
+            try
+            {
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         // Subscriber
         public void ResetTimerAndTrackBar(TrackStatusEventArgs e)
         {
             timer.Stop();
+
             // Reset the posotion of thumb
             ResetTrackBar();
-
             // Reset icon of btn_StartPlayback
             btnStartPlayback.Content = FindResource("PlaybackCtrl_Play");
-
-            // Fire event to notify subscribber that track has been stopped
-            // (reset `TrackInfo.playingSign`, ... etc)
-            //TrackIsStoppedEvent(e);
         }
 
         // Subscriber
-        //private void SetTimerAndTrackBar(TrackInfo track)
         private void SetTimerAndTrackBar(TrackStatusEventArgs e)
         {
             trackBar.Maximum = _musicPlayer.GetSongLength();
@@ -540,44 +572,8 @@ namespace MPLite
             // Change icon of btnVolumeControl
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
         }
-
         #endregion
 
-        private void btnBackward_Click(object sender, RoutedEventArgs e)
-        {
-            if (_musicPlayer.IsStopped())
-                return;
-
-            string listName = Properties.Settings.Default.TaskPlaylist;
-            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
-
-            try
-            {
-                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, false));
-            }
-            catch(Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            
-        }
-
-        private void btnForward_Click(object sender, RoutedEventArgs e)
-        {
-            if (_musicPlayer.IsStopped())
-                return;
-
-            string listName = Properties.Settings.Default.TaskPlaylist;
-            PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
-
-            try
-            {
-                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
+        
     }
 }

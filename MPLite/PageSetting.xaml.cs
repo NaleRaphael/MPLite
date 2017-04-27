@@ -7,6 +7,8 @@ using Microsoft.Win32;
 namespace MPLite
 {
     using PlaybackMode = Core.PlaybackMode;
+    using AppSettings = Core.AppSettings;
+
     public partial class PageSetting : Page
     {
         public PageSetting()
@@ -26,8 +28,9 @@ namespace MPLite
             }
             cmb_PlaybackSetting.SelectedIndex = Properties.Settings.Default.PlaybackMode;
 
-            // txtPlaylistStoragePath
-            txtPlaylistStoragePath.Text = Path.GetFullPath(Properties.Settings.Default.PlaylistInfoPath);
+            // textbox
+            txtPlaylistStoragePath.Text = Path.GetFullPath(AppSettings.PlaylistDatabase);
+            txtCalendarEventStoragePath.Text = Path.GetFullPath(AppSettings.EventDatabase);
         }
 
         private void cmb_PlaybackSetting_SelectionChanged(object sender, SelectionChangedEventArgs e)

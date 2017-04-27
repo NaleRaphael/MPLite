@@ -18,13 +18,13 @@
                 <Label x:Name="lbl_PlaybackSetting" Content="Playback mode" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFC8C8C8" FontFamily="Segoe UI"/>
             </Grid>
             <Grid x:Name="gridPlayerConfig" HorizontalAlignment="Left" Height="60" Margin="10,70,0,0" VerticalAlignment="Top" Width="350">
-                <TextBox x:Name="txtPlaylistStoragePath" HorizontalAlignment="Left" Height="22" Margin="5,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="308" IsReadOnly="True" IsReadOnlyCaretVisible="True" Background="{x:Null}" Foreground="#FFC8C8C8"/>
+                <TextBox x:Name="txtPlaylistStoragePath" HorizontalAlignment="Left" Height="22" Margin="5,26,0,0" VerticalAlignment="Top" Width="308" IsReadOnly="True" IsReadOnlyCaretVisible="True" Background="{x:Null}" Foreground="#FFC8C8C8"/>
                 <Label x:Name="lblPlaylistStoragePath" Content="Playlist storage" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
                 <Button x:Name="btnSelectPlaylistStoragePath" Content="..." HorizontalAlignment="Left" Margin="313,26,0,0" VerticalAlignment="Top" Width="22" Click="btnSelectPlaylistStoragePath_Click"/>
             </Grid>
             <Grid x:Name="gridCalendarSetting" HorizontalAlignment="Left" Height="60" Margin="10,130,0,0" VerticalAlignment="Top" Width="350">
                 <Label x:Name="lblCalendarEventStorage" Content="Calendar event storage" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Segoe UI" Foreground="#FFC8C8C8"/>
-                <TextBox x:Name="txtCalendarEventStoragePath" HorizontalAlignment="Left" Height="22" Margin="5,26,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="308" IsReadOnly="True" Foreground="#FFC8C8C8" Background="{x:Null}"/>
+                <TextBox x:Name="txtCalendarEventStoragePath" HorizontalAlignment="Left" Height="22" Margin="5,26,0,0" VerticalAlignment="Top" Width="308" IsReadOnly="True" Foreground="#FFC8C8C8" Background="{x:Null}"/>
                 <Button x:Name="btnSelectCalendarEventStoragePath" Content="..." HorizontalAlignment="Left" Margin="313,26,0,0" VerticalAlignment="Top" Width="22" Click="btnSelectCalendarEventStoragePath_Click"/>
             </Grid>
             <Label x:Name="lbl_HotkeySetting" Content="Hotkey Setting" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8"/>

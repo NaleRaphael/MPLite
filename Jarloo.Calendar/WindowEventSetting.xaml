@@ -106,11 +106,11 @@
             <StackPanel Height="Auto" MouseDown="StackPanel_MouseDown" Margin="0,0,0,0">
                 <Grid Height="30" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
                     <Label x:Name="lblEventName" Content="Event name" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <TextBox x:Name="txtEventName" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right"/>
+                    <TextBox x:Name="txtEventName" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right" TextChanged="txtEventName_TextChanged" LostFocus="txtEventName_LostFocus"/>
                 </Grid>
                 <Grid Height="30" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
                     <Label x:Name="lblRank" Content="Rank" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <TextBox x:Name="txtRank" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right"/>
+                    <TextBox x:Name="txtRank" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right" TextChanged="txtRank_TextChanged" LostFocus="txtRank_LostFocus"/>
                 </Grid>
                 <Grid Height="50" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
                     <Label x:Name="lblBeginningTime" Content="Beginning time" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
