@@ -9,6 +9,28 @@
       mc:Ignorable="d" 
       d:DesignHeight="350" d:DesignWidth="525"
       Title="PageCalendar" Background="#FF323232">
+    <Page.Resources>
+        <Style x:Key="Style_FlatImageButton" TargetType="Button">
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border" Background="Transparent" BorderThickness="0">
+                            <ContentPresenter Name="content" Content="{TemplateBinding Button.Content}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF3C3C3C" TargetName="border"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF323232" TargetName="border"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
     <Grid x:Name="GridContainer">
         <Grid HorizontalAlignment="Left" Height="350" VerticalAlignment="Top" Width="100">
@@ -22,14 +44,18 @@
             <Button x:Name="btnAddNewEvent" Content="Button" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-2.049,-1.379" Click="btnAddNewEvent_Click"/>
         </Grid>
         <Jarloo:Calendar x:Name="calendar" Margin="100,0,0,0" Foreground="#FFAFA082" Background="#FF2D323C" FontFamily="Segoe UI"/>
-        <Grid x:Name="gridLeftContainer" Height="Auto" Width="15" Margin="100,30,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="Transparent"
+        <Grid x:Name="gridLeftContainer" Height="Auto" Width="15" Margin="100,46,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="Transparent"
               MouseEnter="gridLeftContainer_MouseEnter" MouseLeave="gridLeftContainer_MouseLeave">
-            <Button x:Name="btnMoveToPrevMonth" Visibility="Hidden" Click="btnMoveToPrevMonth_Click" ></Button>
+            <Button x:Name="btnMoveToPrevMonth" Visibility="Hidden" Style="{DynamicResource Style_FlatImageButton}" Click="btnMoveToPrevMonth_Click" >
+                <Image Source="images/goPrev.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
         </Grid>
-        <Grid x:Name="gridRightContainer" Height="Auto" Width="15" Margin="0,30,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="Transparent" 
+        <Grid x:Name="gridRightContainer" Height="Auto" Width="15" Margin="0,46,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="Transparent" 
               MouseEnter="gridRightContainer_MouseEnter" MouseLeave="gridRightContainer_MouseLeave">
-            <Button x:Name="btnMoveToNextMonth" Visibility="Hidden" Click="btnMoveToNextMonth_Click" ></Button>
+            <Button x:Name="btnMoveToNextMonth" Visibility="Hidden" Style="{DynamicResource Style_FlatImageButton}" Click="btnMoveToNextMonth_Click" >
+                <Image Source="images/goNext.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+            </Button>
         </Grid>
-        <Button x:Name="btnMoveToCurrentDate" Content="Today" Margin="495,0,0,0" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Click="btnMoveToCurrentDate_Click"/>
+        <Button x:Name="btnMoveToCurrentDate" Margin="100,0,0,0" Width="93" Height="18" Style="{DynamicResource Style_FlatImageButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btnMoveToCurrentDate_Click"/>
     </Grid>
 </Page>

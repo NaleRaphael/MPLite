@@ -17,6 +17,10 @@
                 <ResourceDictionary Source="Resources/AppleScrollViewer.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
+            <Style x:Key="MenuItemRename" TargetType="{x:Type MenuItem}">
+                <EventSetter Event="Click" Handler="miMenuItem_Click"/>
+            </Style>
+            
             <Style x:Key="StyleListBoxItem" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="BorderThickness" Value="0,0,0,1"/>
                 <Setter Property="BorderBrush" Value="#FF4B4B4B"/>
@@ -45,6 +49,14 @@
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Setter Property="ContextMenu">
+                    <Setter.Value>
+                        <ContextMenu>
+                            <MenuItem x:Name="miRename" Header="Rename" Style="{StaticResource MenuItemRename}"/>
+                        </ContextMenu>
                     </Setter.Value>
                 </Setter>
 
@@ -87,7 +99,7 @@
             </ListView>
         </DockPanel>
         <Button x:Name="btnAddPlaylist" Margin="10,0,0,10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="30" Height="30" Style="{DynamicResource Style_FlatImageButton}" Click="btnAddPlaylist_Click">
-            <Image Source="images/icons/add_playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <Image Source="images/add_playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
         </Button>
     </Grid>
 </Page>

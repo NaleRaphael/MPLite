@@ -8,7 +8,6 @@ namespace Jarloo.Calendar.Themes
 {
     using IEvent = MPLite.Event.IEvent;
     using CustomEvent = MPLite.Event.CustomEvent;
-    //using DateTimeExtension = MPLite.Event.DateTimeExtension;
 
     public partial class Generic
     {

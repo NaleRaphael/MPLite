@@ -309,7 +309,7 @@ namespace MPLite
 
         private void btnBackward_Click(object sender, RoutedEventArgs e)
         {
-            if (_musicPlayer.IsStopped())
+            if (!_musicPlayer.IsPlaying() && ! _musicPlayer.IsPaused())
                 return;
 
             string listName = Properties.Settings.Default.TaskPlaylist;
@@ -328,7 +328,7 @@ namespace MPLite
 
         private void btnForward_Click(object sender, RoutedEventArgs e)
         {
-            if (_musicPlayer.IsStopped())
+            if (!_musicPlayer.IsPlaying() && !_musicPlayer.IsPaused())
                 return;
 
             string listName = Properties.Settings.Default.TaskPlaylist;
@@ -573,7 +573,5 @@ namespace MPLite
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
         }
         #endregion
-
-        
     }
 }

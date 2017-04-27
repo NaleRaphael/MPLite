@@ -1,17 +1,17 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:MPLite">
-    <Image x:Key="PlaybackCtrl_Play" Source="../images/icons/play.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="PlaybackCtrl_Pause" Source="../images/icons/pause.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="PlaybackCtrl_Forward" Source="../images/icons/forward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="PlaybackCtrl_Backward" Source="../images/icons/backward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="Volume_100" Source="../images/icons/volw_100.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="Volume_66" Source="../images/icons/volw_66.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="Volume_33" Source="../images/icons/volw_33.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="Volume_0" Source="../images/icons/volw_0.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="Volume_muted" Source="../images/icons/volw_muted.png"/>
-    <Image x:Key="Add_Playlist" Source="../images/icons/add_playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
-    <Image x:Key="Page_Playlist" Source="../images/icons/playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="PlaybackCtrl_Play" Source="../images/play.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="PlaybackCtrl_Pause" Source="../images/pause.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="PlaybackCtrl_Forward" Source="../images/forward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="PlaybackCtrl_Backward" Source="../images/backward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="Volume_100" Source="../images/volw_100.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="Volume_66" Source="../images/volw_66.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="Volume_33" Source="../images/volw_33.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="Volume_0" Source="../images/volw_0.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="Volume_muted" Source="../images/volw_muted.png"/>
+    <Image x:Key="Add_Playlist" Source="../images/add_playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <Image x:Key="Page_Playlist" Source="../images/playlist.png" RenderOptions.BitmapScalingMode="HighQuality"/>
 
     <Style x:Key="Style_FlatImageButton" TargetType="Button">
         <Setter Property="Template">

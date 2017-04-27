@@ -332,19 +332,8 @@ namespace MPLite
         {
             if (e.Key == Key.F2)    // Rename listName in the ListBoxItem
             {
-                TextBox txtBox = ((ListBoxItem)sender).Template.FindName("txtEditBox", (FrameworkElement)sender) as TextBox;
-                if (txtBox == null)
-                    Console.WriteLine("Failed to cast object to Textbox: ListBox - txtEditBox");
-                TextBlock txtBlock = ((ListBoxItem)sender).Template.FindName("txtItemName", (FrameworkElement)sender) as TextBlock;
-                if (txtBlock == null)
-                    Console.WriteLine("Failed to cast object to Textbox: ListBox - txtItemName");
-
+                SwitchEditingMode((ListBoxItem)sender, true);
                 oriPlaylistName = OCPlaylist[lb_PlaylistMenu.SelectedIndex].ListName;
-
-                // Exchange the visibility of  control in selected TextBoxItem
-                txtBlock.Visibility = Visibility.Hidden;
-                txtBox.Visibility = Visibility.Visible;
-                txtBox.Focus();     // Set focus on the TextBox of selected ListBoxItem
             }
             else if (e.Key == Key.Escape)   // Disable editable mode of selected TextBoxItem
             {
@@ -363,26 +352,44 @@ namespace MPLite
         private void txtEditBox_LostFocus(object sender, RoutedEventArgs e)
         {
             ListBoxItem lbi = ((TextBox)sender).TemplatedParent as ListBoxItem;
-            TextBlock txtBlock = lbi.Template.FindName("txtItemName", lbi) as TextBlock;
-            TextBox txtBox = sender as TextBox;
-
-            // Exchange the visibility of  control in selected TextBoxItem
-            txtBlock.Visibility = Visibility.Visible;
-            txtBox.Visibility = Visibility.Hidden;
+            string result = SwitchEditingMode(lbi, false);
 
             Guid targetGuid = OCPlaylist[lb_PlaylistMenu.SelectedIndex].GUID;
-            if (txtBox.Text != oriPlaylistName)
+            if (result != oriPlaylistName)
             {
                 PlaylistCollection plc = PlaylistCollection.GetDatabase();
                 Playlist pl = plc.TrackLists.Find(x => x.GUID == targetGuid);
-                pl.ListName = txtBox.Text;
+                pl.ListName = result;
                 plc.SaveToDatabase();
                 lb_PlaylistMenu.UpdateLayout();
             }
 
             oriPlaylistName = "";   // Reset
         }
+
+        private string SwitchEditingMode(ListBoxItem parent, bool isEditingMode)
+        {
+            TextBox txtBox = parent.Template.FindName("txtEditBox", parent) as TextBox;
+            TextBlock txtBlock = parent.Template.FindName("txtItemName", parent) as TextBlock;
+
+            txtBlock.Visibility = isEditingMode ? Visibility.Hidden : Visibility.Visible;
+            txtBox.Visibility = isEditingMode ? Visibility.Visible : Visibility.Hidden;
+            if (isEditingMode)
+            {
+                txtBox.Focus();
+                txtBox.CaretIndex = txtBox.Text.Length;
+            }
+
+            return isEditingMode ? null : txtBox.Text;
+        }
         #endregion
+
+        private void miMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
+            ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
+            SwitchEditingMode(lbi, true);
+        }
 
         #region Handle events fired from scheduler
         // TODO: rename this

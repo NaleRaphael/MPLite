@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>images\MPLite.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Itenso.Windows.Controls.ListViewLayout, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -178,23 +181,26 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\icons\backward.png" />
-    <Resource Include="images\icons\exit.png" />
-    <Resource Include="images\icons\forward.png" />
-    <Resource Include="images\icons\gear.png" />
-    <Resource Include="images\icons\pause.png" />
-    <Resource Include="images\icons\play.png" />
-    <Resource Include="images\icons\playlist.png" />
-    <Resource Include="images\icons\volw_0.png" />
-    <Resource Include="images\icons\volw_100.png" />
-    <Resource Include="images\icons\volw_33.png" />
-    <Resource Include="images\icons\volw_66.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
     <Content Include="dll\MPLite.Core.dll" />
-    <Resource Include="images\icons\add_playlist.png" />
-    <Resource Include="images\icons\volw_muted.png" />
+    <Resource Include="images\goNext.png" />
+    <Resource Include="images\goPrev.png" />
+    <Resource Include="images\basicSetting.png" />
+    <Resource Include="images\add_playlist.png" />
+    <Resource Include="images\backward.png" />
+    <Resource Include="images\calendar.png" />
+    <Resource Include="images\exit.png" />
+    <Resource Include="images\forward.png" />
+    <Resource Include="images\gear.png" />
+    <Resource Include="images\pause.png" />
+    <Resource Include="images\play.png" />
+    <Resource Include="images\playlist.png" />
+    <Resource Include="images\volw_0.png" />
+    <Resource Include="images\volw_100.png" />
+    <Resource Include="images\volw_33.png" />
+    <Resource Include="images\volw_66.png" />
+    <Resource Include="images\volw_muted.png" />
+    <Resource Include="images\MPLite.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
