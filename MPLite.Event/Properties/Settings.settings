@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MPLite.Event.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="DBPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">eventDB.json</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>
