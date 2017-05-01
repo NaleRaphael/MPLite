@@ -28,6 +28,7 @@
             </ObjectDataProvider>
 
             <Image x:Key="ImagExitWindow" Source="Images\exit.png"/>
+            <Image x:Key="ImagRemoveTimePickerContainer" x:Shared="False" Source="Images\remove_red.png" RenderOptions.BitmapScalingMode="HighQuality"/>
 
             <Style x:Key="FocusableGrid_Basic" TargetType="{x:Type Grid}">
                 <EventSetter Event="MouseEnter" Handler="BasicGrid_MouseEnter"/>
@@ -52,6 +53,29 @@
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
                                     <Setter Property="Background" Value="#FF252525" TargetName="border"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="FlatButton_Opacity" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" Background="Transparent" BorderThickness="0">
+                                <ContentPresenter Name="content" Content="{TemplateBinding Button.Content}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Opacity" Value="0.7"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="False">
+                                    <Setter Property="Opacity" Value="0.2"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Opacity" Value="0.9"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -112,9 +136,13 @@
                     <Label x:Name="lblRank" Content="Rank" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
                     <TextBox x:Name="txtRank" HorizontalAlignment="Left" Height="20" Margin="81,0,0,0" TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Width="139" Padding="1,0" HorizontalContentAlignment="Right" TextChanged="txtRank_TextChanged" LostFocus="txtRank_LostFocus"/>
                 </Grid>
-                <Grid Height="50" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
+                <Grid x:Name="gdDateTimePickerContainer" Height="50" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
                     <Label x:Name="lblBeginningTime" Content="Beginning time" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <xctk:DateTimePicker x:Name="dateTimePicker" Margin="10,0,10,10" Height="20" VerticalAlignment="Bottom"/>
+                    <Button x:Name="btnAddMoreTimePicker" HorizontalAlignment="Left" Margin="95,2,0,0" VerticalAlignment="Top" Width="16" Height="16" Style="{StaticResource FlatButton_Opacity}" Click="btnAddMoreTimePicker_Click">
+                        <Image Source="Images/add_green.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                    <xctk:DateTimePicker x:Name="dateTimePicker" Margin="10,20,10,0" Height="20" VerticalAlignment="Top"/>
+                    <StackPanel x:Name="spTimePickerList" Height="0" Width="Auto" Margin="10,0,10,10" VerticalAlignment="Bottom"/>
                 </Grid>
                 <Grid Height="50" Background="Transparent" VerticalAlignment="Top" Margin="0,0,0,0" Style="{StaticResource FocusableGrid_Basic}">
                     <Label x:Name="lblDuration" Content="Duration (HH:mm:ss)" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>

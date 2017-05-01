@@ -47,7 +47,7 @@ namespace MPLite.Event
             OriginalBeginningTime = BeginningTime;
         }
 
-        public IEvent Clone()
+        public virtual IEvent Clone()
         {
             return new CustomEvent
             {
@@ -68,30 +68,46 @@ namespace MPLite.Event
             };
         }
 
+        public virtual void Initialize()
+        {
+            // If this object is created by object initializer, this method should be called.
+            OriginalBeginningTime = BeginningTime;
+        }
+
         // Timer has to be set by EventManager, not start counting itself.
-        public void SetTimer()
+        public virtual void SetTimer()
         {
             IsTriggered = false;    // reset (for recurring event)
 
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };
+            Console.WriteLine("Interval: " + (BeginningTime - DateTime.Now).ToString());
             timerEventHandler = (sender, args) =>
             {
                 IsTriggered = true;
-                Timer.Stop();
-                Timer.Tick -= timerEventHandler;    // check
-                timerEventHandler = null;   // check
-                Timer = null;
+                if (Timer != null)
+                {
+                    Timer.Stop();
+                    Timer.Tick -= timerEventHandler;    // check
+                    timerEventHandler = null;   // check
+                    Timer = null;
+                }
 
                 // Notify subscribers that this event starts
                 ActionStartsEvent(this);
 
-                // Update the next beginningTime of this event if it is a recurring event
-                UpdateBeginningTime();
-
                 // Timer for timing event duration
+                // Update timer when event ends if `Duration` is not zero, otherwise update it directly.
                 if (Duration != TimeSpan.Zero)
                 {
-                    Timer = new DispatcherTimer { Interval = Duration };
+                    DateTime prevBeginningTime = BeginningTime;
+                    bool isUpToDate = UpdateBeginningTime();
+                    TimeSpan buffer = TimeSpan.FromSeconds(1);
+                    TimeSpan intv = BeginningTime - prevBeginningTime;
+
+                    // Truncate timer interval if `Duration` is too long
+                    Timer = new DispatcherTimer {
+                        Interval = (Duration > intv && intv > buffer) ? intv - buffer : Duration
+                    };
 
                     timerEventHandler = (s, a) =>
                     {
@@ -103,19 +119,25 @@ namespace MPLite.Event
                         // Notify subscribers that this event ends
                         ActionEndsEvent(this);
 
+                        if (isUpToDate && BeginningTime > DateTime.Now)
+                            SetTimer();
+
                         if (AutoDelete)
                             SelfDestructEvent(this);
                     };
                     Timer.Tick += timerEventHandler;
-                    timerEventHandler = null;
                     Timer.Start();
+                }
+                else if (this.UpdateBeginningTime() && BeginningTime > DateTime.Now)
+                {
+                    SetTimer();
                 }
             };
             Timer.Tick += timerEventHandler;
             Timer.Start();
         }
 
-        public void DisposeTimer()
+        public virtual void DisposeTimer()
         {
             if (Timer != null)
             {
@@ -124,12 +146,16 @@ namespace MPLite.Event
             }
         }
 
-        public void UpdateBeginningTime()
+        /// <summary>
+        /// Update `BeginningTime` accroding to `RecurringFrequency`.
+        /// </summary>
+        /// <returns>Boolean value indicating whether `BeginningTime` is up to date or not.</returns>
+        public virtual bool UpdateBeginningTime()
         {
             if (RecurringFrequency == RecurringFrequencies.None)
-                return;
+                return false;
             if (BeginningTime > DateTime.Now)
-                return;
+                return true;    // BeginningTime is up-to-date.
 
             // assume that `dt` is today, check whether it has been expired or not. (if it is expired: starts from next day)
             DateTime beginningDateTime = BeginningTime.AddDays((DateTime.Today.Date - BeginningTime.Date).Days);
@@ -142,13 +168,8 @@ namespace MPLite.Event
                 BeginningTime = DateTime.Today.Date.Add(BeginningTime.TimeOfDay);
             else
                 BeginningTime = Utils.DateTimeOfNextWeekday(beginningDateTime, nextRecurringWeekday.ToSystemWeekday());
-        }
 
-        // TODO: this method cannot be called if this object is created by object initializer, try another method
-        private void CheckEventPropertyConflict()
-        {
-            if (AutoDelete && RecurringFrequency != RecurringFrequencies.None)
-                throw new Exception("Property `AutoDelete` should be false if `RecurringFreqeuncy` is not \"None\".");
+            return true;    
         }
     }
 

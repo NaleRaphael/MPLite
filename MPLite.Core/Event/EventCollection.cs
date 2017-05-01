@@ -7,7 +7,7 @@ namespace MPLite.Event
     using Properties = Core.Properties;
     public class EventCollection
     {
-        public List<CustomEvent> EventList { get; set; }
+        public List<IEvent> EventList { get; set; }
 
         public delegate void DatabaseIsChangedEventHandler();
         public event DatabaseIsChangedEventHandler DatabaseIsChanged;
@@ -23,13 +23,13 @@ namespace MPLite.Event
             if (ec == null)
             {
                 ec = new EventCollection();
-                ec.EventList = new List<CustomEvent>();
+                ec.EventList = new List<IEvent>();
             }
             this.EventList = ec.EventList;
             ec = null;
         }
 
-        public void AddEvent(CustomEvent target)
+        public void AddEvent(IEvent target)
         {
             string dbPath = Properties.Settings.Default.DBPath;
 
@@ -37,7 +37,7 @@ namespace MPLite.Event
             if (ec == null)
             {
                 ec = new EventCollection();
-                ec.EventList = new List<CustomEvent>();
+                ec.EventList = new List<IEvent>();
             }
 
             ec.EventList.Add(target);
@@ -106,7 +106,7 @@ namespace MPLite.Event
             DatabaseIsChanged();
         }
 
-        public CustomEvent GetEvent(Guid targetGUID)
+        public IEvent GetEvent(Guid targetGUID)
         {
             string dbPath = Properties.Settings.Default.DBPath;
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
@@ -115,7 +115,7 @@ namespace MPLite.Event
                 ec = new EventCollection();
             }
 
-            CustomEvent result;
+            IEvent result;
             try
             {
                 result = ec.EventList.Find(x => x.GUID == targetGUID);

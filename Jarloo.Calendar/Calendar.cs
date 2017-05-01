@@ -48,7 +48,6 @@ namespace Jarloo.Calendar
         public ObservableCollection<string> DayNames { get; set; }
 
         public EventManager EventManager { get; set; }
-        //public IEventHandlerFactory EventHandlerFacotry { get; set; }
 
         public DateTime CurrentDate
         {
@@ -185,7 +184,6 @@ namespace Jarloo.Calendar
             this.BuildCalendar(targetDate);     // Day of the beginning date should be 1
         }
 
-        // TODO: rewrite this (parameter IEvent is not used)
         private void AddEventsToCalendar(IEvent evnt)
         {
             RefreshEventsToCalendarEntry(evnt, true);
@@ -294,11 +292,4 @@ namespace Jarloo.Calendar
             this.Day = day;
         }
     }
-    /*
-    public enum CalendarViewingMode
-    {
-        Daily = 0,
-        Weekly = 1,
-        Monthly = 2
-    }*/
 }

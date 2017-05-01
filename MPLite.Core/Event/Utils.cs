@@ -107,7 +107,7 @@ namespace MPLite.Event
         public static void FindRangeOfMonth(DateTime date, out DateTime beginningDate, out DateTime endingDate)
         {
             beginningDate = new DateTime(date.Year, date.Month, 1);
-            endingDate = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
+            endingDate = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month)).AddDays(1);
         }
 
         public static bool IsDayInRange(DateTime source, DateTime target, CalendarViewingMode mode)
@@ -161,7 +161,7 @@ namespace MPLite.Event
                 return result;
 
             DateTime iter = target.ThisDayForwardOnly ? ((target.OriginalBeginningTime > rngb) ? target.OriginalBeginningTime : rngb) : rngb;
-            for (; iter <= rnge; iter = iter.AddDays(1))
+            for (; iter < rnge; iter = iter.AddDays(1))
             {
                 if (((byte)iter.DayOfWeek.ToCustomWeekday() & (byte)rf) >= 1)
                     result.Add(iter);

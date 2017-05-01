@@ -93,7 +93,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CircularQueue.cs" />
-    <Compile Include="EventRouter.cs" />
     <Compile Include="PagePlaylist.xaml.cs">
       <DependentUpon>PagePlaylist.xaml</DependentUpon>
     </Compile>

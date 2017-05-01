@@ -55,6 +55,7 @@
     <Compile Include="Event\EventCollection.cs" />
     <Compile Include="Event\EventManager.cs" />
     <Compile Include="Event\IEvent.cs" />
+    <Compile Include="Event\MultiTriggerEvent.cs" />
     <Compile Include="Event\SchedulerEventBase.cs" />
     <Compile Include="Event\Utils.cs" />
     <Compile Include="MPLiteConstant.cs" />

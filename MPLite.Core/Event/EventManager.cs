@@ -9,8 +9,8 @@ namespace MPLite.Event
         private DispatcherTimer refreshTimer;
         private EventCollection ecdb;     // entry of database (recording all set events)
 
-        public List<CustomEvent> ActivatedEvents { get; set; }    // events which are in the range of `NextRefreshingTime`
-        public List<CustomEvent> EventDB { get; set; }
+        public List<IEvent> ActivatedEvents { get; set; }    // events which are in the range of `NextRefreshingTime`
+        public List<IEvent> EventDB { get; set; }
         public DateTime NextRefreshingTime { get; set; }
 
         public IEventHandlerFactory EventHandlerFactory { get; set; }
@@ -28,7 +28,7 @@ namespace MPLite.Event
         public EventManager(IEventHandlerFactory handlerFacotry)
         {
             EventHandlerFactory = handlerFacotry;
-            ActivatedEvents = new List<CustomEvent>();
+            ActivatedEvents = new List<IEvent>();
 
             ecdb = new EventCollection();
             ecdb.DatabaseIsChanged += UpdateEventDB;
@@ -42,7 +42,7 @@ namespace MPLite.Event
         }
 
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
-        public void AddEvent(CustomEvent evnt)
+        public void AddEvent(IEvent evnt)
         {
             // Check
             try
@@ -54,9 +54,8 @@ namespace MPLite.Event
                 throw;
             }
 
-            // workaround: if event is created by object initializer, `OriginalBeginningTime` won't be set properly.
-            evnt.OriginalBeginningTime = evnt.BeginningTime;
-            ecdb.AddEvent(evnt);      // Saved into database
+            evnt.Initialize();      // Post-processing for those objects created by object initializer
+            ecdb.AddEvent(evnt);    // Saved into database
 
             // TODO: RefreshTasks should be provided for a single-added task
             RefreshTasks();
@@ -79,7 +78,7 @@ namespace MPLite.Event
             if (activatedTarget != null)
             {
                 activatedTarget.DisposeTimer();
-                ActivatedEvents.Remove((CustomEvent)activatedTarget);
+                ActivatedEvents.Remove(activatedTarget);
             }
 
             EventIsDeletedEvent(target);
@@ -92,14 +91,14 @@ namespace MPLite.Event
 
             target.DisposeTimer();
 
-            ActivatedEvents.Remove((CustomEvent)target);
+            ActivatedEvents.Remove(target);
             ecdb.DeleteEvent((CustomEvent)target);
 
             EventIsDeletedEvent(target);
             target = null;
         }
 
-        private bool IsEventInRange(CustomEvent target)
+        private bool IsEventInRange(IEvent target)
         {
             if (target.BeginningTime > NextRefreshingTime)
                 return false;
@@ -108,7 +107,7 @@ namespace MPLite.Event
             else return true;
         }
 
-        private void CheckEventProperty(CustomEvent target)
+        private void CheckEventProperty(IEvent target)
         {
             if (target.AutoDelete && target.RecurringFrequency != RecurringFrequencies.None)
                 throw new EventPropertyConflictException("Property `AutoDelete` should be \"false\" if `RecurringFreqeuncy` is not \"None\".");
@@ -161,13 +160,13 @@ namespace MPLite.Event
             // NOTE: check whether there will be some unfinished tasks being disposed?
             ActivatedEvents.Clear();
 
-            foreach (CustomEvent ce in EventDB)
+            foreach (IEvent ce in EventDB)
             {
                 SetActivatedTask(ce);
             }
         }
 
-        private void SetActivatedTask(CustomEvent ce)
+        private void SetActivatedTask(IEvent ce)
         {
             // TODO: check that the beginning time of task is updated, otherwise the task won't be triggered
             ce.UpdateBeginningTime();
@@ -192,7 +191,7 @@ namespace MPLite.Event
 
         private void DisposeActivatedTimers()
         {
-            foreach (CustomEvent ce in EventDB)
+            foreach (IEvent ce in EventDB)
             {
                 ce.DisposeTimer();
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -9,6 +10,7 @@ namespace MPLite
     using PlaybackCommands = Event.PlaybackCommands;
     using RecurringFrequencies = Event.RecurringFrequencies;
     using CustomEvent = Event.CustomEvent;
+    using MultiTriggerEvent = Event.MultiTriggerEvent;
     using SchedulerEventArgs = Event.SchedulerEventArgs;
     using SchedulerEventHandler = Event.SchedulerEventHandler;
     using SchedulerEventHandlerFactory = Event.SchedulerEventHandlerFactory;
@@ -181,28 +183,59 @@ namespace MPLite
 
         private void btnAddNewEvent_Click(object sender, RoutedEventArgs e)
         {
-            CustomEvent evnt = new CustomEvent
+            //CustomEvent evnt = new CustomEvent
+            //{
+            //    BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(10),
+            //    Duration = TimeSpan.FromSeconds(5),
+            //    Enabled = true,
+            //    EventText = "Test event2",
+            //    Rank = 1,
+            //    ReadOnlyEvent = false,
+            //    RecurringFrequency = RecurringFrequencies.Daily,
+            //    ThisDayForwardOnly = true,
+            //    IgnoreTimeComponent = true,
+            //    AutoDelete = false,
+            //};
+
+            //evnt.ActionStartsEventArgs = new SchedulerEventArgs
+            //{
+            //    Playlist = "New Playlist",
+            //    Command = PlaybackCommands.Play,
+            //    Mode = PlaybackMode.Default,
+            //    TrackIndex = 0
+            //};
+
+            //evnt.ActionEndsEventArgs = new SchedulerEventArgs
+            //{
+            //    Command = PlaybackCommands.Stop
+            //};
+
+            Queue<DateTime> dtQueue = new Queue<DateTime>(3);
+            dtQueue.Enqueue(DateTime.Now.AddDays(-5).AddSeconds(5));
+            dtQueue.Enqueue(DateTime.Now.AddDays(-5).AddSeconds(20));
+            dtQueue.Enqueue(DateTime.Now.AddDays(-5).AddSeconds(60));
+
+            MultiTriggerEvent evnt = new MultiTriggerEvent(dtQueue)
             {
-                BeginningTime = DateTime.Now.AddDays(-5).AddSeconds(10),
-                Duration = TimeSpan.FromSeconds(5),
+                Duration = TimeSpan.FromSeconds(3),
                 Enabled = true,
-                EventText = "Test event2",
+                EventText = "MultiTriggerEvent",
                 Rank = 1,
                 ReadOnlyEvent = false,
-                RecurringFrequency = RecurringFrequencies.EveryTuesday,
+                RecurringFrequency = RecurringFrequencies.EveryWeekday,
                 ThisDayForwardOnly = true,
                 IgnoreTimeComponent = true,
                 AutoDelete = false,
             };
-            
+
             evnt.ActionStartsEventArgs = new SchedulerEventArgs
             {
                 Playlist = "New Playlist",
                 Command = PlaybackCommands.Play,
                 Mode = PlaybackMode.Default,
-                TrackIndex = -1
+                TrackIndex = 0
             };
-            
+
             evnt.ActionEndsEventArgs = new SchedulerEventArgs
             {
                 Command = PlaybackCommands.Stop

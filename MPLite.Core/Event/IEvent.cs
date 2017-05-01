@@ -36,8 +36,12 @@ namespace MPLite.Event
 
         IEvent Clone();
 
+        // Post-processing of object creation if it is created by onject initializer
+        void Initialize();
+
         void SetTimer();
         void DisposeTimer();
+        bool UpdateBeginningTime();
     }
 
     // Used to reset event for recurrsion

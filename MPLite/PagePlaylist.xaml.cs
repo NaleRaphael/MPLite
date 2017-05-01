@@ -127,7 +127,7 @@ namespace MPLite
         {
             if (e == null || ((Playlist)lb_PlaylistMenu.SelectedItem).ListName != e.OwnerList)
                 return;
-            if (e.Index < 0)
+            if (e.Index == -1 || e.Index > OCTrack.Count)
                 return;
             OCTrack[e.Index].StatusSign = MPLiteConstant.TrackStatusSign[(int)e.Track.TrackStatus];
         }
