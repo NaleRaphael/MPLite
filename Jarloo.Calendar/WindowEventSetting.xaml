@@ -190,7 +190,7 @@
                 </Grid>
                 <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
                     <Label x:Name="lblPlaybackMode" Content="Playback mode" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <ComboBox x:Name="cmbPlaybackMode" Height="20" ItemsSource="{Binding Source={StaticResource enumPlaybackMode}}" SelectedIndex="0" VerticalAlignment="Top" Margin="95,5,10,0"/>
+                    <ComboBox x:Name="cmbPlaybackMode" Height="20" VerticalAlignment="Top" Margin="95,5,10,0"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>

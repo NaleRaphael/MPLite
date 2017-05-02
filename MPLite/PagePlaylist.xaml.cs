@@ -39,13 +39,8 @@ namespace MPLite
 
         #region Field
         private string oriPlaylistName = "";
-
         private string prevShowingPlaylist;
         private string currShowingPlaylist;
-
-        // Workaround of avoid playing wrong song when there are duplicates
-        //private int prevTrackIdx = -1;
-        //private int currTrackIdx = -1;
         #endregion
 
         public PagePlaylist()
@@ -248,12 +243,10 @@ namespace MPLite
 
                 if (selectNext)
                 {
-                    //prevTrackIdx = currTrackIdx;    // workaround
                     return player.GetTrack(selectedPlaylist, selectedTrackIndex, mode);
                 }
                 else
                 {
-                    //currTrackIdx = prevTrackIdx;
                     return player.GetPrevTrack(selectedPlaylist, selectedTrackIndex, mode);
                 }
             }

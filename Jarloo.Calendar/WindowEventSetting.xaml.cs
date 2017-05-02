@@ -91,6 +91,16 @@ namespace Jarloo.Calendar
                 }
                 cmbPlaylistName.ItemsSource = plNames;
             }
+
+            // cmbPlaybackMode
+            List<PlaybackMode> playbackModes = new List<MPLite.Core.PlaybackMode>();
+            foreach (PlaybackMode mode in Enum.GetValues(typeof(PlaybackMode)))
+            {
+                if (mode == PlaybackMode.None) continue;
+                playbackModes.Add(mode);
+            }
+            cmbPlaybackMode.ItemsSource = playbackModes;
+            cmbPlaybackMode.SelectedIndex = 0;
         }
 
         #region Window control
