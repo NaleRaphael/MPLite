@@ -25,13 +25,13 @@ namespace MPLite.Core.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MPlitePlaylist.json")]
-        public string PlaylistInfoPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("MPLiteTrackDB.json")]
+        public string TrackDBPath {
             get {
-                return ((string)(this["PlaylistInfoPath"]));
+                return ((string)(this["TrackDBPath"]));
             }
             set {
-                this["PlaylistInfoPath"] = value;
+                this["TrackDBPath"] = value;
             }
         }
         
@@ -97,13 +97,37 @@ namespace MPLite.Core.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("eventDB.json")]
-        public string DBPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("MPLiteEventDB.json")]
+        public string EventDBPath {
             get {
-                return ((string)(this["DBPath"]));
+                return ((string)(this["EventDBPath"]));
             }
             set {
-                this["DBPath"] = value;
+                this["EventDBPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("MPLiteTrackDB.json")]
+        public string TrackDBName {
+            get {
+                return ((string)(this["TrackDBName"]));
+            }
+            set {
+                this["TrackDBName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("MPLiteEventDB.json")]
+        public string EventDBName {
+            get {
+                return ((string)(this["EventDBName"]));
+            }
+            set {
+                this["EventDBName"] = value;
             }
         }
     }

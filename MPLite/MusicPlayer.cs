@@ -397,7 +397,7 @@ namespace MPLite
             {
                 Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
                 if (pl == null || pl.TrackAmount == 0)
-                    throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", playlistName));
+                    throw new InvalidPlaylistException(string.Format("Given playlist \"{0}\" is invalid.", playlistName));
                 trackQueue = new TrackQueue(pl, selectedIdx, mode);
             }
 
@@ -418,7 +418,7 @@ namespace MPLite
             {
                 Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == listName);
                 if (pl == null || pl.TrackAmount == 0)
-                    throw new InvalidPlaylistException(string.Format("Given playlist {0} is invalid.", listName));
+                    throw new InvalidPlaylistException(string.Format("Given playlist \"{0}\" is invalid.", listName));
                 trackQueue = new TrackQueue(pl, selIdx, mode);
                 Properties.Settings.Default.TaskPlaylist = listName;
                 Properties.Settings.Default.Save();

@@ -8,6 +8,7 @@ namespace MPLite
 {
     using PlaybackMode = Core.PlaybackMode;
     using AppSettings = Core.AppSettings;
+    using FolderBrowserDialog = System.Windows.Forms.FolderBrowserDialog;
 
     public partial class PageSetting : Page
     {
@@ -29,8 +30,8 @@ namespace MPLite
             cmb_PlaybackSetting.SelectedIndex = Properties.Settings.Default.PlaybackMode;
 
             // textbox
-            txtPlaylistStoragePath.Text = Path.GetFullPath(AppSettings.PlaylistDatabase);
-            txtCalendarEventStoragePath.Text = Path.GetFullPath(AppSettings.EventDatabase);
+            txtPlaylistStoragePath.Text = Path.GetFullPath(AppSettings.TrackDBPath);
+            txtCalendarEventStoragePath.Text = Path.GetFullPath(AppSettings.EventDBPath);
         }
 
         private void cmb_PlaybackSetting_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -50,21 +51,27 @@ namespace MPLite
 
         private void btnSelectPlaylistStoragePath_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = Path.GetDirectoryName(Path.GetFullPath(Properties.Settings.Default.PlaylistInfoPath));
-            if (ofd.ShowDialog() == true)
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.SelectedPath = Path.GetDirectoryName(Path.GetFullPath(AppSettings.TrackDBPath));
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                txtPlaylistStoragePath.Text = ofd.FileName;
+                if (Directory.Exists(Path.GetDirectoryName(fbd.SelectedPath)))
+                {
+                    AppSettings.SetTrackDBPath(fbd.SelectedPath);
+                    txtPlaylistStoragePath.Text = AppSettings.TrackDBPath;
+                }
             }
-
-            // save config
         }
 
         private void btnSelectCalendarEventStoragePath_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            //ofd.InitialDirectory = Path.GetDirectoryName(Path.GetFullPath());
-            
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.SelectedPath = Path.GetDirectoryName(Path.GetFullPath(AppSettings.EventDBPath));
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                AppSettings.SetEventDBPath(fbd.SelectedPath);
+                txtCalendarEventStoragePath.Text = AppSettings.EventDBPath;
+            }
         }
     }
 }

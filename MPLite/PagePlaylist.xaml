@@ -18,7 +18,11 @@
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="MenuItemRename" TargetType="{x:Type MenuItem}">
-                <EventSetter Event="Click" Handler="miMenuItem_Click"/>
+                <EventSetter Event="Click" Handler="miRename_Click"/>
+            </Style>
+
+            <Style x:Key="MenuItemDelete" TargetType="{x:Type MenuItem}">
+                <EventSetter Event="Click" Handler="miDelete_Click"/>
             </Style>
             
             <Style x:Key="StyleListBoxItem" TargetType="{x:Type ListBoxItem}">
@@ -56,6 +60,7 @@
                     <Setter.Value>
                         <ContextMenu>
                             <MenuItem x:Name="miRename" Header="Rename" Style="{StaticResource MenuItemRename}"/>
+                            <MenuItem x:Name="miDelete" Header="Delete" Style="{StaticResource MenuItemDelete}"/>
                         </ContextMenu>
                     </Setter.Value>
                 </Setter>

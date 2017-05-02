@@ -25,18 +25,6 @@ namespace MPLite.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("MPlitePlaylist.json")]
-        public string PlaylistInfoPath {
-            get {
-                return ((string)(this["PlaylistInfoPath"]));
-            }
-            set {
-                this["PlaylistInfoPath"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("New Playlist")]
         public string LastSelectedPlaylist {
             get {

@@ -154,7 +154,6 @@
   <ItemGroup>
     <Content Include="dll\MPLite.Core.dll" />
     <Resource Include="Images\remove_red.png" />
-    <None Include="Resources\remove_red.png" />
     <Resource Include="Images\add_green.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

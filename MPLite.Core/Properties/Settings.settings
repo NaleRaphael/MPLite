@@ -2,8 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MPLite.Core.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="PlaylistInfoPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">MPlitePlaylist.json</Value>
+    <Setting Name="TrackDBPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MPLiteTrackDB.json</Value>
     </Setting>
     <Setting Name="ValidFileType" Type="System.String" Scope="User">
       <Value Profile="(Default)">.mp3|.wma|.wmv</Value>
@@ -20,8 +20,14 @@
     <Setting Name="LastSelectedPlaylist" Type="System.String" Scope="User">
       <Value Profile="(Default)">New Playlist</Value>
     </Setting>
-    <Setting Name="DBPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">eventDB.json</Value>
+    <Setting Name="EventDBPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MPLiteEventDB.json</Value>
+    </Setting>
+    <Setting Name="TrackDBName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MPLiteTrackDB.json</Value>
+    </Setting>
+    <Setting Name="EventDBName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MPLiteEventDB.json</Value>
     </Setting>
   </Settings>
 </SettingsFile>

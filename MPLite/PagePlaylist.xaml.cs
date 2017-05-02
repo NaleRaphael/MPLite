@@ -10,10 +10,8 @@ namespace MPLite
 {
     using TrackInfo = Core.TrackInfo;
     using MPLiteConstant = Core.MPLiteConstant;
-    using TrackStatus = Core.TrackStatus;
     using Playlist = Core.Playlist;
     using PlaylistCollection = Core.PlaylistCollection;
-    using PlayTrackEventArgs = Core.PlayTrackEventArgs;
     using SchedulerEventArgs = Event.SchedulerEventArgs;
     using PlaybackMode = Core.PlaybackMode;
     using PlaybackCommands = Event.PlaybackCommands;
@@ -46,8 +44,8 @@ namespace MPLite
         private string currShowingPlaylist;
 
         // Workaround of avoid playing wrong song when there are duplicates
-        private int prevTrackIdx = -1;
-        private int currTrackIdx = -1;
+        //private int prevTrackIdx = -1;
+        //private int currTrackIdx = -1;
         #endregion
 
         public PagePlaylist()
@@ -250,12 +248,12 @@ namespace MPLite
 
                 if (selectNext)
                 {
-                    prevTrackIdx = currTrackIdx;    // workaround
+                    //prevTrackIdx = currTrackIdx;    // workaround
                     return player.GetTrack(selectedPlaylist, selectedTrackIndex, mode);
                 }
                 else
                 {
-                    currTrackIdx = prevTrackIdx;
+                    //currTrackIdx = prevTrackIdx;
                     return player.GetPrevTrack(selectedPlaylist, selectedTrackIndex, mode);
                 }
             }
@@ -308,23 +306,26 @@ namespace MPLite
             if (e.Key == Key.Delete && lb_PlaylistMenu.SelectedItems.Count == 1)
             {
                 string selectedPlaylist = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
-                // Remove playlist from database
-                PlaylistCollection.RemovePlaylist(selectedPlaylist);
-                // Refresh lv_Playlist
-                RefreshPlaylistContent(selectedPlaylist, lb_PlaylistMenu.SelectedIndex);
-                // Remove ListBoxItem
-                OCPlaylist.Remove((Playlist)lb_PlaylistMenu.SelectedItem);
+                DeletePlaylistFromListBox(selectedPlaylist);
+            }
+        }
 
-                // Switch content of lv_playlist to previous one, or hide lv_playlist if there is no remaining items in lb_PlaylistMenu
-                if (lb_PlaylistMenu.Items.Count != 0)
-                {
-                    selectedPlaylist = ((Playlist)(lb_PlaylistMenu.Items[lb_PlaylistMenu.Items.Count - 1])).ListName;
-                    RefreshPlaylistContent(selectedPlaylist, lb_PlaylistMenu.Items.Count - 1);
-                }
-                else
-                {
-                    lv_Playlist.Visibility = Visibility.Hidden;
-                }
+        private void DeletePlaylistFromListBox(string listName)
+        {
+            // Remove playist from database
+            PlaylistCollection.RemovePlaylist(listName);
+            // Refresh ListBoxItem
+            OCPlaylist.Remove((Playlist)lb_PlaylistMenu.SelectedItem);
+
+            // Switch content of lv_Playlist to previous one, or hide lv_Playlist if there is no remaining items in lb_PlaylistMenu
+            if (lb_PlaylistMenu.Items.Count != 0)
+            {
+                listName = ((Playlist)lb_PlaylistMenu.Items[lb_PlaylistMenu.Items.Count - 1]).ListName;
+                RefreshPlaylistContent(listName, lb_PlaylistMenu.Items.Count - 1);
+            }
+            else
+            {
+                lv_Playlist.Visibility = Visibility.Hidden;
             }
         }
 
@@ -382,14 +383,22 @@ namespace MPLite
 
             return isEditingMode ? null : txtBox.Text;
         }
-        #endregion
 
-        private void miMenuItem_Click(object sender, RoutedEventArgs e)
+        private void miRename_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
             ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
             SwitchEditingMode(lbi, true);
         }
+
+        private void miDelete_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
+            ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
+            string listName = ((Playlist)lbi.DataContext).ListName;
+            DeletePlaylistFromListBox(listName);
+        }
+        #endregion
 
         #region Handle events fired from scheduler
         // TODO: rename this

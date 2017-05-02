@@ -99,7 +99,7 @@ namespace MPLite
             int trackIdx = base.Next();
             track = GetNextTrackAccordingMode(trackIdx);
 
-            Console.WriteLine("CurrentQueueIndex: " + CurrentQueueIndex);
+            Console.WriteLine(string.Format("CurrentQueueIndex: {0}; Remaining: {1}", CurrentQueueIndex, this.Count));
             return trackIdx;
         }
 
@@ -121,7 +121,7 @@ namespace MPLite
         {
             int trackIdx = base.Current();
             track = this.Soundtracks[trackIdx];
-            Console.WriteLine("CurrentQueueIndex: " + CurrentQueueIndex);
+            Console.WriteLine(string.Format("CurrentQueueIndex: {0}; Remaining: {1}", CurrentQueueIndex, this.Count));
             return trackIdx;
         }
 
@@ -138,7 +138,7 @@ namespace MPLite
             track = this.Soundtracks[trackIdx];
             playedTrackAmount = canPlayPreviousTrack ? playedTrackAmount - 1 : playedTrackAmount;
 
-            Console.WriteLine("CurrentQueueIndex: " + CurrentQueueIndex);
+            Console.WriteLine(string.Format("CurrentQueueIndex: {0}; Remaining: {1}", CurrentQueueIndex, this.Count));
             return trackIdx;
         }
 

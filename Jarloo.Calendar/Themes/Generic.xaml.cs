@@ -67,28 +67,18 @@ namespace Jarloo.Calendar.Themes
             
             // Set initial DateTime for dateTimePicker in WindowEventSetting
             Day obj = dp.DataContext as Day;
-            
             DateTime initialDateTime = (obj.Date == DateTime.Today) ? DateTime.Now.Ceiling(TimeSpan.FromMinutes(30)) : obj.Date.AddHours(7);
 
             WindowEventSetting winEventSetting = new WindowEventSetting(initialDateTime);
-            // TODO: set parent window of WindowEventSetting
             winEventSetting.Owner = Calendar.Owner;     // workaround: store owner info by static property
-            winEventSetting.PassingDataEvent += ShowDataFromWinEventSetting;
             winEventSetting.NewEventIsCreatedEvent += RefireEvent;
             winEventSetting.WindowStartupLocation = WindowStartupLocation.CenterScreen;     // TODO: try to set startupLocation to center of MPLite
             winEventSetting.Show();
-            
-            //DayContentSelectionEvent(obj, SelectedDayContentActions.AddEvent);
         }
 
         private void RefireEvent(CustomEvent ce)
         {
             NewEventIsCreatedEvent(ce);
-        }
-
-        private void ShowDataFromWinEventSetting(string data)
-        {
-            MessageBox.Show("Generic:" + data);
         }
 
         private void miDeleteEvent_Click(object sender, RoutedEventArgs e)

@@ -18,7 +18,7 @@ namespace MPLite.Event
 
         public void Initialize()
         {
-            string dbPath = Properties.Settings.Default.DBPath;
+            string dbPath = Properties.Settings.Default.EventDBPath;
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
             if (ec == null)
             {
@@ -31,7 +31,7 @@ namespace MPLite.Event
 
         public void AddEvent(IEvent target)
         {
-            string dbPath = Properties.Settings.Default.DBPath;
+            string dbPath = Properties.Settings.Default.EventDBPath;
 
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
             if (ec == null)
@@ -50,7 +50,7 @@ namespace MPLite.Event
 
         public void DeleteEvent(CustomEvent target)
         {
-            string dbPath = Properties.Settings.Default.DBPath;
+            string dbPath = Properties.Settings.Default.EventDBPath;
 
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
             if (ec == null)
@@ -69,7 +69,7 @@ namespace MPLite.Event
 
         public void DeleteEvent(Guid targetGUID)
         {
-            string dbPath = Properties.Settings.Default.DBPath;
+            string dbPath = Properties.Settings.Default.EventDBPath;
 
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
             if (ec == null)
@@ -89,7 +89,7 @@ namespace MPLite.Event
         // TODO: directly overwrite an empty list into database? (without reading the original one)
         public void Clear()
         {
-            string dbPath = Properties.Settings.Default.DBPath;
+            string dbPath = Properties.Settings.Default.EventDBPath;
 
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
             if (ec == null)
@@ -108,7 +108,7 @@ namespace MPLite.Event
 
         public IEvent GetEvent(Guid targetGUID)
         {
-            string dbPath = Properties.Settings.Default.DBPath;
+            string dbPath = Properties.Settings.Default.EventDBPath;
             EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
             if (ec == null)
             {

@@ -32,12 +32,6 @@ namespace Jarloo.Calendar
         private Regex reDigitOnly = new Regex("^[0-9]+$");
 
         #region Events
-        public delegate IEvent NewlyAddedEventHandler();
-        public event NewlyAddedEventHandler NewlyAddedEvent;
-
-        public delegate void PassingDataEventHandler(string data);
-        public event PassingDataEventHandler PassingDataEvent;
-
         public delegate void NewEventIsCreatedEventHandler(CustomEvent evnt);
         public event NewEventIsCreatedEventHandler NewEventIsCreatedEvent;
         #endregion
@@ -102,7 +96,7 @@ namespace Jarloo.Calendar
         #region Window control
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.PassingDataEvent = null;
+            NewEventIsCreatedEvent = null;
         }
 
         private void StackPanel_MouseDown(object sender, MouseButtonEventArgs e)

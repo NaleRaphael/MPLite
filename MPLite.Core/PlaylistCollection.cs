@@ -17,7 +17,7 @@ namespace MPLite.Core
         // TODO: Update listview then update database (according to the order of playlist)
         public static void AddPlaylist(string[] filePaths, string listName)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
@@ -37,7 +37,7 @@ namespace MPLite.Core
 
         public static void AddPlaylist(List<TrackInfo> tracks, string listName)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
@@ -57,7 +57,7 @@ namespace MPLite.Core
 
         public static void DeleteTracksByIndices(int[] indices, string listName)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
@@ -73,7 +73,7 @@ namespace MPLite.Core
 
         public static void DeleteTracksByIndices(int[] indices, Guid guid)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
 
             if (plc == null)
@@ -89,19 +89,19 @@ namespace MPLite.Core
 
         public static PlaylistCollection GetDatabase()
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             return DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
         }
 
         public void SaveToDatabase()
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             DataControl.SaveData<PlaylistCollection>(configPath, this, false);
         }
 
         public static Playlist GetPlaylist(string listName)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             Playlist pl;
             try
             {
@@ -116,7 +116,7 @@ namespace MPLite.Core
 
         public static Playlist GetPlaylist(Guid guid)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             Playlist pl;
             try
             {
@@ -131,7 +131,7 @@ namespace MPLite.Core
 
         public static string AddPlaylist(string listName)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             try
             {
                 PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
@@ -152,7 +152,7 @@ namespace MPLite.Core
 
         public static void RemovePlaylist(string listName)
         {
-            string configPath = Properties.Settings.Default.PlaylistInfoPath;
+            string configPath = Properties.Settings.Default.TrackDBPath;
             try
             {
                 PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
