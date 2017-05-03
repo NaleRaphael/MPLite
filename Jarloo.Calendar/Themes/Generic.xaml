@@ -125,6 +125,10 @@
         <EventSetter Event="Click" Handler="miAddEvent_Click"/>
     </Style>
 
+    <Style x:Key="StyleMenuItemEditEvent" TargetType="{x:Type MenuItem}">
+        <EventSetter Event="Click" Handler="miEditEvent_Click"/>
+    </Style>
+    
     <Style x:Key="StyleMenuItemDeleteEvent" TargetType="{x:Type MenuItem}">
         <EventSetter Event="Click" Handler="miDeleteEvent_Click"/>
     </Style>
@@ -165,7 +169,8 @@
                 <ContextMenu>
                     <CheckBox x:Name="chkEnable" Style="{StaticResource OrangeSwitchStyle}" Width="60" IsChecked="{Binding Enabled}"/>
                     <MenuItem x:Name="miShowInfo" Style="{StaticResource StyleMenuItemShowInfo}" Header="Event info"/>
-                    <MenuItem x:Name="miDeleteEvent" Style="{StaticResource StyleMenuItemDeleteEvent}" Header="Delete event"/>
+                    <MenuItem x:Name="miEditEvent" Style="{StaticResource StyleMenuItemEditEvent}" Header="Edit"/>
+                    <MenuItem x:Name="miDeleteEvent" Style="{StaticResource StyleMenuItemDeleteEvent}" Header="Delete"/>
                 </ContextMenu>
             </Setter.Value>
         </Setter>

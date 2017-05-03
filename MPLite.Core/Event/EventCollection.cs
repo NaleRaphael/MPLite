@@ -86,6 +86,42 @@ namespace MPLite.Event
             DatabaseIsChanged();
         }
 
+        public void UpdateEvent(IEvent evnt)
+        {
+            string dbPath = Properties.Settings.Default.EventDBPath;
+
+            EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
+            if (ec == null)
+            {
+                return;
+            }
+
+            IEvent target = ec.EventList.Find(x => x.GUID == evnt.GUID);
+            target = evnt;
+            this.EventList = ec.EventList;
+            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            ec = null;
+        }
+
+        public void UpdateEvent<T>(T evnt) where T : IEvent
+        {
+            string dbPath = Properties.Settings.Default.EventDBPath;
+
+            EventCollection ec = DataControl.ReadFromJson<EventCollection>(dbPath, true);
+            if (ec == null)
+            {
+                return;
+            }
+            
+            int idx = ec.EventList.FindIndex(x => x.GUID == evnt.GUID);
+            if (idx == -1)
+                return;
+            ec.EventList.RemoveAt(idx);
+            ec.EventList.Insert(idx, evnt);
+            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            ec = null;
+        }
+
         // TODO: directly overwrite an empty list into database? (without reading the original one)
         public void Clear()
         {

@@ -15,7 +15,14 @@ namespace MPLite.Event
 
         public override void Initialize()
         {
-            OriginalBeginningTime = BeginningTimeQueue.Peek();
+            BeginningTime = BeginningTimeQueue.Peek();
+            OriginalBeginningTime = BeginningTime;
+        }
+
+        public override void CloneTo(IEvent target)
+        {
+            base.CloneTo(target);
+            (target as MultiTriggerEvent).BeginningTimeQueue = this.BeginningTimeQueue;
         }
 
         public override bool UpdateBeginningTime()

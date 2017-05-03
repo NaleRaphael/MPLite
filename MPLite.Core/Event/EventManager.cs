@@ -44,6 +44,8 @@ namespace MPLite.Event
         // Before execute `AddEvent`, manager should check whether the event is in range (one day).
         public void AddEvent(IEvent evnt)
         {
+            evnt.Initialize();      // Post-processing for those objects created by object initializer
+
             // Check
             try
             {
@@ -54,14 +56,12 @@ namespace MPLite.Event
                 throw;
             }
 
-            evnt.Initialize();      // Post-processing for those objects created by object initializer
+            
             ecdb.AddEvent(evnt);    // Saved into database
 
-            // TODO: RefreshTasks should be provided for a single-added task
             RefreshTasks();
 
-            // Fire an event to notify subscribber that event is added successfully
-            // TODO: notify calendar to update layout
+            // Notify subscribber that event is added successfully
             EventIsAddedEvent(evnt);
         }
 
@@ -96,6 +96,18 @@ namespace MPLite.Event
 
             EventIsDeletedEvent(target);
             target = null;
+        }
+
+        public void UpdateEvent<T>(T target) where T : IEvent
+        {
+            if (target == null) return;
+
+            target.DisposeTimer();
+            ActivatedEvents.Remove(target);
+            ecdb.UpdateEvent(target);
+
+            UpdateEventDB();
+            RefreshTasks();
         }
 
         private bool IsEventInRange(IEvent target)

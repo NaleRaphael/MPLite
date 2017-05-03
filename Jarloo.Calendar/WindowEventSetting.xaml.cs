@@ -1,10 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Input;
 using System.Text.RegularExpressions;
 using Xceed.Wpf.Toolkit;
@@ -31,17 +29,26 @@ namespace Jarloo.Calendar
         private Regex reEscChars = new Regex("[\\\\/:*?\"<>|]");
         private Regex reDigitOnly = new Regex("^[0-9]+$");
 
+        private List<Control> controlList = new List<Control>();
+
+        private IEvent evntToBeUpdated;
+
         #region Events
         public delegate void NewEventIsCreatedEventHandler(CustomEvent evnt);
         public event NewEventIsCreatedEventHandler NewEventIsCreatedEvent;
+        public delegate void UpdateEventHandler(IEvent evnt);
+        public event UpdateEventHandler UpdateEvent;
         #endregion
 
         public DateTime InitialBeginningTime { get; set; }
+        public bool IsReadOnly { get; private set; }
+        public DisplayMode WindowMode { get; private set; }
 
         public WindowEventSetting()
         {
             InitializeComponent();
             InitializeControls();
+            IsReadOnly = false;
         }
 
         public WindowEventSetting(DateTime selectedDateTime)
@@ -49,6 +56,8 @@ namespace Jarloo.Calendar
             InitializeComponent();
             InitialBeginningTime = selectedDateTime;
             InitializeControls();
+            WindowMode = DisplayMode.Create;
+            IsReadOnly = false;
         }
 
         private void InitializeControls()
@@ -101,6 +110,66 @@ namespace Jarloo.Calendar
             }
             cmbPlaybackMode.ItemsSource = playbackModes;
             cmbPlaybackMode.SelectedIndex = 0;
+
+            // Build control list
+            controlList.Add(txtEventName);
+            controlList.Add(txtRank);
+            controlList.Add(dateTimePicker);
+            controlList.Add(btnAddMoreTimePicker);
+            controlList.Add(chkSetDuration);
+            controlList.Add(timeSpanUpDown);
+            controlList.Add(cmbRecurringFreq);
+            controlList.Add(chkAutoDelete);
+            controlList.Add(chkThisDayForwardOnly);
+
+            controlList.Add(cmbPlaylistName);
+            controlList.Add(cmbTrackIndex);
+            controlList.Add(cmbPlaybackMode);
+        }
+
+        public void ShowEventSetting<T>(T evnt, DisplayMode mode) where T : class, IEvent
+        {
+            WindowMode = mode;
+            IsReadOnly = (mode == DisplayMode.ShowInfo) ? true : false;
+            evntToBeUpdated = (mode == DisplayMode.Edit) ? evnt as T : null;
+
+            txtEventName.Text = evnt.EventText;
+
+            txtRank.Text = evnt.Rank.ToString();
+
+            dateTimePicker.Value = evnt.BeginningTime;
+
+            timeSpanUpDown.Value = evnt.Duration;
+            //timeSpanUpDown.IsEnabled = false;     // BUG? this approach cannot disable control
+            chkSetDuration.IsChecked = (evnt.Duration == TimeSpan.MinValue) ? false : true;
+
+            // Recurring frequency
+            if (Enum.GetValues(typeof(RecurringFrequencies)).Contains<RecurringFrequencies>(evnt.RecurringFrequency))
+                cmbRecurringFreq.SelectedItem = evnt.RecurringFrequency;
+            else
+            {
+                cmbRecurringFreq.SelectedItem = RecurringFrequencies.Custom;
+                ConvertRecurringFreqToBlocks(evnt.RecurringFrequency);
+            }
+            gridRecurringDate.IsEnabled = false;
+
+            chkAutoDelete.IsChecked = evnt.AutoDelete;
+
+            chkThisDayForwardOnly.IsChecked = evnt.ThisDayForwardOnly;
+
+            // Settings of playback
+            SchedulerEventArgs actionArgs = evnt.ActionStartsEventArgs as SchedulerEventArgs;
+            cmbPlaylistName.SelectedItem = actionArgs.Playlist;
+            cmbTrackIndex.SelectedIndex = actionArgs.TrackIndex;
+            cmbPlaybackMode.SelectedItem = actionArgs.Mode;
+
+            if (IsReadOnly)
+            {
+                foreach (Control ctrl in controlList)
+                {
+                    ctrl.IsEnabled = false;
+                }
+            }
         }
 
         #region Window control
@@ -127,7 +196,8 @@ namespace Jarloo.Calendar
         {
             try
             {
-                ParseEventSetting();
+                if (!IsReadOnly)
+                    ParseEventSetting();
                 this.Close();
             }
             catch (Exception ex)
@@ -150,6 +220,8 @@ namespace Jarloo.Calendar
             if (reEscChars.IsMatch(txtEventName.Text))
                 throw new Exception("Event name shoud not contain the following charaters: \\/:*?\"<>|");
             eventName = txtEventName.Text.TrimEnd(' ');
+            if (eventName.Length == 0)
+                throw new Exception("Event name should not be space.");
 
             // Rank
             if (!reDigitOnly.IsMatch(txtRank.Text))
@@ -157,37 +229,25 @@ namespace Jarloo.Calendar
             rank = int.Parse(txtRank.Text);
 
             // Beginning time
-            if (spTimePickerList.Children.Count == 0)
+            List<DateTime> dtList = new List<DateTime>();
+
+            dtList.Add(dateTimePicker.Value.Value);
+            foreach (Grid gd in spTimePickerList.Children)
             {
-                if (dateTimePicker.Value == null)
-                    throw new Exception("Invalid value of DateTimePicker");
-                else beginningTime = dateTimePicker.Value.Value;
+                TimePicker tp = gd.FindChild<TimePicker>();
+                if (tp == null)
+                    continue;
+
+                // Get time component only (although formate of timePicker has been set as `DateTimeFormat.LongTime`,
+                // we still have to prevent illegal input)
+                DateTime dt = dateTimePicker.Value.Value.Date;  // get date only
+                dtList.Add(dt.Add(tp.Value.Value.TimeOfDay));
             }
-            else
+
+            dtList.Sort();
+            foreach (DateTime dt in dtList)
             {
-                List<DateTime> dtList = new List<DateTime>();
-
-                if (dateTimePicker.Value == null)
-                    throw new Exception("Invalid value of DateTimePicker");
-                else dtList.Add(dateTimePicker.Value.Value);
-                
-                foreach (Grid gd in spTimePickerList.Children)
-                {
-                    TimePicker tp = gd.FindChild<TimePicker>();
-                    if (tp == null)
-                        continue;
-
-                    // Get time component only (although formate of timePicker has been set as `DateTimeFormat.LongTime`,
-                    // we still have to prevent illegal input)
-                    DateTime dt = dateTimePicker.Value.Value.Date;  // get date only
-                    dtList.Add(dt.Add(tp.Value.Value.TimeOfDay));
-                }
-
-                dtList.Sort();
-                foreach (DateTime dt in dtList)
-                {
-                    beginningTimeQueue.Enqueue(dt);
-                }
+                beginningTimeQueue.Enqueue(dt);
             }
 
             // Duration
@@ -195,37 +255,15 @@ namespace Jarloo.Calendar
                 duration = timeSpanUpDown.Value.Value;
 
             // Set recurring frequency
-            int recurringFreq = 0;
+            RecurringFrequencies recurringFreq = 0;
             if (cmbRecurringFreq.SelectedItem.ToString() == RecurringFrequencies.Custom.ToString())
             {
-                // Do sth
-                int temp = 1;
-                foreach (CheckBox chkbox in gridRecurringDate.Children)
-                {
-                    recurringFreq += (chkbox.IsChecked == true) ? temp : 0;
-                    temp *= 2;
-                }
+                recurringFreq = ConvertBlocksToRecurringFreq();
             }
             else
             {
-                recurringFreq = (int)cmbRecurringFreq.SelectedItem;
+                recurringFreq = (RecurringFrequencies)cmbRecurringFreq.SelectedItem;
             }
-
-            Console.WriteLine(((RecurringFrequencies)recurringFreq).ToString());
-
-            //CustomEvent evnt = new CustomEvent
-            //{
-            //    EventText = eventName,
-            //    Rank = rank,
-            //    BeginningTime = beginningTime,
-            //    Duration = duration,
-            //    AutoDelete = autoDelete,
-            //    ThisDayForwardOnly = thisDayForwardOnly,
-            //    Enabled = true,  // let user set this while creating event?
-            //    RecurringFrequency = (RecurringFrequencies)recurringFreq,
-            //    IgnoreTimeComponent = true,
-            //    ReadOnlyEvent = false
-            //};
 
             MultiTriggerEvent evnt = new MultiTriggerEvent(beginningTimeQueue)
             {
@@ -235,12 +273,11 @@ namespace Jarloo.Calendar
                 AutoDelete = autoDelete,
                 ThisDayForwardOnly = thisDayForwardOnly,
                 Enabled = true,  // let user set this while creating event?
-                RecurringFrequency = (RecurringFrequencies)recurringFreq,
+                RecurringFrequency = recurringFreq,
                 IgnoreTimeComponent = true,
                 ReadOnlyEvent = false
             };
 
-            // TODO: create event args
             evnt.ActionStartsEventArgs = new SchedulerEventArgs
             {
                 Playlist = cmbPlaylistName.SelectedItem.ToString(),
@@ -254,8 +291,41 @@ namespace Jarloo.Calendar
                 Command = PlaybackCommands.Stop
             };
 
-            NewEventIsCreatedEvent(evnt);
+            if (WindowMode == DisplayMode.Create)
+                NewEventIsCreatedEvent(evnt);
+            else if (WindowMode == DisplayMode.Edit)
+            {
+                evnt.CloneTo(evntToBeUpdated);
+                UpdateEvent(evntToBeUpdated);
+            }
+                
         }
+
+        #region Converter of RecurringFreqeuncy and date blocks
+        private void ConvertRecurringFreqToBlocks(RecurringFrequencies rf)
+        {
+            byte temp = 0x1;
+            byte brf = (byte)rf;
+            foreach (CheckBox chkbox in gridRecurringDate.Children)
+            {  
+                if ((temp & brf) == 1)
+                    chkbox.IsChecked = true;
+                brf >>= 1;
+            }
+        }
+
+        private RecurringFrequencies ConvertBlocksToRecurringFreq()
+        {
+            int recurringFreq = 0;
+            int temp = 1;
+            foreach (CheckBox chkbox in gridRecurringDate.Children)
+            {
+                recurringFreq += (chkbox.IsChecked == true) ? temp : 0;
+                temp <<= 1;
+            }
+            return (RecurringFrequencies)recurringFreq;
+        }
+        #endregion
 
         #region Grid background controls
         private void BasicGrid_MouseEnter(object sender, RoutedEventArgs e)
@@ -435,6 +505,13 @@ namespace Jarloo.Calendar
         }
     }
 
+    public enum DisplayMode
+    {
+        Create = 0,
+        ShowInfo,
+        Edit
+    }
+
     public static class ControlExtension
     {
         public static T FindChild<T>(this DependencyObject parent) where T : DependencyObject
@@ -451,6 +528,29 @@ namespace Jarloo.Calendar
                     break;
             }
             return child;
+        }
+    }
+
+    public static class EnumExtension
+    {
+        public static bool Contains<T>(this Array ary, T obj)
+        {
+            if (ary.Length == 0)
+                throw new Exception("Given array is empty");
+            if (ary.GetValue(0).GetType() != typeof(T))
+                throw new Exception("Given object does not equal to the type of array elements.");
+
+            bool result = false;
+            for (int i = 0; i < ary.Length; i++)
+            {
+                if (ary.GetValue(i).Equals(obj))
+                {
+                    result = true;
+                    break;
+                }
+            }
+
+            return result;
         }
     }
 }

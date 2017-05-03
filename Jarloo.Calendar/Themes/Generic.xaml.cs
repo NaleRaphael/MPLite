@@ -18,6 +18,9 @@ namespace Jarloo.Calendar.Themes
         public delegate void NewEventIsCreatedEventHandler(CustomEvent ce);
         public static event NewEventIsCreatedEventHandler NewEventIsCreatedEvent;
 
+        public delegate void UpdateEventHandler(IEvent evnt);
+        public static event UpdateEventHandler UpdateEvent;
+
         private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
@@ -71,14 +74,34 @@ namespace Jarloo.Calendar.Themes
 
             WindowEventSetting winEventSetting = new WindowEventSetting(initialDateTime);
             winEventSetting.Owner = Calendar.Owner;     // workaround: store owner info by static property
-            winEventSetting.NewEventIsCreatedEvent += RefireEvent;
+            winEventSetting.NewEventIsCreatedEvent += OnRecievingNewEvent;
             winEventSetting.WindowStartupLocation = WindowStartupLocation.CenterScreen;     // TODO: try to set startupLocation to center of MPLite
             winEventSetting.Show();
         }
 
-        private void RefireEvent(CustomEvent ce)
+        private void OnRecievingNewEvent(CustomEvent ce)
         {
             NewEventIsCreatedEvent(ce);
+        }
+
+        private void miEditEvent_Click(object sender, RoutedEventArgs e)
+        {
+            ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
+            ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
+            if (lbi == null) return;
+            IEvent evnt = lbi.DataContext as IEvent;
+
+            WindowEventSetting winEventSetting = new WindowEventSetting();
+            winEventSetting.Owner = Calendar.Owner;
+            winEventSetting.UpdateEvent += OnRecievingUpdatedEvent;
+            winEventSetting.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            winEventSetting.ShowEventSetting(evnt, DisplayMode.Edit);
+            winEventSetting.Show();
+        }
+
+        private void OnRecievingUpdatedEvent(IEvent evnt)
+        {
+            UpdateEvent(evnt);
         }
 
         private void miDeleteEvent_Click(object sender, RoutedEventArgs e)
@@ -96,6 +119,7 @@ namespace Jarloo.Calendar.Themes
     {
         ShowInfo = 1,
         AddEvent = 2,
-        DeleteEvent = 3
+        EditEvent = 3,
+        DeleteEvent = 4
     }
 }

@@ -121,7 +121,8 @@ namespace Jarloo.Calendar
             BuildCalendar(DateTime.Today);
 
             Generic.DayContentSelectionEvent += SelectedDayContentActionEntry;
-            Generic.NewEventIsCreatedEvent += OnRecievingNewEventObject;
+            Generic.NewEventIsCreatedEvent += OnRecievingNewEvent;
+            Generic.UpdateEvent += OnRecievingUpdatedEvent;
 
             Owner = owner;  // workaround: set owner for WindowEventSetting
         }
@@ -172,9 +173,15 @@ namespace Jarloo.Calendar
             return Convert.ToInt32(dow.ToString("D"));
         }
 
-        private void OnRecievingNewEventObject(CustomEvent ce)
+        private void OnRecievingNewEvent(CustomEvent ce)
         {
             EventManager.AddEvent(ce);
+        }
+
+        private void OnRecievingUpdatedEvent(IEvent evnt)
+        {
+            EventManager.UpdateEvent(evnt);
+            RefreshCalendar(0);
         }
 
         private void RefreshCalendar(int offset)
@@ -250,10 +257,12 @@ namespace Jarloo.Calendar
             switch (action)
             {
                 case SelectedDayContentActions.ShowInfo:
-                    MessageBox.Show(evnt.EventText);
+                    ShowEventSetting(evnt);
                     break;
                 case SelectedDayContentActions.AddEvent:
-                    EventManager.AddEvent((CustomEvent)evnt);
+                    EventManager.AddEvent((CustomEvent)evnt);   // TODO: remove type casting and rewrite AddEvent as a generic method
+                    break;
+                case SelectedDayContentActions.EditEvent:
                     break;
                 case SelectedDayContentActions.DeleteEvent:
                     EventManager.DeleteEvent(evnt.GUID);
@@ -262,6 +271,18 @@ namespace Jarloo.Calendar
                     break;
             }
         }
+
+        private void ShowEventSetting(IEvent evnt)
+        {
+            WindowEventSetting winEventSetting = new WindowEventSetting();
+            winEventSetting.Owner = Calendar.Owner;
+            winEventSetting.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            winEventSetting.ShowEventSetting((CustomEvent)evnt, DisplayMode.ShowInfo);
+            winEventSetting.Show();
+        }
+
+        //private void 
 
         #region Public methods for user
         public void MoveToPrevMonth()

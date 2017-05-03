@@ -47,25 +47,35 @@ namespace MPLite.Event
             OriginalBeginningTime = BeginningTime;
         }
 
-        public virtual IEvent Clone()
+        public virtual void CloneTo(IEvent target)
         {
-            return new CustomEvent
+            if (target == null)
+                target = new CustomEvent();
+            try
             {
-                // TODO: can GUID clone too?
-                BeginningTime = BeginningTime,
-                OriginalBeginningTime = OriginalBeginningTime,
-                Duration = Duration,
-                Timer = Timer,
-                RecurringFrequency = RecurringFrequency,
-                EventText = EventText,
-                Rank = Rank,
-                IsTriggered = IsTriggered,
-                Enabled = Enabled,
-                AutoDelete = AutoDelete,
-                IgnoreTimeComponent = IgnoreTimeComponent,
-                ReadOnlyEvent = ReadOnlyEvent,
-                ThisDayForwardOnly = ThisDayForwardOnly
-            };
+                object obj = Convert.ChangeType(target, this.GetType());
+                if (obj == null)
+                    throw new Exception(string.Format("Given target is not a type of {0}.", this.GetType().Name));
+            }
+            catch
+            {
+                throw;
+            }
+
+            target.BeginningTime = this.BeginningTime;
+            target.OriginalBeginningTime = this.OriginalBeginningTime;
+            target.Duration = this.Duration;
+            target.Timer = this.Timer;
+            target.RecurringFrequency = this.RecurringFrequency;
+            target.EventText = this.EventText;
+            target.Rank = this.Rank;
+            target.Enabled = this.Enabled;
+            target.AutoDelete = this.AutoDelete;
+            target.IgnoreTimeComponent = this.IgnoreTimeComponent;
+            target.ReadOnlyEvent = this.ReadOnlyEvent;
+            target.ThisDayForwardOnly = this.ThisDayForwardOnly;
+            target.ActionStartsEventArgs = this.ActionStartsEventArgs;
+            target.ActionEndsEventArgs = this.ActionEndsEventArgs;
         }
 
         public virtual void Initialize()
@@ -80,7 +90,7 @@ namespace MPLite.Event
             IsTriggered = false;    // reset (for recurring event)
 
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };
-            Console.WriteLine("Interval: " + (BeginningTime - DateTime.Now).ToString());
+            Console.WriteLine(string.Format("Event: {0}; Interval: {1}", EventText, (BeginningTime - DateTime.Now).ToString()));
             timerEventHandler = (sender, args) =>
             {
                 IsTriggered = true;

@@ -34,7 +34,7 @@ namespace MPLite.Event
         event TimerElapsedEventHandler ActionEndsEvent;
         event TimerElapsedEventHandler SelfDestructEvent;
 
-        IEvent Clone();
+        void CloneTo(IEvent target);
 
         // Post-processing of object creation if it is created by onject initializer
         void Initialize();
