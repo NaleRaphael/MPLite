@@ -23,6 +23,7 @@ namespace MPLite.Event
         {
             base.CloneTo(target);
             (target as MultiTriggerEvent).BeginningTimeQueue = this.BeginningTimeQueue;
+            (target as MultiTriggerEvent).Initialize();
         }
 
         public override bool UpdateBeginningTime()
@@ -35,7 +36,7 @@ namespace MPLite.Event
                 BeginningTime = BeginningTimeQueue.Dequeue();
             }
 
-            return base.UpdateBeginningTime();
+            return (RecurringFrequency == RecurringFrequencies.None) ? true : base.UpdateBeginningTime();
         }
     }
 }

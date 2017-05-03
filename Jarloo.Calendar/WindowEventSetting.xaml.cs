@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -132,15 +133,30 @@ namespace Jarloo.Calendar
             WindowMode = mode;
             IsReadOnly = (mode == DisplayMode.ShowInfo) ? true : false;
             evntToBeUpdated = (mode == DisplayMode.Edit) ? evnt as T : null;
-
             txtEventName.Text = evnt.EventText;
-
             txtRank.Text = evnt.Rank.ToString();
 
-            dateTimePicker.Value = evnt.BeginningTime;
+            // beginning time
+            if (evnt.GetType().Equals(typeof(CustomEvent)))
+            {
+                dateTimePicker.Value = evnt.BeginningTime;
+            }
+            else if (evnt.GetType().Equals(typeof(MultiTriggerEvent)))
+            {
+                MultiTriggerEvent mte = evnt as MultiTriggerEvent;
+                dateTimePicker.Value = mte.BeginningTimeQueue.Peek();
+                for (int i = 1; i < mte.BeginningTimeQueue.Count; i++)
+                {
+                    Button btn;
+                    TimePicker tp;
+                    ChangeMarginOfTimePickerContainer(true);
+                    CreateTimePickerGroup(mte.BeginningTimeQueue.ElementAt(i), out btn, out tp);
+                    btn.IsEnabled = !IsReadOnly;
+                    tp.IsEnabled = !IsReadOnly;
+                }
+            }
 
             timeSpanUpDown.Value = evnt.Duration;
-            //timeSpanUpDown.IsEnabled = false;     // BUG? this approach cannot disable control
             chkSetDuration.IsChecked = (evnt.Duration == TimeSpan.MinValue) ? false : true;
 
             // Recurring frequency
@@ -449,43 +465,9 @@ namespace Jarloo.Calendar
         private void btnAddMoreTimePicker_Click(object sender, RoutedEventArgs e)
         {
             ChangeMarginOfTimePickerContainer(true);
-
-            Button btnRemoveTimePicker = new Button
-            {
-                Name = "btnRemoveTimePicker",
-                Width = 16,
-                Height = 16,
-                Margin = new Thickness(0, 0, 0, 2),
-                VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Style = this.FindResource("FlatButton_Opacity") as Style,
-            };
-            btnRemoveTimePicker.SetResourceReference(Button.ContentProperty, "ImagRemoveTimePickerContainer");
-            btnRemoveTimePicker.Click += btnRemoveTimePicker_Click;
-
-            TimePicker timePicker = new TimePicker()
-            {
-                Name = "timePicker",
-                Height = 20,
-                Margin = new Thickness(20, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Format = DateTimeFormat.LongTime,
-            };
-            timePicker.Value = this.InitialBeginningTime;
-
-            Grid gdTimePicker = new Grid()
-            {
-                Name = "gdTimePicker",
-                Height = 20,
-                Margin = new Thickness(0, 0, 0, 10),
-                VerticalAlignment = VerticalAlignment.Bottom,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-            };
-            gdTimePicker.Children.Add(btnRemoveTimePicker);
-            gdTimePicker.Children.Add(timePicker);
-
-            spTimePickerList.Children.Add(gdTimePicker);
+            Button btn;
+            TimePicker tp;
+            CreateTimePickerGroup(this.InitialBeginningTime, out btn, out tp);
         }
 
         private void btnRemoveTimePicker_Click(object sender, RoutedEventArgs e)
@@ -502,6 +484,46 @@ namespace Jarloo.Calendar
 
             Thickness temp = spTimePickerList.Margin;
             spTimePickerList.Margin = new Thickness(temp.Left, 0, temp.Right, 0);
+        }
+
+        private void CreateTimePickerGroup(DateTime initialValue, out Button btnRemoveTimePicker, out TimePicker timePicker)
+        {
+            btnRemoveTimePicker = new Button
+            {
+                Name = "btnRemoveTimePicker",
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 0, 2),
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Style = this.FindResource("FlatButton_Opacity") as Style,
+            };
+            btnRemoveTimePicker.SetResourceReference(Button.ContentProperty, "ImagRemoveTimePickerContainer");
+            btnRemoveTimePicker.Click += btnRemoveTimePicker_Click;
+
+            timePicker = new TimePicker()
+            {
+                Name = "timePicker",
+                Height = 20,
+                Margin = new Thickness(20, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                Format = DateTimeFormat.LongTime,
+            };
+            timePicker.Value = initialValue;
+
+            Grid gdTimePicker = new Grid()
+            {
+                Name = "gdTimePicker",
+                Height = 20,
+                Margin = new Thickness(0, 0, 0, 10),
+                VerticalAlignment = VerticalAlignment.Bottom,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+            };
+            gdTimePicker.Children.Add(btnRemoveTimePicker);
+            gdTimePicker.Children.Add(timePicker);
+
+            spTimePickerList.Children.Add(gdTimePicker);
         }
     }
 

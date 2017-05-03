@@ -16,6 +16,12 @@ namespace MPLite.Event
         {
         }
 
+        public static EventCollection GetDataBase()
+        {
+            string dbPath = Properties.Settings.Default.EventDBPath;
+            return DataControl.ReadFromJson<EventCollection>(dbPath, true);
+        }
+
         public void Initialize()
         {
             string dbPath = Properties.Settings.Default.EventDBPath;
@@ -118,6 +124,7 @@ namespace MPLite.Event
                 return;
             ec.EventList.RemoveAt(idx);
             ec.EventList.Insert(idx, evnt);
+            this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, this, true);
             ec = null;
         }

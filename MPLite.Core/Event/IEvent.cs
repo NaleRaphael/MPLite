@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Threading;
+using Newtonsoft.Json;
 
 namespace MPLite.Event
 {
@@ -9,6 +10,8 @@ namespace MPLite.Event
         DateTime BeginningTime { get; set; }
         DateTime OriginalBeginningTime { get; set; }
         TimeSpan Duration { get; set; }
+
+        [JsonIgnore]
         DispatcherTimer Timer { get; set; }
         
         RecurringFrequencies RecurringFrequency { get; set; }

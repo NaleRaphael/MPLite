@@ -203,7 +203,7 @@ namespace MPLite.Event
 
         private void DisposeActivatedTimers()
         {
-            foreach (IEvent ce in EventDB)
+            foreach (IEvent ce in ActivatedEvents)
             {
                 ce.DisposeTimer();
             }

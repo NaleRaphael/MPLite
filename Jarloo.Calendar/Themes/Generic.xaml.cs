@@ -56,10 +56,15 @@ namespace Jarloo.Calendar.Themes
         {
             ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
             ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
-
             if (lbi == null) return;
-            CustomEvent obj = lbi.DataContext as CustomEvent;
-            DayContentSelectionEvent(obj, SelectedDayContentActions.ShowInfo);
+            Guid targetGuid = (lbi.DataContext as IEvent).GUID;
+
+            EventCollection ec = EventCollection.GetDataBase();
+            if (ec == null)
+                throw new Exception("Event database is not avalible.");
+            IEvent evnt = ec.GetEvent(targetGuid);
+
+            DayContentSelectionEvent(evnt, SelectedDayContentActions.ShowInfo);
         }
 
         private void miAddEvent_Click(object sender, RoutedEventArgs e)
@@ -89,7 +94,12 @@ namespace Jarloo.Calendar.Themes
             ContextMenu cm = ((MenuItem)sender).Parent as ContextMenu;
             ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
             if (lbi == null) return;
-            IEvent evnt = lbi.DataContext as IEvent;
+            Guid targetGuid = (lbi.DataContext as IEvent).GUID;
+
+            EventCollection ec = EventCollection.GetDataBase();
+            if (ec == null)
+                throw new Exception("Event database is not avalible.");
+            IEvent evnt = ec.GetEvent(targetGuid);
 
             WindowEventSetting winEventSetting = new WindowEventSetting();
             winEventSetting.Owner = Calendar.Owner;
