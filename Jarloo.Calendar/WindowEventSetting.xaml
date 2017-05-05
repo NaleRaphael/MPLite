@@ -21,12 +21,6 @@
                 </ObjectDataProvider.MethodParameters>
             </ObjectDataProvider>
 
-            <ObjectDataProvider x:Key="enumPlaybackMode" ObjectType="{x:Type System:Enum}" MethodName="GetValues">
-                <ObjectDataProvider.MethodParameters>
-                    <x:Type TypeName="mplitecore:PlaybackMode"/>
-                </ObjectDataProvider.MethodParameters>
-            </ObjectDataProvider>
-
             <Image x:Key="ImagExitWindow" Source="Images\exit.png"/>
             <Image x:Key="ImagRemoveTimePickerContainer" x:Shared="False" Source="Images\remove_red.png" RenderOptions.BitmapScalingMode="HighQuality"/>
 

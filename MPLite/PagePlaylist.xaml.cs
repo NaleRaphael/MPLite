@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using GongSolutions.Wpf.DragDrop;
 
 namespace MPLite
 {
@@ -57,9 +58,12 @@ namespace MPLite
         #region Initialization
         private void InitPlaylist()
         {
-            if (OCPlaylist == null) OCPlaylist = new ObservableCollection<Playlist>();
-            if (OCTrack == null) OCTrack = new ObservableCollection<TrackInfo>();
+            lb_PlaylistMenu.DataContext = new TrackListsViewModel();
+            OCPlaylist = (lb_PlaylistMenu.DataContext as TrackListsViewModel).TrackLists;
             lb_PlaylistMenu.ItemsSource = OCPlaylist;
+
+            lv_Playlist.DataContext = new TracksViewModel(PlaylistCollection.GetPlaylist(Properties.Settings.Default.LastSelectedPlaylist));
+            OCTrack = (lv_Playlist.DataContext as TracksViewModel).Soundtracks;
             lv_Playlist.ItemsSource = OCTrack;
 
             RefreshPlaylist();
@@ -71,7 +75,9 @@ namespace MPLite
             PlaylistCollection plc = PlaylistCollection.GetDatabase();
             if (plc == null) return;
 
-            FillOC(OCPlaylist, plc.TrackLists);
+            (lb_PlaylistMenu.DataContext as TrackListsViewModel).UpdateTrackLists(plc.TrackLists);
+            //(lb_PlaylistMenu.DataContext as TrackListsViewModel).TrackLists.FillContent(plc.TrackLists);
+            //FillOC((lb_PlaylistMenu.DataContext as TrackListsViewModel).TrackLists, plc.TrackLists);
         }
 
         private void RefreshPlaylistContent(string selectedPlaylist, int selectedPlaylistIndex)
@@ -85,7 +91,9 @@ namespace MPLite
             Playlist pl = plc.TrackLists.Find(x => x.ListName == selectedPlaylist);
             if (pl == null) return;
 
-            FillOC(OCTrack, pl.Soundtracks);
+            (lv_Playlist.DataContext as TracksViewModel).UpdateSoundtracks(pl.Soundtracks);
+            //(lv_Playlist.DataContext as TracksViewModel).Soundtracks.FillContent(pl.Soundtracks);
+            //FillOC((lv_Playlist.DataContext as TracksViewModel).Soundtracks, pl.Soundtracks);
 
             // Update info
             Properties.Settings.Default.LastSelectedPlaylist = selectedPlaylist;
@@ -104,15 +112,6 @@ namespace MPLite
                 }
             }
         }
-
-        private void FillOC<T>(ObservableCollection<T> oc, List<T> source)
-        {
-            if (source == null) return;
-
-            oc.Clear();
-            foreach (T obj in source)
-                oc.Add(obj);
-        }
         #endregion
 
         #region Track status control
@@ -122,6 +121,7 @@ namespace MPLite
                 return;
             if (e.Index == -1 || e.Index > OCTrack.Count)
                 return;
+            OCTrack[e.Index].TrackStatus = e.Track.TrackStatus;
             OCTrack[e.Index].StatusSign = MPLiteConstant.TrackStatusSign[(int)e.Track.TrackStatus];
         }
         #endregion
@@ -129,20 +129,27 @@ namespace MPLite
         #region lv_Playlist controls
         private void lv_Playlist_DragEnter(object sender, DragEventArgs e)
         {
+            Console.WriteLine("DragEnter: " + e.Data.ToString());
+
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                e.Effects = DragDropEffects.Copy;
+                GongSolutions.Wpf.DragDrop.DragDrop.SetIsDragSource(lv_Playlist, false);
+                GongSolutions.Wpf.DragDrop.DragDrop.SetIsDropTarget(lv_Playlist, false);
+                e.Effects = DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link;
             }
         }
 
         private void lv_Playlist_Drop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files == null)
+                return;
+
             string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
-            List<string> flist = new List<string>();
+            //List<string> flist = new List<string>();
             List<TrackInfo> tlist = new List<TrackInfo>();
 
-            foreach(string filePath in files)
+            foreach (string filePath in files)
             {
                 // Validate file type
                 if (!MPLiteConstant.validFileType.Contains(System.IO.Path.GetExtension(filePath)))
@@ -189,8 +196,15 @@ namespace MPLite
                 string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
                 List<int> selIdices = new List<int>();
 
+                // Stop player if selected track is playing
+                //if (((Playlist)lb_PlaylistMenu.SelectedItem).Soundtracks[])
+
                 foreach (TrackInfo track in lv_Playlist.SelectedItems)
+                {
                     selIdices.Add(lv_Playlist.Items.IndexOf(track));
+                    if (track.TrackStatus == Core.TrackStatus.Playing)
+                        StopPlayerRequestEvent();
+                }
 
                 selIdices.Sort((x, y) => { return -x.CompareTo(y); });
                 PlaylistCollection.DeleteTracksByIndices(selIdices.ToArray<int>(), listName);
@@ -286,9 +300,13 @@ namespace MPLite
 
         private void lb_PlaylistMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
-            SetPrevAndCurrShowingPlaylist(listName);
-            RefreshPlaylistContent(listName, lb_PlaylistMenu.SelectedIndex);
+            Playlist pl = lb_PlaylistMenu.SelectedItem as Playlist;
+            TracksViewModel tvm = lv_Playlist.DataContext as TracksViewModel;
+            tvm.TracklistName = pl.ListName;
+            tvm.TracklistGUID = pl.GUID;
+
+            SetPrevAndCurrShowingPlaylist(pl.ListName);
+            RefreshPlaylistContent(pl.ListName, lb_PlaylistMenu.SelectedIndex);
 
             if (lv_Playlist.Visibility == Visibility.Hidden)
                 lv_Playlist.Visibility = Visibility.Visible;
@@ -417,7 +435,17 @@ namespace MPLite
                     break;
             }
         }
+
+
+
+
+
         #endregion
+
+        private void lv_Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            (lv_Playlist.DataContext as TracksViewModel).SelectedIndices = lv_Playlist.GetSelectedIndices();
+        }
     }
 
     public class EmptyPlaylistException : Exception

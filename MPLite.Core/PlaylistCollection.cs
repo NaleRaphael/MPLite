@@ -150,6 +150,16 @@ namespace MPLite.Core
             }
         }
 
+        public static void ReorderTracks(Guid listGUID, List<int> selectedIndices, int insertIndex)
+        {
+            PlaylistCollection plc = GetDatabase();
+            
+            Playlist pl = plc.TrackLists.Find(x => x.GUID == listGUID);
+            pl.ReorderTracks(selectedIndices, insertIndex);
+
+            plc.SaveToDatabase();
+        }
+
         public static void RemovePlaylist(string listName)
         {
             string configPath = Properties.Settings.Default.TrackDBPath;
@@ -227,14 +237,26 @@ namespace MPLite.Core
             }
         }
 
-        public void MoveTrack(int oriIdx, int newIdx)
+        public void InsertTracks(List<TrackInfo> tracks, int insertIdx)
         {
-            TrackInfo track = Soundtracks[oriIdx];
-            Soundtracks.RemoveAt(oriIdx);
-            Soundtracks.Insert(newIdx, track);
+            foreach (TrackInfo track in tracks)
+            {
+                Soundtracks.Insert(insertIdx, track);
+            }
         }
 
-        // TODO: move multiple tracks (dragging items in lv_Playlist)
+        public void ReorderTracks(List<int> trackIdx, int insertIdx)
+        {
+            trackIdx.Sort((x, y) => -x.CompareTo(y));   // descending sorting
+            List<TrackInfo> tracks = new List<TrackInfo>(trackIdx.Count);
+            for (int i = 0; i < trackIdx.Count; i++)
+            {
+                tracks.Add(Soundtracks[trackIdx[i]]);
+                Soundtracks.RemoveAt(trackIdx[i]);
+            }
+
+            this.InsertTracks(tracks, insertIdx);
+        }
     }
 
     public class InvalidPlaylistException : Exception

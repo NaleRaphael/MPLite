@@ -157,7 +157,7 @@ namespace Jarloo.Calendar
             }
 
             timeSpanUpDown.Value = evnt.Duration;
-            chkSetDuration.IsChecked = (evnt.Duration == TimeSpan.MinValue) ? false : true;
+            chkSetDuration.IsChecked = (evnt.Duration == TimeSpan.Zero) ? false : true;
 
             // Recurring frequency
             if (Enum.GetValues(typeof(RecurringFrequencies)).Contains<RecurringFrequencies>(evnt.RecurringFrequency))
@@ -167,10 +167,9 @@ namespace Jarloo.Calendar
                 cmbRecurringFreq.SelectedItem = RecurringFrequencies.Custom;
                 ConvertRecurringFreqToBlocks(evnt.RecurringFrequency);
             }
+
             gridRecurringDate.IsEnabled = false;
-
             chkAutoDelete.IsChecked = evnt.AutoDelete;
-
             chkThisDayForwardOnly.IsChecked = evnt.ThisDayForwardOnly;
 
             // Settings of playback

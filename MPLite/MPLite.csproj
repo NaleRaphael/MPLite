@@ -39,6 +39,10 @@
     <ApplicationIcon>images\MPLite.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GongSolutions.Wpf.DragDrop, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\gong-wpf-dragdrop.1.1.0\lib\net40\GongSolutions.Wpf.DragDrop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Itenso.Windows.Controls.ListViewLayout, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dll\Itenso.Windows.Controls.ListViewLayout.dll</HintPath>
@@ -95,7 +99,9 @@
     <Compile Include="PagePlaylist.xaml.cs">
       <DependentUpon>PagePlaylist.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TrackListsViewModel.cs" />
     <Compile Include="TrackStatusDisplayer.cs" />
+    <Compile Include="TracksViewModel.cs" />
     <Compile Include="Utils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

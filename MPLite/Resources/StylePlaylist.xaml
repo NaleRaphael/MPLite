@@ -52,7 +52,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    
     <Style x:Key="StyleListViewItem" TargetType="{x:Type ListViewItem}">
         <Setter Property="TextBlock.Foreground" Value="#FFC8C8C8"/>
         <Setter Property="Template">
@@ -82,12 +82,9 @@
                             <Setter Property="BorderBrush" Value="Transparent"/>
                             <Setter TargetName="UpperHighlight" Property="Visibility" Value="Hidden"/>
                         </Trigger>
-
                     </ControlTemplate.Triggers>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
 </ResourceDictionary>

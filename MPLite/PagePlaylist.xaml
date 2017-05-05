@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:MPLite"
       xmlns:lvctrl="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
+      xmlns:dd="urn:gong-wpf-dragdrop"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="500"
       Title="PagePlaylist" Width="Auto" Height="Auto" AllowDrop="True">
@@ -24,7 +25,7 @@
             <Style x:Key="MenuItemDelete" TargetType="{x:Type MenuItem}">
                 <EventSetter Event="Click" Handler="miDelete_Click"/>
             </Style>
-            
+
             <Style x:Key="StyleListBoxItem" TargetType="{x:Type ListBoxItem}">
                 <Setter Property="BorderThickness" Value="0,0,0,1"/>
                 <Setter Property="BorderBrush" Value="#FF4B4B4B"/>
@@ -68,7 +69,6 @@
                 <EventSetter Event="KeyDown" Handler="MenuListBox_KeyDown"/>
                 <EventSetter Event="MouseUp" Handler="MenuListBox_MouseUp"/>
             </Style>
-            
         </ResourceDictionary>
 
     </Page.Resources>
@@ -87,11 +87,14 @@
             -->
             
             <ListBox x:Name="lb_PlaylistMenu" Width="150" Background="#FF414141" BorderThickness="0" FontFamily="Segoe UI" Foreground="Black"
-                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-            
+                     KeyDown="lb_PlaylistMenu_KeyDown" ItemContainerStyle="{StaticResource StyleListBoxItem}" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True"/>
+
             <ListView Grid.Row="0" x:Name="lv_Playlist" Height="Auto" Width="Auto" Background="#FF323232" BorderBrush="#00000000" BorderThickness="0" 
-                  lvctrl:ListViewLayoutManager.Enabled="True" DragEnter="lv_Playlist_DragEnter" Drop="lv_Playlist_Drop" MouseDoubleClick="lv_Playlist_MouseDoubleClick" 
-                  KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI" ItemContainerStyle="{StaticResource StyleListViewItem}">
+                  lvctrl:ListViewLayoutManager.Enabled="True" 
+                  KeyDown="lv_Playlist_KeyDown" ScrollViewer.VerticalScrollBarVisibility="Auto" FontFamily="Segoe UI" ItemContainerStyle="{StaticResource StyleListViewItem}"
+                  AllowDrop="True" MouseDoubleClick="lv_Playlist_MouseDoubleClick"
+                  dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}" SelectionChanged="lv_Playlist_SelectionChanged">
                 <ListView.View>
                     <GridView x:Name="GV_Playlist" ColumnHeaderContainerStyle="{StaticResource StylePlaylistHeader}" AllowsColumnReorder="False">
                         <GridViewColumn Header="" lvctrl:ProportionalColumn.Width="3" DisplayMemberBinding="{Binding Path=StatusSign}"/>

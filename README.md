@@ -17,3 +17,4 @@ A simple music player written in C# (.NET 4.0) with a built-in scheduler.
 - [Itenso.Windows.Controls.ListViewLayout](https://www.codeproject.com/Articles/25058/ListView-Layout-Manager)
 - [Calendar.NET](https://www.codeproject.com/Articles/378900/Calendar-NET) `MPLite.Event` is built according to this library.
 - [Extended WPF toolkit](http://wpftoolkit.codeplex.com/)
+- [GongSolutions.WPF.DragDrop](https://github.com/punker76/gong-wpf-dragdrop)

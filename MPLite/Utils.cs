@@ -1,4 +1,7 @@
-﻿using System.Security;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Security;
 using System.Runtime.InteropServices;
 
 namespace MPLite
@@ -28,6 +31,36 @@ namespace MPLite
             setting.TaskPlayingTrackStatus = 0;
             setting.TaskPlaybackMode = 0;
             setting.Save();
+        }
+    }
+
+    public static class ListViewExtension
+    {
+        internal static List<int> GetSelectedIndices(this ListView lv)
+        {
+            List<int> selectedIndices = new List<int>(lv.SelectedItems.Count);
+            if (lv.SelectedItems.Count == 0)
+                return selectedIndices;
+
+            for (int i = 0; i < lv.Items.Count; i++)
+            {
+                ListViewItem lvi = lv.ItemContainerGenerator.ContainerFromIndex(i) as ListViewItem;
+                if (lvi.IsSelected)
+                    selectedIndices.Add(i);
+            }
+            return selectedIndices;
+        }
+    }
+
+    public static class ObservableCollectionExtension
+    {
+        internal static void FillContent<T>(this ObservableCollection<T> oc, List<T> source)
+        {
+            if (source == null) return;
+
+            oc.Clear();
+            foreach (T obj in source)
+                oc.Add(obj);
         }
     }
 
