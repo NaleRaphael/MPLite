@@ -55,6 +55,29 @@ namespace MPLite.Core
             DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
         }
 
+        public static Playlist UpdatePlaylist(List<TrackInfo> tracks, string listName)
+        {
+            string configPath = Properties.Settings.Default.TrackDBPath;
+            PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
+            Playlist pl = null;
+
+            if (plc == null)
+            {
+                pl = new Playlist(listName);
+                pl.UpdateTracks(tracks);
+                plc = new PlaylistCollection();
+                plc.TrackLists.Add(pl);
+            }
+            else
+            {
+                pl = plc.TrackLists.Find(x => x.ListName == listName);
+                pl.UpdateTracks(tracks);
+            }
+            DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
+
+            return pl;
+        }
+
         public static void DeleteTracksByIndices(int[] indices, string listName)
         {
             string configPath = Properties.Settings.Default.TrackDBPath;
@@ -105,7 +128,9 @@ namespace MPLite.Core
             Playlist pl;
             try
             {
-                pl = DataControl.ReadFromJson<PlaylistCollection>(configPath, false).TrackLists.Find(x => x.ListName == listName);
+                //pl = DataControl.ReadFromJson<PlaylistCollection>(configPath, false).TrackLists.Find(x => x.ListName == listName);
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
+                pl = (plc == null) ? null : plc.TrackLists.Find(x => x.ListName == listName);
             }
             catch
             {
@@ -150,6 +175,22 @@ namespace MPLite.Core
             }
         }
 
+        public static void AddPlaylist(Playlist pl)
+        {
+            string configPath = Properties.Settings.Default.TrackDBPath;
+            try
+            {
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
+                plc = (plc == null) ? new PlaylistCollection() : plc;
+                plc.TrackLists.Add(pl);
+                DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public static void ReorderTracks(Guid listGUID, List<int> selectedIndices, int insertIndex)
         {
             PlaylistCollection plc = GetDatabase();
@@ -175,7 +216,22 @@ namespace MPLite.Core
             }
         }
 
-        private static string AddSerialNum(List<Playlist> collection, string listName)
+        public static void RemovePlaylist(Guid targetGUID)
+        {
+            string configPath = Properties.Settings.Default.TrackDBPath;
+            try
+            {
+                PlaylistCollection plc = DataControl.ReadFromJson<PlaylistCollection>(configPath, false);
+                plc.TrackLists.RemoveAt(plc.TrackLists.FindIndex(x => x.GUID == targetGUID));
+                DataControl.SaveData<PlaylistCollection>(configPath, plc, false);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public static string AddSerialNum(List<Playlist> collection, string listName)
         {
             int serialNum = 0;
             string temp = listName;

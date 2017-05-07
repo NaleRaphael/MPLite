@@ -22,17 +22,27 @@ namespace MPLite.Core
 
         public static T ReadFromJson<T>(string filePath, bool usingTypeNameHandling) where T : class
         {
-            T result;
+            T result = null;
             try
             {
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.TypeNameHandling = usingTypeNameHandling ? TypeNameHandling.All : TypeNameHandling.None;
+
+                if (!File.Exists(filePath))
+                    File.Create(filePath).Close();
 
                 using (StreamReader sr = File.OpenText(filePath))
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
                     result = (T)serializer.Deserialize(reader);
                 }
+            }
+            catch (FileNotFoundException exFileNotFound)
+            {
+                // Create file and read again
+                File.Create(filePath);
+                //Console.WriteLine("File not found.");
+                //return null;
             }
             catch (Exception ex)
             {

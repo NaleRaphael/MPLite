@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using GongSolutions.Wpf.DragDrop;
 
@@ -20,11 +19,12 @@ namespace MPLite
         private List<int> selectedIndices = new List<int>();
         private ObservableCollection<TrackInfo> soundtracks = new ObservableCollection<TrackInfo>();
 
+        public delegate void PlaylistIsUpdatedEventHandler(Playlist pl);
+        public event PlaylistIsUpdatedEventHandler PlaylistIsUpdatedEvent;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string TracklistName { get; set; }
         public Guid TracklistGUID { get; set; }
-        
 
         public ObservableCollection<TrackInfo> Soundtracks
         {
@@ -47,9 +47,8 @@ namespace MPLite
 
         public TracksViewModel(Playlist pl)
         {
-            TracklistName = pl.ListName;
-            TracklistGUID = pl.GUID;
-
+            TracklistName = (pl == null) ? null : pl.ListName;
+            TracklistGUID = (pl == null) ? Guid.Empty : pl.GUID;
         }
 
         public void UpdatePlaylistName(string listName)
@@ -60,6 +59,13 @@ namespace MPLite
         public void UpdateSoundtracks(List<TrackInfo> source)
         {
             Soundtracks.FillContent(source);
+        }
+
+        public void UpdateSoundtracks(Playlist pl)
+        {
+            TracklistGUID = pl.GUID;
+            TracklistName = pl.ListName;
+            Soundtracks.FillContent(pl.Soundtracks);
         }
 
         void IDropTarget.DragOver(IDropInfo dropInfo)
@@ -104,7 +110,10 @@ namespace MPLite
                 }
 
                 if (tlist.Count != 0)
-                    PlaylistCollection.AddPlaylist(tlist, TracklistName);
+                {
+                    Playlist pl = PlaylistCollection.UpdatePlaylist(tlist, TracklistName);
+                    if (PlaylistIsUpdatedEvent != null) PlaylistIsUpdatedEvent(pl);
+                }
             }
             else
             {
@@ -127,6 +136,9 @@ namespace MPLite
                     dropInfo.InsertIndex - tracks.Count : dropInfo.InsertIndex;
                 PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, insertIndex);
                 UpdateSoundtracks(PlaylistCollection.GetPlaylist(TracklistGUID).Soundtracks);
+
+                // reset PlayStatus
+
             }
         }
 
@@ -136,6 +148,11 @@ namespace MPLite
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void DeleteTracks()
+        {
+
         }
     }
 }
