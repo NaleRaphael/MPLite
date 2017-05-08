@@ -385,8 +385,6 @@ namespace MPLite
         // TODO: rename this
         public void RunPlaylist(SchedulerEventArgs e)
         {
-            NewSelectionEvent();    // Notify MusicPlayer to reset queue
-
             switch (e.Command)
             {
                 case PlaybackCommands.Pause:
@@ -394,6 +392,7 @@ namespace MPLite
                     break;
                 case PlaybackCommands.Stop:
                     StopPlayerRequestEvent();
+                    NewSelectionEvent();    // Notify MusicPlayer to reset queue
                     break;
                 case PlaybackCommands.Play:
                     StopPlayerRequestEvent();
