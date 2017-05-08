@@ -10,6 +10,7 @@ using GongSolutions.Wpf.DragDrop;
 namespace MPLite
 {
     using TrackInfo = Core.TrackInfo;
+    using TrackStatus = Core.TrackStatus;
     using Playlist = Core.Playlist;
     using PlaylistCollection = Core.PlaylistCollection;
     using MPLiteConstant = Core.MPLiteConstant;
@@ -23,8 +24,9 @@ namespace MPLite
         public event PlaylistIsUpdatedEventHandler PlaylistIsUpdatedEvent;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string TracklistName { get; set; }
-        public Guid TracklistGUID { get; set; }
+        public string TracklistName { get; private set; }
+        public Guid TracklistGUID { get; private set; }
+        public TrackInfo PlayingTrack { get; private set; }
 
         public ObservableCollection<TrackInfo> Soundtracks
         {
@@ -45,17 +47,24 @@ namespace MPLite
             }
         }
 
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        #region Constructor
         public TracksViewModel(Playlist pl)
         {
             TracklistName = (pl == null) ? null : pl.ListName;
             TracklistGUID = (pl == null) ? Guid.Empty : pl.GUID;
         }
+        #endregion
 
         public void UpdatePlaylistName(string listName)
         {
             TracklistName = listName;
         }
-
+        
         public void UpdateSoundtracks(List<TrackInfo> source)
         {
             Soundtracks.FillContent(source);
@@ -66,6 +75,18 @@ namespace MPLite
             TracklistGUID = pl.GUID;
             TracklistName = pl.ListName;
             Soundtracks.FillContent(pl.Soundtracks);
+        }
+
+        public void UpdateTrackStatus(TrackStatusEventArgs e)
+        {
+            if (e == null || e.Index == -1)
+                return;
+
+            PlayingTrack = e.Track;
+            TrackInfo track = soundtracks.FirstOrDefault(x => x.GUID == e.Track.GUID);
+            if (track != null)
+                track.TrackStatus = e.Track.TrackStatus;
+            else return;
         }
 
         void IDropTarget.DragOver(IDropInfo dropInfo)
@@ -112,11 +133,16 @@ namespace MPLite
                 if (tlist.Count != 0)
                 {
                     Playlist pl = PlaylistCollection.UpdatePlaylist(tlist, TracklistName);
-                    if (PlaylistIsUpdatedEvent != null) PlaylistIsUpdatedEvent(pl);
+                    PlaylistIsUpdatedEvent?.Invoke(pl);
                 }
             }
             else
             {
+                // workaround: There is a bug that user can drag item from the gap between two items.
+                //    It triggers DragEvent without SelectionChangeEvent. So that `selectedIndices` will be empty.
+                if (selectedIndices.Count == 0)
+                    return;
+
                 // Reorder tracks
                 List<TrackInfo> tracks;
 
@@ -134,23 +160,32 @@ namespace MPLite
                     
                 int insertIndex = (dropInfo.InsertIndex > selectedIndices[0]) ? 
                     dropInfo.InsertIndex - tracks.Count : dropInfo.InsertIndex;
-                PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, insertIndex);
-                UpdateSoundtracks(PlaylistCollection.GetPlaylist(TracklistGUID).Soundtracks);
+                Playlist pl = PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, insertIndex);
+                UpdateSoundtracks(pl.Soundtracks);
+
+                PlaylistIsUpdatedEvent?.Invoke(pl);
 
                 // reset PlayStatus
-
+                if (PlayingTrack != null)
+                {
+                    TrackInfo track = soundtracks.FirstOrDefault(x => x.GUID == PlayingTrack.GUID);
+                    if (track != null) track.TrackStatus = PlayingTrack.TrackStatus;
+                }
             }
         }
 
-        private void NotifyPropertyChanged(string propertyName)
+        public void RemoveTracksByIndices()
         {
-            if (PropertyChanged != null)
+            PlaylistCollection.DeleteTracksByIndices(selectedIndices.ToArray(), TracklistGUID);
+            for (int i = selectedIndices.Count - 1; i >= 0; i--)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                soundtracks.RemoveAt(selectedIndices[i]);
             }
+
+            PlaylistIsUpdatedEvent?.Invoke(PlaylistCollection.GetPlaylist(TracklistGUID));
         }
 
-        public void DeleteTracks()
+        public void SetTrackStatus(TrackInfo track, TrackStatus status)
         {
 
         }

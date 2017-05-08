@@ -48,7 +48,7 @@ namespace MPLite.Event
 
             ec.EventList.Add(target);
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            DataControl.SaveData<EventCollection>(dbPath, this, true, true);
             ec = null;
 
             DatabaseIsChanged();
@@ -66,7 +66,7 @@ namespace MPLite.Event
 
             ec.EventList.Remove(ec.EventList.Find(x => x.GUID == target.GUID));
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            DataControl.SaveData<EventCollection>(dbPath, this, true, true);
             ec = null;
 
             // Notify subscriber
@@ -85,7 +85,7 @@ namespace MPLite.Event
 
             ec.EventList.Remove(ec.EventList.Find(x => x.GUID == targetGUID));
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            DataControl.SaveData<EventCollection>(dbPath, this, true, true);
             ec = null;
 
             // Notify subscriber
@@ -105,7 +105,7 @@ namespace MPLite.Event
             IEvent target = ec.EventList.Find(x => x.GUID == evnt.GUID);
             target = evnt;
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            DataControl.SaveData<EventCollection>(dbPath, this, true, true);
             ec = null;
         }
 
@@ -125,7 +125,7 @@ namespace MPLite.Event
             ec.EventList.RemoveAt(idx);
             ec.EventList.Insert(idx, evnt);
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, this, true);
+            DataControl.SaveData<EventCollection>(dbPath, this, true, true);
             ec = null;
         }
 
@@ -142,7 +142,7 @@ namespace MPLite.Event
 
             ec.EventList.Clear();
             this.EventList = ec.EventList;
-            DataControl.SaveData<EventCollection>(dbPath, ec, true);
+            DataControl.SaveData<EventCollection>(dbPath, ec, true, true);
             ec = null;
 
             // Notify subscriber

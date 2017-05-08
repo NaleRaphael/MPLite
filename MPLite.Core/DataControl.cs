@@ -7,11 +7,11 @@ namespace MPLite.Core
 {
     public static class DataControl
     {
-        public static void SaveData<T>(string filePath, Object obj, bool usingTypeNameHandling) where T : class
+        public static void SaveData<T>(string filePath, Object obj, bool usingTypeNameHandling, bool indented) where T : class
         {
             JsonSerializer serializer = new JsonSerializer();
             serializer.TypeNameHandling = usingTypeNameHandling ? TypeNameHandling.All : TypeNameHandling.None;
-            serializer.Formatting = usingTypeNameHandling ? Formatting.Indented : Formatting.None;
+            serializer.Formatting = indented ? Formatting.Indented : Formatting.None;
 
             using (StreamWriter sw = File.CreateText(filePath))
             using (JsonWriter writer = new JsonTextWriter(sw))

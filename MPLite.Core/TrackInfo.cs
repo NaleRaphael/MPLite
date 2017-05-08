@@ -30,9 +30,15 @@ namespace MPLite.Core
         public TrackStatus TrackStatus
         {
             get { return _trackStatus; }
-            set { _trackStatus = value; NotifyPropertyChanged("TrackStatus"); }
+            set
+            {
+                _trackStatus = value;
+                StatusSign = MPLiteConstant.TrackStatusSign[(int)value];
+                NotifyPropertyChanged("TrackStatus");
+            }
         }
 
+        public Guid GUID { get; set; }
         public string TrackName { get; set; }
         public string TrackPath { get; set; }
         public string Duration { get; set; }
@@ -71,10 +77,11 @@ namespace MPLite.Core
             
             int min = ((int)f.Properties.Duration.TotalSeconds) / 60;
             int sec = ((int)f.Properties.Duration.TotalSeconds) % 60;
-            string duration = string.Format("{0:0}:{1:00}", min, sec);
+            string duration = string.Format("{0}:{1:00}", min, sec);
 
             TrackInfo track = new TrackInfo
             {
+                GUID = Guid.NewGuid(),
                 TrackName = (f.Tag.Title != null) ? f.Tag.Title : Path.GetFileNameWithoutExtension(filePath),
                 TrackPath = filePath,
                 Artist = (f.Tag.Performers.Length > 0) ? f.Tag.Performers[0] : "Unknown",

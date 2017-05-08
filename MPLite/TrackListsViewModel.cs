@@ -47,5 +47,15 @@ namespace MPLite
             trackLists.Remove(trackLists.First(x => x.GUID == targetGUID));
             CurrentPlaylist = (trackLists.Count == 0) ? null : trackLists[trackLists.Count - 1];
         }
+
+        public void UpdatePlaylistName(Guid targetGUID, string newName)
+        {
+            PlaylistCollection plc = PlaylistCollection.GetDatabase();
+            Playlist pl = plc.TrackLists.Find(x => x.GUID == targetGUID);
+            pl.ListName = newName;
+            plc.SaveToDatabase();
+
+            trackLists.First(x => x.GUID == targetGUID).ListName = newName;
+        }
     }
 }

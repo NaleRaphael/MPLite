@@ -73,7 +73,7 @@ namespace MPLite.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("New Playlist")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TaskPlaylist {
             get {
                 return ((string)(this["TaskPlaylist"]));
