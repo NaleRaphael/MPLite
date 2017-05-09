@@ -24,34 +24,37 @@
                     </Button>
                 </StackPanel>
             </ContentControl>
-            <ContentControl Height="50" Width="Auto" MouseDoubleClick="ContentControl_MouseDoubleClick">
-                <Grid x:Name="gridPlaybackControl" Width="120" HorizontalAlignment="Left" Margin="20,10,0,10" >
-                    <Button x:Name="btnBackward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnBackward_Click" Margin="0,0,90,0">
+            <ContentControl Height="50" Width="170" MouseDoubleClick="ContentControl_MouseDoubleClick" Margin="10,0,0,0">
+                <Grid x:Name="gridPlaybackControl" Width="150" HorizontalAlignment="Left" Margin="10,10,0,10" >
+                    <Button x:Name="btnBackward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnBackward_Click" Margin="0,0,120,0">
                         <Image Source="images/backward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnStartPlayback" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}"  Click="btnStartPlayback_Click" Margin="30,0,60,0">
+                    <Button x:Name="btnStop" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnStop_Click" Margin="30,0,90,0">
+                        <Image Source="images/stop.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                    </Button>
+                    <Button x:Name="btnStartPlayback" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}"  Click="btnStartPlayback_Click" Margin="60,0">
                         <Image Source="images/play.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnForward_Click" Margin="60,0,30,0">
+                    <Button x:Name="btnForward" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Click="btnForward_Click" Margin="90,0,30,0">
                         <Image Source="images/forward.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="90,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
+                    <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="120,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
                         <Image Source="images/volw_100.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Slider x:Name="trackbarVolume" HorizontalAlignment="Left" VerticalAlignment="Top" Width="80" Height="30" Style="{DynamicResource StyleTrackBarVolumeControl}" Margin="5,0,35,0" 
+                    <Slider x:Name="trackbarVolume" HorizontalAlignment="Left" VerticalAlignment="Top" Width="110" Height="30" Style="{DynamicResource StyleTrackBarVolumeControl}" Margin="5,0,0,0" 
                             MouseLeave="trackbarVolume_MouseLeave" MouseEnter="trackbarVolume_MouseEnter" IsMoveToPointEnabled="True" PreviewMouseUp="trackbarVolume_PreviewMouseUp"/>
                 </Grid>
             </ContentControl>
-            
+
         </DockPanel>
 
-        <Grid Height="Auto" VerticalAlignment="Top" Margin="205,0,10,0">
+        <Grid Height="Auto" VerticalAlignment="Top" Margin="245,0,10,0">
             <Label x:Name="lbl_TrackName" Content="Soundtrack" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
                    Margin="80,8,80,17" PreviewMouseDown="lbl_TrackName_PreviewMouseDown" FontFamily="Segoe UI"/>
             <Slider x:Name="trackBar" Height="25" VerticalAlignment="Top" Margin="0,26,0,0" Style="{DynamicResource StyleTrackBar}" 
                     Thumb.DragCompleted="Slider_DragCompleted" PreviewMouseDown="trackBar_PreviewMouseDown" PreviewMouseUp="trackBar_PreviewMouseUp"/>
-            <Label x:Name="lbl_TrackProgess" Content="00:00 / 00:00" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" 
-                   Margin="230,10,0,15" FontSize="10" HorizontalAlignment="Right" PreviewMouseDown="lbl_TrackProgess_PreviewMouseDown" FontFamily="Segoe UI"/>
+            <Label x:Name="lbl_TrackProgess" Content="00:00 / 00:00" Foreground="#FFE1E1E1" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" 
+                   Margin="0,10,0,15" FontSize="10" HorizontalAlignment="Right" PreviewMouseDown="lbl_TrackProgess_PreviewMouseDown" FontFamily="Segoe UI"/>
         </Grid>
 
         <DockPanel x:Name="dPaneFooter" LastChildFill="False" Background="#FF4B4B4B" Height="35" Width="Auto" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5">
@@ -79,6 +82,6 @@
         </DockPanel>
 
         <Frame x:Name="framePageSwitcher" Content="" Margin="0,50,0,35" NavigationUIVisibility="Hidden"/>
-        
+
     </Grid>
 </Window>

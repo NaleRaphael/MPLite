@@ -12,6 +12,10 @@
     xmlns:Jarloo="clr-namespace:Jarloo.Calendar" xmlns:Converters="clr-namespace:Jarloo.Calendar.Converters"
     x:Class="Jarloo.Calendar.Themes.Generic">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../Resources/AppleScrollViewer.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
     <LinearGradientBrush x:Key="CheckedBlue" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Color="#FF285AB3" Offset="0" />
         <GradientStop Color="#FF4184EC" Offset="0.5" />
@@ -163,7 +167,9 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        
+
+        <!--<Setter Property="ScrollViewer.Style" Value="{StaticResource AppleScrollViewer}"/>-->
+
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -185,7 +191,7 @@
         </Style.Resources>
         -->
     </Style>
-    
+
     <Style x:Key="Style_FlatImageButton" TargetType="{x:Type Button}">
         <Setter Property="Template">
             <Setter.Value>
@@ -205,7 +211,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-
+    
     <Style TargetType="{x:Type Jarloo:Calendar}">
         <Setter Property="Template">
             <Setter.Value>

@@ -91,6 +91,7 @@ namespace MPLite
 
             // Track bar
             trackBar.IsMoveToPointEnabled = true;
+            trackBar.Visibility = Visibility.Hidden;
 
             // Volume bar
             trackbarVolume.Visibility = Visibility.Hidden;
@@ -101,11 +102,13 @@ namespace MPLite
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
 
             // Track status displayer
-            trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName);
+            trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName, trackBar);
             _musicPlayer.PlayerStartedEvent += trackStatusDisplayer.SetTrackName;
             _musicPlayer.PlayerStartedEvent += trackStatusDisplayer.SetTrackLength;
+            _musicPlayer.PlayerStartedEvent += trackStatusDisplayer.ShowTrackBar;
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackName;
             _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.ResetTrackProgress;
+            _musicPlayer.PlayerStoppedEvent += trackStatusDisplayer.HideTrackBar;
 
             // Set default page
             // NOTE: PagePlaylist have to be created early than PageCalendar, so that PageCalendar.SchedulerEvent can be assigned.
@@ -307,6 +310,12 @@ namespace MPLite
             }
         }
 
+        private void btnStop_Click(object sender, RoutedEventArgs e)
+        {
+            _musicPlayer.Stop();
+            _musicPlayer.ClearQueue();
+        }
+
         private void btnBackward_Click(object sender, RoutedEventArgs e)
         {
             if (!_musicPlayer.IsPlaying() && ! _musicPlayer.IsPaused())
@@ -494,6 +503,7 @@ namespace MPLite
         {
             trackbarVolume.Visibility = show ? Visibility.Visible : Visibility.Hidden;
             btnBackward.Visibility = show ? Visibility.Hidden : Visibility.Visible;
+            btnStop.Visibility = show ? Visibility.Hidden : Visibility.Visible;
             btnStartPlayback.Visibility = show ? Visibility.Hidden : Visibility.Visible;
             btnForward.Visibility = show ? Visibility.Hidden : Visibility.Visible;
         }

@@ -187,6 +187,7 @@
   <ItemGroup>
     <Content Include="dll\Itenso.Windows.Controls.ListViewLayout.dll" />
     <Content Include="dll\MPLite.Core.dll" />
+    <Resource Include="images\stop.png" />
     <Resource Include="images\goNext.png" />
     <Resource Include="images\goPrev.png" />
     <Resource Include="images\basicSetting.png" />

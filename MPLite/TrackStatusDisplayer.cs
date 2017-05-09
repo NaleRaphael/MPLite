@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace MPLite
 {
@@ -9,14 +10,16 @@ namespace MPLite
     {
         public Label TrackProgress;
         public Label TrackName;
+        public System.Windows.Controls.Slider TrackBar;
         private string trackDuration;
 
-        public TrackStatusDispModule(Label lbl_trackProgress, Label lbl_trackName)
+        public TrackStatusDispModule(Label lbl_trackProgress, Label lbl_trackName, System.Windows.Controls.Slider trackBar)
         {
             TrackProgress = lbl_trackProgress;
             TrackName = lbl_trackName;
             TrackProgress.Content = "";
             TrackName.Content = "";
+            TrackBar = trackBar;
         }
 
         public void SetTrackLength(TrackStatusEventArgs e)
@@ -42,6 +45,16 @@ namespace MPLite
         public void ResetTrackProgress(TrackStatusEventArgs e)
         {
             TrackProgress.Content = "";
+        }
+
+        public void ShowTrackBar(TrackStatusEventArgs e)
+        {
+            TrackBar.Visibility = Visibility.Visible;
+        }
+
+        public void HideTrackBar(TrackStatusEventArgs e)
+        {
+            TrackBar.Visibility = Visibility.Hidden;
         }
     }
 }
