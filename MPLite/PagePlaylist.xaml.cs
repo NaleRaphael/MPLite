@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GongSolutions.Wpf.DragDrop;
 
 namespace MPLite
 {
     using TrackInfo = Core.TrackInfo;
     using TrackStatus = Core.TrackStatus;
-    using MPLiteConstant = Core.MPLiteConstant;
     using Playlist = Core.Playlist;
     using PlaylistCollection = Core.PlaylistCollection;
     using SchedulerEventArgs = Event.SchedulerEventArgs;
@@ -47,7 +44,6 @@ namespace MPLite
             InitializeComponent();
             InitPlaylist();
 
-            //lb_PlaylistMenu.SelectedIndex = Properties.Settings.Default.LastSelectedPlaylistIndex;  // select default list
             currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
             MainWindow.GetTrackEvent += GetTrack;
@@ -96,7 +92,6 @@ namespace MPLite
 
             // Bind event for updating content of view-model of lb_PlaylistMenu
             tracksVM.PlaylistIsUpdatedEvent += (lb_PlaylistMenu.DataContext as TrackListsViewModel).UpdateTrackList;
-            //tracksVM.PlaylistIsUpdatedEvent += SetTrackStatus.
         }
 
         private void RefreshPlaylist()
@@ -188,11 +183,11 @@ namespace MPLite
                 {
                     if (track.TrackStatus == TrackStatus.Playing)
                     {
-                        StopPlayerRequestEvent();  // TODO: update trackStatus
+                        StopPlayerRequestEvent();
                     }
                 }
 
-                tracksVM.RemoveTracksByIndices();
+                tracksVM.RemoveTracks();
             }
         }
         #endregion
@@ -322,6 +317,18 @@ namespace MPLite
             {
                 TextBox txtBox = ((ListBoxItem)sender).Template.FindName("txtEditBox", (FrameworkElement)sender) as TextBox;
                 txtEditBox_LostFocus(txtBox, new RoutedEventArgs());    // Trigger LostFocus event to save change
+            }
+            else if (e.Key == Key.Up)
+            {
+                if (lb_PlaylistMenu.SelectedIndex <= 0) return;
+                lb_PlaylistMenu.SelectedIndex -= 1;
+                lb_PlaylistMenu_SelectionChanged(null, null);
+            }
+            else if (e.Key == Key.Down)
+            {
+                if (lb_PlaylistMenu.SelectedIndex >= lb_PlaylistMenu.Items.Count - 1) return;
+                lb_PlaylistMenu.SelectedIndex += 1;
+                lb_PlaylistMenu_SelectionChanged(null, null);
             }
         }
 

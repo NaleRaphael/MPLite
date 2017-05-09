@@ -5,10 +5,10 @@ A simple music player written in C# (.NET 4.0) with a built-in scheduler.
 ![](screenshots/ss_Playlist.png)
 
 ## TODO
-- [ ] Rearrange tracks by dragging
-- [ ] Multiple trigger event (For special task, like the class bell. It needs to be tiggered multiple time in a day.)
+- [x] Rearrange tracks by dragging
+- [x] Multiple trigger event (For special task, like the class bell. It needs to be tiggered multiple time in a day.)
 - [ ] Smoothly volume control
-- [ ] Window for showing event info
+- [x] Window for showing event info
 - [ ] Remote control (through mobile phone)
 
 ## Awesome librarys this project used

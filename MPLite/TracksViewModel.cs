@@ -174,7 +174,7 @@ namespace MPLite
             }
         }
 
-        public void RemoveTracksByIndices()
+        public void RemoveTracks()
         {
             PlaylistCollection.DeleteTracksByIndices(selectedIndices.ToArray(), TracklistGUID);
             for (int i = selectedIndices.Count - 1; i >= 0; i--)
@@ -183,11 +183,6 @@ namespace MPLite
             }
 
             PlaylistIsUpdatedEvent?.Invoke(PlaylistCollection.GetPlaylist(TracklistGUID));
-        }
-
-        public void SetTrackStatus(TrackInfo track, TrackStatus status)
-        {
-
         }
     }
 }

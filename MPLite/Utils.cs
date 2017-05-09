@@ -9,8 +9,9 @@ namespace MPLite
     using PlaybackMode = Core.PlaybackMode;
     using TrackStatus = Core.TrackStatus;
 
-    public class Utils
+    public static class AppSetting
     {
+        
     }
 
     public static class MPLiteExtension

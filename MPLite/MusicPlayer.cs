@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;   //DllImport
 
@@ -245,7 +243,6 @@ namespace MPLite
             string cmd = "stop MediaFile";
             error = mciSendString(cmd, null, 0, IntPtr.Zero);
             PlayerStatus = PlaybackState.Stopped;
-
             Close();
 
             // Fire event to notify subscribers
@@ -253,10 +250,7 @@ namespace MPLite
                 PlayerStoppedEvent(null);
             else
             {
-                // If there was a track playing, reset its TrackStatus
-                TrackInfo track;
                 if (CurrentTrack == null) return;
-
                 CurrentTrack.TrackStatus = TrackStatus.Stopped;
                 PlayerStoppedEvent(new TrackStatusEventArgs(CurrentTrack, CurrentPlaylistName, CurrentTrackIndex));
             }
