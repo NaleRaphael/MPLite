@@ -78,6 +78,7 @@ namespace MPLite
             PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             PagePlaylist.StopPlayerRequestEvent += _musicPlayer.Stop;
             PagePlaylist.PausePlayerRequestEvent += _musicPlayer.Pause;
+            PagePlaylist.PlaylistIsReorderedEvent += _musicPlayer.UpdateQueue;
 
             _musicPlayer.PlayerStartedEvent += this.SetTimerAndTrackBar;
             _musicPlayer.PlayerStoppedEvent += this.ResetTimerAndTrackBar;

@@ -22,6 +22,8 @@ namespace MPLite
 
         public delegate void PlaylistIsUpdatedEventHandler(Playlist pl);
         public event PlaylistIsUpdatedEventHandler PlaylistIsUpdatedEvent;
+        public delegate void PlaylistIsReorderedEventHandler(Playlist pl, TrackInfo playingTrack, int playingTrackIndex);
+        public event PlaylistIsReorderedEventHandler PlaylistIsReorderedEvent;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string TracklistName { get; private set; }
@@ -164,6 +166,7 @@ namespace MPLite
                 UpdateSoundtracks(pl.Soundtracks);
 
                 PlaylistIsUpdatedEvent?.Invoke(pl);
+                PlaylistIsReorderedEvent?.Invoke(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
 
                 // reset PlayStatus
                 if (PlayingTrack != null)
@@ -182,7 +185,9 @@ namespace MPLite
                 soundtracks.RemoveAt(selectedIndices[i]);
             }
 
-            PlaylistIsUpdatedEvent?.Invoke(PlaylistCollection.GetPlaylist(TracklistGUID));
+            Playlist pl = PlaylistCollection.GetPlaylist(TracklistGUID);
+            PlaylistIsUpdatedEvent?.Invoke(pl);
+            PlaylistIsReorderedEvent?.Invoke(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
         }
     }
 }

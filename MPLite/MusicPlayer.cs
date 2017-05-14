@@ -437,13 +437,30 @@ namespace MPLite
             return prevTrack;
         }
 
+        public void UpdateQueue(Playlist pl, TrackInfo playingTrack, int playingTrackIndex)
+        {
+            trackQueue = new TrackQueue(pl, playingTrackIndex, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
+            TrackInfo nextTrack;
+            trackQueue.Next(out nextTrack);
+        }
+
         public void ClearQueue()
         {
             if (trackQueue != null)
             {
                 trackQueue.Clear();
                 trackQueue = null;
+                ClearPlayerCache();
             }
+        }
+
+        private void ClearPlayerCache()
+        {
+            CurrentPlaylistName = null;
+            CurrentTrack = null;
+            CurrentTrackIndex = -1;
+            CurrentTrackLength = -1;
+            CurrentTrackStatus = TrackStatus.None;
         }
     }
 
