@@ -194,9 +194,13 @@ namespace MPLite.Core
         {
             PlaylistCollection plc = GetDatabase();
             Playlist pl = plc.TrackLists.Find(x => x.GUID == listGUID);
-            pl.ReorderTracks(selectedIndices, insertIndex);
-            plc.SaveToDatabase();
-            return pl;
+
+            if (pl.ReorderTracks(selectedIndices, insertIndex))
+            {
+                plc.SaveToDatabase();
+                return pl;
+            }
+            else return null;   // Failed to reorder tracks (no need to reorder tracks)
         }
 
         public static void RemovePlaylist(string listName)
@@ -299,17 +303,33 @@ namespace MPLite.Core
             }
         }
 
-        public void ReorderTracks(List<int> trackIdx, int insertIdx)
+        public bool ReorderTracks(List<int> trackIdx, int insertIdx)
         {
-            trackIdx.Sort((x, y) => -x.CompareTo(y));   // descending sorting
-            List<TrackInfo> tracks = new List<TrackInfo>(trackIdx.Count);
+            int firstIdx = trackIdx[0];
+            int newInsertIdx = insertIdx;
+
+            // correct insertIdx by checking how many items locating before it
             for (int i = 0; i < trackIdx.Count; i++)
             {
-                tracks.Add(Soundtracks[trackIdx[i]]);
-                Soundtracks.RemoveAt(trackIdx[i]);
+                if (trackIdx[i] < insertIdx)
+                    newInsertIdx--;
             }
 
-            this.InsertTracks(tracks, insertIdx);
+            if (newInsertIdx == firstIdx)
+                return false;   // no need to reorder tracks
+            else
+            {
+                trackIdx.Sort((x, y) => -x.CompareTo(y));   // descending sorting
+                List<TrackInfo> tracks = new List<TrackInfo>(trackIdx.Count);
+                for (int i = 0; i < trackIdx.Count; i++)
+                {
+                    tracks.Add(Soundtracks[trackIdx[i]]);
+                    Soundtracks.RemoveAt(trackIdx[i]);
+                }
+                this.InsertTracks(tracks, newInsertIdx);
+            }
+
+            return true;
         }
     }
 

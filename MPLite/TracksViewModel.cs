@@ -158,10 +158,9 @@ namespace MPLite
                     // Multiple files is dropped
                     tracks = dropInfo.Data as List<TrackInfo>;
                 }
-                    
-                int insertIndex = (dropInfo.InsertIndex > selectedIndices[0]) ? 
-                    dropInfo.InsertIndex - tracks.Count : dropInfo.InsertIndex;
-                Playlist pl = PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, insertIndex);
+
+                Playlist pl = PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, dropInfo.InsertIndex);
+                if (pl == null) return;
                 UpdateSoundtracks(pl.Soundtracks);
 
                 UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack);
