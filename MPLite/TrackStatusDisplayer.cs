@@ -3,9 +3,6 @@ using System.Windows.Controls;
 
 namespace MPLite
 {
-    using PlayTrackEventArgs = Core.PlayTrackEventArgs;
-    using TrackInfo = Core.TrackInfo;
-
     public class TrackStatusDispModule
     {
         public Label TrackProgress;

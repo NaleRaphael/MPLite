@@ -33,18 +33,8 @@
     </Page.Resources>
 
     <Grid x:Name="GridContainer">
-        <Grid HorizontalAlignment="Left" Height="350" VerticalAlignment="Top" Width="100">
-            <Button x:Name="btnMusicPlayerEventTester" Content="Player Test" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="75" Click="btnMusicPlayerEventTester_Click"/>
-            <Button x:Name="btnCalendarTester" Content="Calendar Test" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnCalendarTester_Click"/>
-            <Button x:Name="btnEventManagerTester" Content="EvntMngr Test" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="75" Click="btnEventManagerTester_Click"/>
-            <Button x:Name="btnStopPlayerEventTester" Content="Stop player Test" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="75" Click="btnStopPlayerEventTester_Click"/>
-            <Button x:Name="btnPausePlayerEventTester" Content="Pause player Test" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="75" Click="btnPausePlayerEventTester_Click"/>
-            <Button x:Name="btnWeekdayConvert" Content="Weekday Test" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Width="75 " Click="btnWeekdayConvert_Click"/>
-            <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="75" Click="button_Click"/>
-            <Button x:Name="btnAddNewEvent" Content="Button" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-2.049,-1.379" Click="btnAddNewEvent_Click"/>
-        </Grid>
-        <Jarloo:Calendar x:Name="calendar" Margin="100,0,0,0" Foreground="#FFAFA082" Background="#FF2D323C" FontFamily="Segoe UI"/>
-        <Grid x:Name="gridLeftContainer" Height="Auto" Width="15" Margin="100,46,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="Transparent"
+        <Jarloo:Calendar x:Name="calendar" Margin="0,0,0,0" Foreground="#FFAFA082" Background="#FF2D323C" FontFamily="Segoe UI"/>
+        <Grid x:Name="gridLeftContainer" Height="Auto" Width="15" Margin="0,46,0,0" VerticalAlignment="Stretch" HorizontalAlignment="Left" Background="Transparent"
               MouseEnter="gridLeftContainer_MouseEnter" MouseLeave="gridLeftContainer_MouseLeave">
             <Button x:Name="btnMoveToPrevMonth" Visibility="Hidden" Style="{DynamicResource Style_FlatImageButton}" Click="btnMoveToPrevMonth_Click" >
                 <Image Source="images/goPrev.png" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -56,6 +46,6 @@
                 <Image Source="images/goNext.png" RenderOptions.BitmapScalingMode="HighQuality"/>
             </Button>
         </Grid>
-        <Button x:Name="btnMoveToCurrentDate" Margin="100,0,0,0" Width="93" Height="18" Style="{DynamicResource Style_FlatImageButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btnMoveToCurrentDate_Click"/>
+        <Button x:Name="btnMoveToCurrentDate" Margin="0,0,0,0" Width="93" Height="18" Style="{DynamicResource Style_FlatImageButton}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btnMoveToCurrentDate_Click"/>
     </Grid>
 </Page>
