@@ -20,9 +20,9 @@ namespace MPLite
             set { trackLists = value; }
         }
 
-        public void UpdateTrackList(Playlist source)
+        public void UpdateTrackList(UpdatePlaylistEventArgs e)
         {
-            trackLists.First(x => x.GUID == source.GUID).Soundtracks = source.Soundtracks;
+            trackLists.First(x => x.GUID == e.UpdatedPlaylist.GUID).Soundtracks = e.UpdatedPlaylist.Soundtracks;
         }
 
         public void UpdateTrackLists(List<Playlist> source)

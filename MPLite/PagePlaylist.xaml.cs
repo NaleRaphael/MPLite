@@ -25,7 +25,7 @@ namespace MPLite
         public static event NewSelectionEventHandler NewSelectionEvent;
         public delegate TrackStatusEventArgs ListContentIsRefreshedEventHandler();
         public static event ListContentIsRefreshedEventHandler ListContentIsRefreshedEvent;
-        public delegate void PlaylistIsReorderedEventHandler(Playlist pl, TrackInfo playingTrack, int playingTrackIndex);
+        public delegate void PlaylistIsReorderedEventHandler(UpdatePlaylistEventArgs e);
         public static event PlaylistIsReorderedEventHandler PlaylistIsReorderedEvent;
 
         public delegate void StopPlayerRequestEventHandler();
@@ -95,7 +95,7 @@ namespace MPLite
             // Bind event for updating content of view-model of lb_PlaylistMenu
             tracksVM.PlaylistIsUpdatedEvent += (lb_PlaylistMenu.DataContext as TrackListsViewModel).UpdateTrackList;
             // Update trackQueue
-            tracksVM.PlaylistIsReorderedEvent += OnPlaylistIsReordered;
+            tracksVM.PlaylistIsUpdatedEvent += OnPlaylistIsUpdated;
         }
 
         private void RefreshPlaylist()
@@ -251,9 +251,9 @@ namespace MPLite
             }
         }
 
-        private void OnPlaylistIsReordered(Playlist pl, TrackInfo playingTrack, int playingTrackIndex)
+        private void OnPlaylistIsUpdated(UpdatePlaylistEventArgs e)
         {
-            PlaylistIsReorderedEvent(pl, playingTrack, playingTrackIndex);
+            PlaylistIsReorderedEvent(e);
         }
 
         private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)

@@ -39,7 +39,7 @@ namespace MPLite
         public TrackStatus CurrentTrackStatus { get; set; }
         public enum PlaybackState { Stopped = 0, Paused, Playing };
         public PlaybackState PlayerStatus = PlaybackState.Stopped;
-        public PlaybackMode PlaybackMode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
+        public PlaybackMode PlaybackMode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;  // TODO: unused parameter
         #endregion
 
         #region Event
@@ -437,9 +437,9 @@ namespace MPLite
             return prevTrack;
         }
 
-        public void UpdateQueue(Playlist pl, TrackInfo playingTrack, int playingTrackIndex)
+        public void UpdateQueue(UpdatePlaylistEventArgs e)
         {
-            trackQueue = new TrackQueue(pl, playingTrackIndex, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
+            trackQueue = new TrackQueue(e.UpdatedPlaylist, e.IndexOfPlayingTrack, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
             TrackInfo nextTrack;
             trackQueue.Next(out nextTrack);
         }

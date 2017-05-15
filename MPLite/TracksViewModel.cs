@@ -20,10 +20,8 @@ namespace MPLite
         private List<int> selectedIndices = new List<int>();
         private ObservableCollection<TrackInfo> soundtracks = new ObservableCollection<TrackInfo>();
 
-        public delegate void PlaylistIsUpdatedEventHandler(Playlist pl);
+        public delegate void PlaylistIsUpdatedEventHandler(UpdatePlaylistEventArgs e);
         public event PlaylistIsUpdatedEventHandler PlaylistIsUpdatedEvent;
-        public delegate void PlaylistIsReorderedEventHandler(Playlist pl, TrackInfo playingTrack, int playingTrackIndex);
-        public event PlaylistIsReorderedEventHandler PlaylistIsReorderedEvent;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string TracklistName { get; private set; }
@@ -135,7 +133,8 @@ namespace MPLite
                 if (tlist.Count != 0)
                 {
                     Playlist pl = PlaylistCollection.UpdatePlaylist(tlist, TracklistName);
-                    PlaylistIsUpdatedEvent?.Invoke(pl);
+                    UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+                    PlaylistIsUpdatedEvent?.Invoke(e);
                 }
             }
             else
@@ -165,8 +164,8 @@ namespace MPLite
                 Playlist pl = PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, insertIndex);
                 UpdateSoundtracks(pl.Soundtracks);
 
-                PlaylistIsUpdatedEvent?.Invoke(pl);
-                PlaylistIsReorderedEvent?.Invoke(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+                UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+                PlaylistIsUpdatedEvent?.Invoke(e);
 
                 // reset PlayStatus
                 if (PlayingTrack != null)
@@ -186,8 +185,22 @@ namespace MPLite
             }
 
             Playlist pl = PlaylistCollection.GetPlaylist(TracklistGUID);
-            PlaylistIsUpdatedEvent?.Invoke(pl);
-            PlaylistIsReorderedEvent?.Invoke(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+            UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+            PlaylistIsUpdatedEvent?.Invoke(e);
+        }
+    }
+
+    public class UpdatePlaylistEventArgs : EventArgs
+    {
+        public Playlist UpdatedPlaylist { get; set; }
+        public TrackInfo PlayingTrack { get; set; }
+        public int IndexOfPlayingTrack { get; set; }
+
+        public UpdatePlaylistEventArgs(Playlist updatedPlaylist, TrackInfo playingTrack, int indexOfPlayingTrack)
+        {
+            UpdatedPlaylist = updatedPlaylist;
+            PlayingTrack = playingTrack;
+            IndexOfPlayingTrack = indexOfPlayingTrack;
         }
     }
 }
