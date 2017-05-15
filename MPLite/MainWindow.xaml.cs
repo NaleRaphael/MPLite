@@ -75,10 +75,10 @@ namespace MPLite
             // Music player
             _musicPlayer = new MusicPlayer();
             PagePlaylist.PlayTrackEvent += this.PlayTrackFromPageList;
-            PagePlaylist.NewSelectionEvent += _musicPlayer.ClearQueue;
             PagePlaylist.StopPlayerRequestEvent += _musicPlayer.Stop;
+            PagePlaylist.StopPlayerRequestEvent += _musicPlayer.ClearQueue;
             PagePlaylist.PausePlayerRequestEvent += _musicPlayer.Pause;
-            PagePlaylist.PlaylistIsReorderedEvent += _musicPlayer.UpdateQueue;
+            PagePlaylist.PlaylistIsUpdatedEvent += _musicPlayer.UpdateQueue;
 
             _musicPlayer.PlayerStartedEvent += this.SetTimerAndTrackBar;
             _musicPlayer.PlayerStoppedEvent += this.ResetTimerAndTrackBar;

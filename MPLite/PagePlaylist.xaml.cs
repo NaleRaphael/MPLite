@@ -21,12 +21,10 @@ namespace MPLite
         public delegate void PlayTrackEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1,
             PlaybackMode mode = PlaybackMode.None);
         public static event PlayTrackEventHandler PlayTrackEvent;
-        public delegate void NewSelectionEventHandler();    // User selected a track as a new entry of trackQueue
-        public static event NewSelectionEventHandler NewSelectionEvent;
         public delegate TrackStatusEventArgs ListContentIsRefreshedEventHandler();
         public static event ListContentIsRefreshedEventHandler ListContentIsRefreshedEvent;
-        public delegate void PlaylistIsReorderedEventHandler(UpdatePlaylistEventArgs e);
-        public static event PlaylistIsReorderedEventHandler PlaylistIsReorderedEvent;
+        public delegate void PlaylistIsUpdatedEventHandler(UpdatePlaylistEventArgs e);
+        public static event PlaylistIsUpdatedEventHandler PlaylistIsUpdatedEvent;
 
         public delegate void StopPlayerRequestEventHandler();
         public static event StopPlayerRequestEventHandler StopPlayerRequestEvent;
@@ -167,7 +165,6 @@ namespace MPLite
             SetPrevAndCurrShowingPlaylist(listName);
 
             StopPlayerRequestEvent();
-            NewSelectionEvent();    // Notify MusicPlayer to reset queue
 
             Properties.Settings.Default.TaskPlaybackMode = Properties.Settings.Default.PlaybackMode;
             Properties.Settings.Default.TaskPlaylist = listName;
@@ -253,7 +250,7 @@ namespace MPLite
 
         private void OnPlaylistIsUpdated(UpdatePlaylistEventArgs e)
         {
-            PlaylistIsReorderedEvent(e);
+            PlaylistIsUpdatedEvent(e);
         }
 
         private void btnAddPlaylist_Click(object sender, RoutedEventArgs e)
@@ -408,7 +405,6 @@ namespace MPLite
                     break;
                 case PlaybackCommands.Stop:
                     StopPlayerRequestEvent();
-                    NewSelectionEvent();    // Notify MusicPlayer to reset queue
                     break;
                 case PlaybackCommands.Play:
                     StopPlayerRequestEvent();

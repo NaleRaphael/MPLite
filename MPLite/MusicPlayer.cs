@@ -440,8 +440,12 @@ namespace MPLite
         public void UpdateQueue(UpdatePlaylistEventArgs e)
         {
             trackQueue = new TrackQueue(e.UpdatedPlaylist, e.IndexOfPlayingTrack, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
-            TrackInfo nextTrack;
-            trackQueue.Next(out nextTrack);
+
+            if (trackQueue.Count != 0)
+            {
+                TrackInfo nextTrack;
+                trackQueue.Next(out nextTrack);
+            }
         }
 
         public void ClearQueue()

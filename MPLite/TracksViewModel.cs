@@ -133,7 +133,7 @@ namespace MPLite
                 if (tlist.Count != 0)
                 {
                     Playlist pl = PlaylistCollection.UpdatePlaylist(tlist, TracklistName);
-                    UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+                    UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack);
                     PlaylistIsUpdatedEvent?.Invoke(e);
                 }
             }
@@ -164,7 +164,7 @@ namespace MPLite
                 Playlist pl = PlaylistCollection.ReorderTracks(TracklistGUID, SelectedIndices, insertIndex);
                 UpdateSoundtracks(pl.Soundtracks);
 
-                UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+                UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack);
                 PlaylistIsUpdatedEvent?.Invoke(e);
 
                 // reset PlayStatus
@@ -185,7 +185,7 @@ namespace MPLite
             }
 
             Playlist pl = PlaylistCollection.GetPlaylist(TracklistGUID);
-            UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack, pl.Soundtracks.FindIndex(x => x.GUID == PlayingTrack.GUID));
+            UpdatePlaylistEventArgs e = new UpdatePlaylistEventArgs(pl, PlayingTrack);
             PlaylistIsUpdatedEvent?.Invoke(e);
         }
     }
@@ -196,11 +196,11 @@ namespace MPLite
         public TrackInfo PlayingTrack { get; set; }
         public int IndexOfPlayingTrack { get; set; }
 
-        public UpdatePlaylistEventArgs(Playlist updatedPlaylist, TrackInfo playingTrack, int indexOfPlayingTrack)
+        public UpdatePlaylistEventArgs(Playlist updatedPlaylist, TrackInfo playingTrack)
         {
             UpdatedPlaylist = updatedPlaylist;
             PlayingTrack = playingTrack;
-            IndexOfPlayingTrack = indexOfPlayingTrack;
+            IndexOfPlayingTrack = (playingTrack == null) ? -1 : updatedPlaylist.Soundtracks.FindIndex(x => x.GUID == playingTrack.GUID);
         }
     }
 }
