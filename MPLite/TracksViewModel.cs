@@ -60,8 +60,15 @@ namespace MPLite
         }
         #endregion
 
-        public void UpdatePlaylistName(string listName)
+        public void UpdatePlaylistInfo(Playlist pl)
         {
+            TracklistGUID = pl.GUID;
+            TracklistName = pl.ListName;
+        }
+
+        public void UpdatePlaylistInfo(Guid listGUID, string listName)
+        {
+            TracklistGUID = listGUID;
             TracklistName = listName;
         }
         
@@ -72,8 +79,6 @@ namespace MPLite
 
         public void UpdateSoundtracks(Playlist pl)
         {
-            TracklistGUID = pl.GUID;
-            TracklistName = pl.ListName;
             Soundtracks.FillContent(pl.Soundtracks);
         }
 

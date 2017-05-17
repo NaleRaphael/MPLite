@@ -32,7 +32,7 @@ namespace MPLite
         #endregion
 
         #region Properties
-        public string CurrentPlaylistName { get; set; }
+        public Guid CurrentPlaylistGUID { get; set; }
         public TrackInfo CurrentTrack { get; set; }
         public int CurrentTrackLength { get; set; }
         public int CurrentTrackIndex { get; set; }
@@ -125,14 +125,13 @@ namespace MPLite
 
             if (track == null)
             {
-                Console.WriteLine("No track is avalible.");
                 PlayerStoppedEvent(null);
 
                 // Once there is no more track can be popped out from trackQueue, it means that task is finished.
                 ClearQueue();
 
                 // Reset task info
-                Properties.Settings.Default.TaskPlaylist = "";
+                Properties.Settings.Default.TaskPlaylistGUID = Guid.Empty;
                 Properties.Settings.Default.TaskPlayingTrackIndex = -1;
                 Properties.Settings.Default.TaskPlayingTrackStatus = 0;
                 Properties.Settings.Default.TaskPlaybackMode = 0;
@@ -153,7 +152,7 @@ namespace MPLite
                     TrackInfo prevTrack;
                     int prevTrackIdx = trackQueue.Current(out prevTrack);
                     prevTrack.TrackStatus = TrackStatus.IncorrectPath;
-                    PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylist, prevTrackIdx));
+                    PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylistGUID, prevTrackIdx));
                 }
                 throw ex_FailedToOpen;
             }
@@ -171,7 +170,7 @@ namespace MPLite
                     TrackInfo prevTrack;
                     int prevTrackIdx = trackQueue.Current(out prevTrack);
                     prevTrack.TrackStatus = TrackStatus.IncorrectPath;
-                    PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylist, prevTrackIdx));
+                    PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylistGUID, prevTrackIdx));
                 }
 
                 throw ex_InvaildPath;
@@ -197,7 +196,7 @@ namespace MPLite
                     // Save the trackInfo that is playing currently
                     CurrentTrack = track;
                     CurrentTrackIndex = trackQueue.Current();
-                    CurrentPlaylistName = Properties.Settings.Default.TaskPlaylist;
+                    CurrentPlaylistGUID = Properties.Settings.Default.TaskPlaylistGUID;
                     PlayerStatus = PlaybackState.Playing;
                     track.TrackStatus = TrackStatus.Playing;
 
@@ -207,7 +206,7 @@ namespace MPLite
 
                     // Fire event to notify subscribers
                     int trackIdx = CurrentTrackIndex;
-                    TrackStatusEventArgs e = new TrackStatusEventArgs(track, Properties.Settings.Default.TaskPlaylist, trackIdx);
+                    TrackStatusEventArgs e = new TrackStatusEventArgs(track, Properties.Settings.Default.TaskPlaylistGUID, trackIdx);
                     PlayerStartedEvent(e);
                     return true;
                 }
@@ -234,7 +233,7 @@ namespace MPLite
                 // Fire event
                 TrackInfo track;
                 int trackIdx = trackQueue.Current(out track);
-                TrackStatusEventArgs e = new TrackStatusEventArgs(track, Properties.Settings.Default.TaskPlaylist, trackIdx);
+                TrackStatusEventArgs e = new TrackStatusEventArgs(track, Properties.Settings.Default.TaskPlaylistGUID, trackIdx);
                 PlayerStartedEvent(e);
             }
             else if (PlayerStatus == PlaybackState.Playing)
@@ -262,7 +261,7 @@ namespace MPLite
             {
                 if (CurrentTrack == null) return;
                 CurrentTrack.TrackStatus = TrackStatus.Stopped;
-                PlayerStoppedEvent(new TrackStatusEventArgs(CurrentTrack, CurrentPlaylistName, CurrentTrackIndex));
+                PlayerStoppedEvent(new TrackStatusEventArgs(CurrentTrack, CurrentPlaylistGUID, CurrentTrackIndex));
             }
         }
 
@@ -275,7 +274,7 @@ namespace MPLite
             // Fire event
             TrackInfo track;
             int trackIdx = trackQueue.Current(out track);
-            TrackStatusEventArgs e = new TrackStatusEventArgs(track, Properties.Settings.Default.TaskPlaylist, trackIdx);
+            TrackStatusEventArgs e = new TrackStatusEventArgs(track, Properties.Settings.Default.TaskPlaylistGUID, trackIdx);
             PlayerStartedEvent(e);
         }
         #endregion
@@ -395,13 +394,13 @@ namespace MPLite
         #endregion
 
         // Called by PagePlaylist. Because it needs to know the index of playing track to set playing sign.
-        public PlayTrackEventArgs GetNextTrack(string playlistName, int selectedIdx, PlaybackMode mode, out int trackIdx)
+        public PlayTrackEventArgs GetNextTrack(Guid listGUID, int selectedIdx, PlaybackMode mode, out int trackIdx)
         {
             if (trackQueue == null)
             {
-                Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == playlistName);
+                Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.GUID == listGUID);
                 if (pl == null || pl.TrackAmount == 0)
-                    throw new InvalidPlaylistException(string.Format("Given playlist \"{0}\" is invalid.", playlistName));
+                    throw new InvalidPlaylistException(string.Format("Given playlist \"{0}\" is invalid.", listGUID));
                 trackQueue = new TrackQueue(pl, selectedIdx, mode);
             }
 
@@ -410,21 +409,21 @@ namespace MPLite
             TrackInfo nextTrack;
             trackIdx = trackQueue.Next(out nextTrack);
 
-            PlayTrackEventArgs e = new PlayTrackEventArgs(trackQueue.ListName, currentTrackIdx, currentTrack, trackQueue.Mode, this.CurrentTrackStatus);
+            PlayTrackEventArgs e = new PlayTrackEventArgs(trackQueue.ListGUID, currentTrackIdx, currentTrack, trackQueue.Mode, this.CurrentTrackStatus);
             e.SetNextTrack(nextTrack, trackIdx);
 
             return e;
         }
 
-        public TrackInfo GetTrack(string listName, int selIdx, PlaybackMode mode)
+        public TrackInfo GetTrack(Guid listGUID, int selIdx, PlaybackMode mode)
         {
             if (trackQueue == null)
             {
-                Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.ListName == listName);
+                Playlist pl = PlaylistCollection.GetDatabase().TrackLists.Find(x => x.GUID == listGUID);
                 if (pl == null || pl.TrackAmount == 0)
-                    throw new InvalidPlaylistException(string.Format("Given playlist \"{0}\" is invalid.", listName));
+                    throw new InvalidPlaylistException(string.Format("Given playlist \"{0}\" is invalid.", listGUID));
                 trackQueue = new TrackQueue(pl, selIdx, mode);
-                Properties.Settings.Default.TaskPlaylist = listName;
+                Properties.Settings.Default.TaskPlaylistGUID = listGUID;
                 Properties.Settings.Default.Save();
             }
 
@@ -434,7 +433,7 @@ namespace MPLite
             return nextTrack;
         }
 
-        public TrackInfo GetPrevTrack(string listName, int selIdx, PlaybackMode mode)
+        public TrackInfo GetPrevTrack(Guid listGuid, int selIdx, PlaybackMode mode)
         {
             TrackInfo prevTrack;
             int prevTrackIdx = trackQueue.Previous(out prevTrack);
@@ -470,7 +469,7 @@ namespace MPLite
 
         private void ClearPlayerCache()
         {
-            CurrentPlaylistName = null;
+            CurrentPlaylistGUID = Guid.Empty;
             CurrentTrack = null;
             CurrentTrackIndex = -1;
             CurrentTrackLength = -1;
@@ -495,13 +494,13 @@ namespace MPLite
     public class TrackStatusEventArgs : EventArgs
     {
         public TrackInfo Track { get; set; }
-        public string OwnerList { get; set; }
+        public Guid OwnerListGUID { get; set; }
         public int Index { get; set; }
 
-        public TrackStatusEventArgs(TrackInfo track, string ownerList, int index)
+        public TrackStatusEventArgs(TrackInfo track, Guid ownerListGUID, int index)
         {
             Track = track;
-            OwnerList = ownerList;
+            OwnerListGUID = ownerListGUID;
             Index = index;
         }
     }

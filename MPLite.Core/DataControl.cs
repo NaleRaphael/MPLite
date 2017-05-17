@@ -41,8 +41,6 @@ namespace MPLite.Core
             {
                 // Create file and read again
                 File.Create(filePath);
-                //Console.WriteLine("File not found.");
-                //return null;
             }
             catch (Exception ex)
             {

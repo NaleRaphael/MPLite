@@ -92,15 +92,7 @@ namespace Jarloo.Calendar
 
             // cmbPlaylist & cmbTrackIndex
             plc = PlaylistCollection.GetDatabase();
-            if (plc != null)
-            {
-                List<string> plNames = new List<string>(plc.TrackLists.Count);
-                foreach (Playlist pl in plc.TrackLists)
-                {
-                    plNames.Add(pl.ListName);
-                }
-                cmbPlaylistName.ItemsSource = plNames;
-            }
+            cmbPlaylist.ItemsSource = (plc == null) ? null : plc.TrackLists;
 
             // cmbPlaybackMode
             List<PlaybackMode> playbackModes = new List<MPLite.Core.PlaybackMode>();
@@ -123,7 +115,7 @@ namespace Jarloo.Calendar
             controlList.Add(chkAutoDelete);
             controlList.Add(chkThisDayForwardOnly);
 
-            controlList.Add(cmbPlaylistName);
+            controlList.Add(cmbPlaylist);
             controlList.Add(cmbTrackIndex);
             controlList.Add(cmbPlaybackMode);
         }
@@ -174,7 +166,7 @@ namespace Jarloo.Calendar
 
             // Settings of playback
             SchedulerEventArgs actionArgs = evnt.ActionStartsEventArgs as SchedulerEventArgs;
-            cmbPlaylistName.SelectedItem = actionArgs.Playlist;
+            cmbPlaylist.SelectedItem = cmbPlaylist.Items.OfType<Playlist>().ToList().Find(x => x.GUID == actionArgs.PlaylistGUID);
             cmbTrackIndex.SelectedIndex = actionArgs.TrackIndex;
             cmbPlaybackMode.SelectedItem = actionArgs.Mode;
 
@@ -280,6 +272,11 @@ namespace Jarloo.Calendar
                 recurringFreq = (RecurringFrequencies)cmbRecurringFreq.SelectedItem;
             }
 
+            if (cmbTrackIndex.SelectedIndex == -1)
+            {
+                throw new Exception("No track is avalible in this playlist");
+            }
+
             MultiTriggerEvent evnt = new MultiTriggerEvent(beginningTimeQueue)
             {
                 EventText = eventName,
@@ -295,7 +292,7 @@ namespace Jarloo.Calendar
 
             evnt.ActionStartsEventArgs = new SchedulerEventArgs
             {
-                Playlist = cmbPlaylistName.SelectedItem.ToString(),
+                PlaylistGUID = (cmbPlaylist.SelectedItem as Playlist).GUID,
                 Command = PlaybackCommands.Play,
                 Mode = (PlaybackMode)cmbPlaybackMode.SelectedItem,
                 TrackIndex = cmbTrackIndex.SelectedIndex
@@ -313,7 +310,6 @@ namespace Jarloo.Calendar
                 evnt.CloneTo(evntToBeUpdated);
                 UpdateEvent(evntToBeUpdated);
             }
-                
         }
 
         #region Converter of RecurringFreqeuncy and date blocks
@@ -380,16 +376,26 @@ namespace Jarloo.Calendar
             dpRecurringDate.Visibility = showing ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void cmbPlaylistName_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void cmbPlaylist_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string plName = cmbPlaylistName.SelectedItem.ToString();
-            int trackAmount = plc.TrackLists.Find(x => x.ListName == plName).TrackAmount;
+            Playlist pl = cmbPlaylist.SelectedItem as Playlist;
+            if (pl == null) return;
+
+            int trackAmount = plc.TrackLists.Find(x => x.GUID == pl.GUID).TrackAmount;
+            if (trackAmount == 0)
+            {
+                System.Windows.MessageBox.Show("No track is avalible in this playlist.");
+                cmbTrackIndex.ItemsSource = null;
+                return;
+            }
+
             int[] trackIndices = new int[trackAmount];
             for (int i = 0; i < trackAmount; i++)
             {
                 trackIndices[i] = i;
             }
             cmbTrackIndex.ItemsSource = trackIndices;
+            cmbTrackIndex.SelectedIndex = 0;
         }
 
         private void btnCloseWindow_Click(object sender, RoutedEventArgs e)

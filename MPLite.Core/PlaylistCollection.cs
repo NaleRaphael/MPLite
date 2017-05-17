@@ -144,7 +144,10 @@ namespace MPLite.Core
             Playlist pl;
             try
             {
-                pl = DataControl.ReadFromJson<PlaylistCollection>(configPath, true).TrackLists.Find(x => x.GUID == guid);
+                PlaylistCollection plc = GetDatabase();
+                if (plc == null)
+                    return null;
+                pl = plc.TrackLists.Find(x => x.GUID == guid);
             }
             catch
             {
@@ -342,7 +345,7 @@ namespace MPLite.Core
 
     public class PlayTrackEventArgs : EventArgs
     {
-        public string PlaylistName { get; set; }
+        public Guid PlaylistGUID { get; set; }
         public int PrevTrackIndex { get; set; }
         public int CurrTrackIndex { get; set; }
         public TrackInfo CurrTrack { get; set; }
@@ -352,11 +355,11 @@ namespace MPLite.Core
         public PlaybackMode PlaybackMode { get; set; }
 
         // Default value of playlistName should be `null` so that music play can selected playlist automatically.
-        public PlayTrackEventArgs(string playlistName = null, int trackIdx = -1, TrackInfo track = null,
+        public PlayTrackEventArgs(Guid listGUID, int trackIdx = -1, TrackInfo track = null,
             PlaybackMode mode = PlaybackMode.None, 
             TrackStatus trackStatus = TrackStatus.None)
         {
-            PlaylistName = (playlistName == null) ? Properties.Settings.Default.LastSelectedPlaylist : playlistName;
+            PlaylistGUID = (PlaylistGUID == null) ? Properties.Settings.Default.LastSelectedPlaylistGUID : listGUID;
             PrevTrack = null;
             CurrTrack = track;
             PrevTrackIndex = -1;

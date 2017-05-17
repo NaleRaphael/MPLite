@@ -90,7 +90,9 @@ namespace MPLite.Event
             IsTriggered = false;    // reset (for recurring event)
 
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };
-            Console.WriteLine(string.Format("Event: {0}; Interval: {1}", EventText, (BeginningTime - DateTime.Now).ToString()));
+#if DEBUG
+            Console.WriteLine(string.Format("Event: `{0}` will start in: {1} secs", EventText, (BeginningTime - DateTime.Now).ToString()));
+#endif
             timerEventHandler = (sender, args) =>
             {
                 IsTriggered = true;

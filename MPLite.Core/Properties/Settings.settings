@@ -17,8 +17,8 @@
     <Setting Name="PlaybackMode" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="LastSelectedPlaylist" Type="System.String" Scope="User">
-      <Value Profile="(Default)">New Playlist</Value>
+    <Setting Name="LastSelectedPlaylistGUID" Type="System.Guid" Scope="User">
+      <Value Profile="(Default)">00000000-0000-0000-0000-000000000000</Value>
     </Setting>
     <Setting Name="EventDBPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">MPLiteEventDB.json</Value>

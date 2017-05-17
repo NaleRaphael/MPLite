@@ -1,4 +1,6 @@
-﻿namespace MPLite.Event
+﻿using System;
+
+namespace MPLite.Event
 {
     using PlaybackMode = Core.PlaybackMode;
 
@@ -14,14 +16,14 @@
     public class SchedulerEventArgs : CustomEventArgs
     {
         public PlaybackCommands Command { get; set; }
-        public string Playlist { get; set; }
+        public Guid PlaylistGUID { get; set; }
         public int TrackIndex { get; set; }
         public PlaybackMode Mode { get; set; }
 
         public SchedulerEventArgs()
         {
             Command = PlaybackCommands.Stop;
-            Playlist = "";
+            PlaylistGUID = Guid.Empty;
             TrackIndex = -1;
             Mode = PlaybackMode.None;
         }

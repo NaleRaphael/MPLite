@@ -176,7 +176,13 @@
                 <Separator Margin="5,0,5,0" Background="#FFC8C8C8"/>
                 <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
                     <Label x:Name="lblPlaylistName" Content="Playlist" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>
-                    <ComboBox x:Name="cmbPlaylistName" Height="20" SelectedIndex="0" VerticalAlignment="Top" Margin="77,5,10,0" SelectionChanged="cmbPlaylistName_SelectionChanged"/>
+                    <ComboBox x:Name="cmbPlaylist" Height="20" SelectedIndex="0" VerticalAlignment="Top" Margin="77,5,10,0" SelectionChanged="cmbPlaylist_SelectionChanged">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <ListBoxItem Content="{Binding Path=ListName}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </Grid>
                 <Grid Height="30" Style="{StaticResource FocusableGrid_PlayerSetting}">
                     <Label x:Name="lblTrackIndex" Content="Beginning track index" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#FFC8C8C8" Height="20" Padding="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"/>

@@ -85,13 +85,13 @@ namespace MPLite.Core.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("New Playlist")]
-        public string LastSelectedPlaylist {
+        [global::System.Configuration.DefaultSettingValueAttribute("00000000-0000-0000-0000-000000000000")]
+        public global::System.Guid LastSelectedPlaylistGUID {
             get {
-                return ((string)(this["LastSelectedPlaylist"]));
+                return ((global::System.Guid)(this["LastSelectedPlaylistGUID"]));
             }
             set {
-                this["LastSelectedPlaylist"] = value;
+                this["LastSelectedPlaylistGUID"] = value;
             }
         }
         

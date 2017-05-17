@@ -44,9 +44,9 @@ namespace MPLite
 
     public static class MPLiteExtension
     {
-        internal static void SetAppProperties(this Properties.Settings setting, string listName, int trackIdx, TrackStatus status, PlaybackMode mode)
+        internal static void SetAppProperties(this Properties.Settings setting, Guid listGUID, int trackIdx, TrackStatus status, PlaybackMode mode)
         {
-            setting.TaskPlaylist = listName;
+            setting.TaskPlaylistGUID = listGUID;
             setting.TaskPlayingTrackIndex = trackIdx;
             setting.TaskPlayingTrackStatus = (int)status;
             setting.TaskPlaybackMode = (int)mode;
@@ -55,7 +55,7 @@ namespace MPLite
 
         internal static void ResetAppProperties(this Properties.Settings setting)
         {
-            setting.TaskPlaylist = "";
+            setting.TaskPlaylistGUID = Guid.Empty;
             setting.TaskPlayingTrackIndex = -1;
             setting.TaskPlayingTrackStatus = 0;
             setting.TaskPlaybackMode = 0;

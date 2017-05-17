@@ -75,7 +75,7 @@ namespace MPLite
     public class TrackQueue : CircularQueue<int>
     {
         public PlaybackMode Mode { get; private set; }
-        public string ListName { get; private set; }
+        public Guid ListGUID { get; private set; }
         public List<TrackInfo> Soundtracks { get; private set; }
 
         private int playedTrackAmount = 0;
@@ -89,7 +89,7 @@ namespace MPLite
         public TrackQueue(Playlist pl, int beginningIdx, PlaybackMode mode) : base(pl.TrackAmount)
         {
             Mode = mode;
-            ListName = pl.ListName;
+            ListGUID = pl.GUID;
             Soundtracks = pl.Soundtracks;
             SetTrackQueue(pl.TrackAmount, beginningIdx, mode);
         }

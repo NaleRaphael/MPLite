@@ -18,8 +18,7 @@ namespace MPLite
     public partial class PagePlaylist : Page
     {
         #region Event
-        public delegate void PlayTrackEventHandler(string selectedPlaylist = null, int selectedTrackIndex = -1,
-            PlaybackMode mode = PlaybackMode.None);
+        public delegate void PlayTrackEventHandler(Guid playlistGUID, int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None);
         public static event PlayTrackEventHandler PlayTrackEvent;
         public delegate TrackStatusEventArgs ListContentIsRefreshedEventHandler();
         public static event ListContentIsRefreshedEventHandler ListContentIsRefreshedEvent;
@@ -35,16 +34,12 @@ namespace MPLite
 
         #region Field
         private string oriPlaylistName = "";
-        private string prevShowingPlaylist;
-        private string currShowingPlaylist;
         #endregion
 
         public PagePlaylist()
         {
             InitializeComponent();
             InitPlaylist();
-
-            currShowingPlaylist = Properties.Settings.Default.LastSelectedPlaylist;
 
             MainWindow.GetTrackEvent += GetTrack;
         }
@@ -69,17 +64,17 @@ namespace MPLite
         private void InitializePlaylistMenu()
         {
             TrackListsViewModel trackListsVM = new TrackListsViewModel();
-            trackListsVM.CurrentPlaylist = PlaylistCollection.GetPlaylist(Properties.Settings.Default.LastSelectedPlaylist);
+            trackListsVM.CurrentPlaylist = PlaylistCollection.GetPlaylist(Properties.Settings.Default.LastSelectedPlaylistGUID);
             lb_PlaylistMenu.DataContext = trackListsVM;
             lb_PlaylistMenu.ItemsSource = trackListsVM.TrackLists;
         }
 
         private void InitializePlaylistContent()
         {
-            TracksViewModel tracksVM = new TracksViewModel(PlaylistCollection.GetPlaylist(Properties.Settings.Default.LastSelectedPlaylist));
+            TracksViewModel tracksVM = new TracksViewModel(PlaylistCollection.GetPlaylist(Properties.Settings.Default.LastSelectedPlaylistGUID));
             TrackListsViewModel trackListsVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
             if (trackListsVM == null)
-                throw new Exception("No avalible playlist.");
+                throw new Exception("Failed to cast object");
 
             lv_Playlist.DataContext = tracksVM;
             if (trackListsVM.CurrentPlaylist != null)
@@ -88,7 +83,9 @@ namespace MPLite
                 tracksVM.UpdateSoundtracks(trackListsVM.CurrentPlaylist);
             }
             else
+            {
                 lv_Playlist.ItemsSource = null;
+            }
 
             // Bind event for updating content of view-model of lb_PlaylistMenu
             tracksVM.PlaylistIsUpdatedEvent += (lb_PlaylistMenu.DataContext as TrackListsViewModel).UpdateTrackList;
@@ -104,8 +101,12 @@ namespace MPLite
             TrackListsViewModel trackListsVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
             if (trackListsVM == null) return;
 
+            Playlist pl = null;
+
             trackListsVM.UpdateTrackLists(plc.TrackLists);
-            lb_PlaylistMenu.SelectedItem = trackListsVM.TrackLists.First(x => x.GUID == trackListsVM.CurrentPlaylist.GUID);
+            if (trackListsVM.CurrentPlaylist != null)
+                pl = trackListsVM.TrackLists.FirstOrDefault(x => x.GUID == trackListsVM.CurrentPlaylist.GUID);
+            lb_PlaylistMenu.SelectedItem = pl;
         }
 
         private void RefreshPlaylistContent()
@@ -116,19 +117,24 @@ namespace MPLite
             if (trackListsVM == null) return;
 
             Playlist pl = trackListsVM.CurrentPlaylist;
-            if (pl == null) return;
+            if (pl == null)
+            {
+                lv_Playlist.Visibility = Visibility.Hidden;
+                return;
+            }
 
+            tracksVM.UpdatePlaylistInfo(pl);
             tracksVM.UpdateSoundtracks(pl);
             lv_Playlist.ItemsSource = tracksVM.Soundtracks as IEnumerable<TrackInfo>;
 
             // Update info
-            Properties.Settings.Default.LastSelectedPlaylist = pl.ListName;
+            Properties.Settings.Default.LastSelectedPlaylistGUID = pl.GUID;
             Properties.Settings.Default.Save();
 
             // Show playing track
             if (lb_PlaylistMenu.SelectedItem != null && ListContentIsRefreshedEvent != null)
             {
-                if (Properties.Settings.Default.TaskPlaylist == pl.ListName)
+                if (Properties.Settings.Default.TaskPlaylistGUID == pl.GUID)
                 {
                     tracksVM.UpdateTrackStatus(ListContentIsRefreshedEvent());
                 }
@@ -147,10 +153,10 @@ namespace MPLite
             TrackListsViewModel trackListsVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
 
             // TODO: try to rewrite this
-            Playlist pl = trackListsVM.TrackLists.First(x => x.ListName == e.OwnerList);
+            Playlist pl = trackListsVM.TrackLists.First(x => x.GUID == e.OwnerListGUID);
             pl.Soundtracks.Find(x => x.GUID == e.Track.GUID).TrackStatus = e.Track.TrackStatus;
 
-            if (pl.ListName == e.OwnerList)
+            if (pl.GUID == e.OwnerListGUID)
                 tracksVM.UpdateTrackStatus(e);
         }
         #endregion
@@ -161,15 +167,14 @@ namespace MPLite
             int selIdx = lv_Playlist.SelectedIndex;
             if (selIdx < 0) return;
 
-            string listName = ((Playlist)lb_PlaylistMenu.SelectedItem).ListName;
-            SetPrevAndCurrShowingPlaylist(listName);
+            Guid listGUID = ((Playlist)lb_PlaylistMenu.SelectedItem).GUID;
 
             StopPlayerRequestEvent();
 
             Properties.Settings.Default.TaskPlaybackMode = Properties.Settings.Default.PlaybackMode;
-            Properties.Settings.Default.TaskPlaylist = listName;
+            Properties.Settings.Default.TaskPlaylistGUID = listGUID;
             Properties.Settings.Default.Save();
-            PlayTrackEvent(listName, selIdx, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
+            PlayTrackEvent(listGUID, selIdx, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
         }
 
         private void lv_Playlist_KeyDown(object sender, KeyEventArgs e)
@@ -191,24 +196,20 @@ namespace MPLite
                 tracksVM.RemoveTracks();
             }
         }
+
+        private void lv_Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            (lv_Playlist.DataContext as TracksViewModel).SelectedIndices = lv_Playlist.GetSelectedIndices();
+        }
         #endregion
 
-        private void SetPrevAndCurrShowingPlaylist(string newPlaylist)
-        {
-            prevShowingPlaylist = currShowingPlaylist;
-            currShowingPlaylist = newPlaylist;
-
-            Properties.Settings.Default.LastSelectedPlaylist = newPlaylist;
-            Properties.Settings.Default.Save();
-        }
-
-        private void PlaySoundtrack(string selectedPlaylist = null, int selectedTrackIndex = -1,
+        private void PlaySoundtrack(Guid playlistGUID, int selectedTrackIndex = -1,
             PlaybackMode mode = PlaybackMode.None)
         {
             try
             {
                 // Fire event to notify MainWindow that a track is selected and waiting to be played
-                PlayTrackEvent(selectedPlaylist, selectedTrackIndex, mode);
+                PlayTrackEvent(playlistGUID, selectedTrackIndex, mode);
             }
             catch
             {
@@ -217,7 +218,7 @@ namespace MPLite
         }
 
         // TODO: add a parameter: get prev/next
-        private TrackInfo GetTrack(MusicPlayer player, string selectedPlaylist = null,
+        private TrackInfo GetTrack(MusicPlayer player, Guid listGUID,
             int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true)
         {
             if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
@@ -228,19 +229,13 @@ namespace MPLite
             try
             {
                 // If no playlist is selected (user click btn_StartPlayback to play music)
-                selectedPlaylist = (selectedPlaylist == null) ? currShowingPlaylist : selectedPlaylist;
+                TracksViewModel tracksVM = lv_Playlist.DataContext as TracksViewModel;
+                listGUID = (listGUID == Guid.Empty) ? tracksVM.TracklistGUID : listGUID;
 
                 if (mode == PlaybackMode.None)
                     throw new Exception("Invalid playback mode");
 
-                if (selectNext)
-                {
-                    return player.GetTrack(selectedPlaylist, selectedTrackIndex, mode);
-                }
-                else
-                {
-                    return player.GetPrevTrack(selectedPlaylist, selectedTrackIndex, mode);
-                }
+                return selectNext ? player.GetTrack(listGUID, selectedTrackIndex, mode) : player.GetPrevTrack(listGUID, selectedTrackIndex, mode);
             }
             catch
             {
@@ -277,12 +272,11 @@ namespace MPLite
         {
             Playlist pl = lb_PlaylistMenu.SelectedItem as Playlist;
             if (pl == null) return;
-            TrackListsViewModel trackListVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
-            if (trackListVM == null) return;
+            TrackListsViewModel trackListsVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
+            if (trackListsVM == null) return;
+            if (trackListsVM.CurrentPlaylist != null && pl.GUID == trackListsVM.CurrentPlaylist.GUID) return;
 
-            if (pl.ListName == trackListVM.CurrentPlaylist.ListName) return;
-
-            trackListVM.CurrentPlaylist = pl;
+            trackListsVM.CurrentPlaylist = pl;
 
             RefreshPlaylistContent();
 
@@ -349,9 +343,7 @@ namespace MPLite
                 TrackListsViewModel trackListsVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
                 trackListsVM.UpdatePlaylistName(targetGUID, result);
                 TracksViewModel tracksVM = lv_Playlist.DataContext as TracksViewModel;
-                tracksVM.UpdatePlaylistName(result);
-                Properties.Settings.Default.LastSelectedPlaylist = result;
-                Properties.Settings.Default.Save();
+                tracksVM.UpdatePlaylistInfo(targetGUID, result);
                 lb_PlaylistMenu.UpdateLayout();
             }
 
@@ -390,14 +382,16 @@ namespace MPLite
 
             trackListsVM.RemovePlaylist(pl.GUID);
             lb_PlaylistMenu.SelectedIndex = trackListsVM.TrackLists.Count - 1;
+
             RefreshPlaylistContent();
         }
-        #endregion
+#endregion
 
-        #region Handle events fired from scheduler
+#region Handle events fired from scheduler
         // TODO: rename this
         public void RunPlaylist(SchedulerEventArgs e)
         {
+            
             switch (e.Command)
             {
                 case PlaybackCommands.Pause:
@@ -408,20 +402,14 @@ namespace MPLite
                     break;
                 case PlaybackCommands.Play:
                     StopPlayerRequestEvent();
-                    PlaySoundtrack(e.Playlist, e.TrackIndex, e.Mode);
+                    PlaySoundtrack(e.PlaylistGUID, e.TrackIndex, e.Mode);
                     break;
                 default:
                     // Add a handling process for this exception
-                    //throw new Exception("Invalid command");
-                    break;
+                    throw new Exception("Invalid command");
             }
         }
-        #endregion
-
-        private void lv_Playlist_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            (lv_Playlist.DataContext as TracksViewModel).SelectedIndices = lv_Playlist.GetSelectedIndices();
-        }
+#endregion
     }
 
     public class EmptyPlaylistException : Exception

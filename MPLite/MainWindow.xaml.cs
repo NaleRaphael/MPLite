@@ -5,7 +5,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using System.Runtime.InteropServices;
 
 namespace MPLite
 {
@@ -32,7 +31,7 @@ namespace MPLite
         // Music player controls
         private readonly MusicPlayer _musicPlayer;
 
-        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player, string selectPlaylist = null, 
+        public delegate TrackInfo GetTrackEventHandler(MusicPlayer player, Guid playlistGUID, 
             int selTrackIdx = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true);
         public static event GetTrackEventHandler GetTrackEvent;
         public delegate void TrackIsPalyingEventHandler(PlayTrackEventArgs e);
@@ -280,11 +279,11 @@ namespace MPLite
         #endregion
 
         #region Music player control
-        private void PlayTrackFromPageList(string selectedPlaylist, int selectedTrackIndex, PlaybackMode mode)
+        private void PlayTrackFromPageList(Guid playlistGUID, int selectedTrackIndex, PlaybackMode mode)
         {
             try
             {
-                _musicPlayer.Play(GetTrackEvent(_musicPlayer, selectedPlaylist, selectedTrackIndex, mode, true));
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, playlistGUID, selectedTrackIndex, mode, true));
             }
             catch (Exception ex)
             {
@@ -301,7 +300,7 @@ namespace MPLite
                 {
                     case MusicPlayer.PlaybackState.Stopped:
                         // Call from MainWindow, so that player will start from the beginning of a list. (-1)
-                        _musicPlayer.Play(GetTrackEvent(_musicPlayer, null, -1, (PlaybackMode)Properties.Settings.Default.PlaybackMode, true));
+                        _musicPlayer.Play(GetTrackEvent(_musicPlayer, Guid.Empty, -1, (PlaybackMode)Properties.Settings.Default.PlaybackMode, true));
                         break;
                     case MusicPlayer.PlaybackState.Playing:
                         _musicPlayer.Pause();
@@ -328,12 +327,12 @@ namespace MPLite
             if (!_musicPlayer.IsPlaying() && ! _musicPlayer.IsPaused())
                 return;
 
-            string listName = Properties.Settings.Default.TaskPlaylist;
+            Guid listGUID = Properties.Settings.Default.TaskPlaylistGUID;
             PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
 
             try
             {
-                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, false));
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listGUID, -1, mode, false));
             }
             catch (Exception ex)
             {
@@ -347,12 +346,12 @@ namespace MPLite
             if (!_musicPlayer.IsPlaying() && !_musicPlayer.IsPaused())
                 return;
 
-            string listName = Properties.Settings.Default.TaskPlaylist;
+            Guid listGUID = Properties.Settings.Default.TaskPlaylistGUID;
             PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.PlaybackMode;
 
             try
             {
-                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
+                _musicPlayer.Play(GetTrackEvent(_musicPlayer, listGUID, -1, mode, true));
             }
             catch (Exception ex)
             {
@@ -397,14 +396,14 @@ namespace MPLite
         private void StopOrPlayNextTrack()
         {
             // Play next track or replay the same track (according to user setting)
-            string listName = Properties.Settings.Default.TaskPlaylist;
+            Guid listGUID = Properties.Settings.Default.TaskPlaylistGUID;
             PlaybackMode mode = (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode;
-            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listName, -1, mode, true));
+            _musicPlayer.Play(GetTrackEvent(_musicPlayer, listGUID, -1, mode, true));
         }
 
         private TrackStatusEventArgs GetPlayingTrackStatus()
         {
-            return new TrackStatusEventArgs(_musicPlayer.CurrentTrack, _musicPlayer.CurrentPlaylistName, _musicPlayer.CurrentTrackIndex);
+            return new TrackStatusEventArgs(_musicPlayer.CurrentTrack, _musicPlayer.CurrentPlaylistGUID, _musicPlayer.CurrentTrackIndex);
         }
         #endregion
 
@@ -428,7 +427,7 @@ namespace MPLite
                 {
                     _musicPlayer.Stop();
                     MessageBox.Show(ex.Message);
-                    MessageBox.Show(ex.StackTrace);
+                    //MessageBox.Show(ex.StackTrace);
                 }
             }
             else if (_musicPlayer.PlayerStatus == MusicPlayer.PlaybackState.Paused)
