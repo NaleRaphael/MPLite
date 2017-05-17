@@ -286,6 +286,8 @@ namespace MPLite
 
         private void lb_PlaylistMenu_KeyDown(object sender, KeyEventArgs e)
         {
+            // Remove this functionality to avoid user deleting playlist by pressing delete key directly
+#if false
             if (e.Key == Key.Delete && lb_PlaylistMenu.SelectedItems.Count == 1)
             {
                 TrackListsViewModel trackListsVM = lb_PlaylistMenu.DataContext as TrackListsViewModel;
@@ -297,6 +299,7 @@ namespace MPLite
                 lb_PlaylistMenu.SelectedIndex = trackListsVM.TrackLists.Count - 1;
                 RefreshPlaylistContent();
             }
+#endif
         }
 
         private void MenuListBox_KeyDown(object sender, KeyEventArgs e)
