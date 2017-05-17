@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 
 namespace MPLite
 {
@@ -24,6 +25,34 @@ namespace MPLite
             MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             MessageBox.Show(e.Exception.StackTrace);
             e.Handled = true;
+        }
+
+        // ref: https://spin.atomicobject.com/2013/12/11/wpf-data-binding-debug
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            SetListener();
+            base.OnStartup(e);
+        }
+
+        [Conditional("DEBUG")]
+        private void SetListener()
+        {
+            PresentationTraceSources.Refresh();
+            PresentationTraceSources.DataBindingSource.Listeners.Add(new ConsoleTraceListener());
+            PresentationTraceSources.DataBindingSource.Listeners.Add(new DebugTraceListener());
+            PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Warning | SourceLevels.Error;
+        }
+    }
+
+    public class DebugTraceListener : TraceListener
+    {
+        public override void Write(string message)
+        {
+        }
+
+        public override void WriteLine(string message)
+        {
+            Debugger.Break();
         }
     }
 }
