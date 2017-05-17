@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=mscorlib"
         xmlns:local="clr-namespace:MPLite"
         mc:Ignorable="d"
         Title="MPLite" Height="350" Width="525" Background="#FF323232" ResizeMode="CanResizeWithGrip" MinWidth="525" MinHeight="350" WindowStyle="None" AllowDrop="True" AllowsTransparency="True" PreviewKeyDown="winMain_PreviewKeyDown" Closing="winMain_Closing">
@@ -12,6 +14,16 @@
                 <ResourceDictionary Source="Resources/StyleTrackbar.xaml"/>
                 <ResourceDictionary Source="Resources/ResMainWindow.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            
+            <Style x:Key="MenuItemClose" TargetType="{x:Type MenuItem}">
+                <EventSetter Event="Click" Handler="miClose_Click"/>
+            </Style>
+            <Style x:Key="MenuItemShowWindow" TargetType="{x:Type MenuItem}">
+                <EventSetter Event="Click" Handler="miShowWindow_Click"/>
+            </Style>
+            <Style x:Key="MenuItemHideWindow" TargetType="{x:Type MenuItem}">
+                <EventSetter Event="Click" Handler="miHideWindow_Click"/>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -82,6 +94,16 @@
         </DockPanel>
 
         <Frame x:Name="framePageSwitcher" Content="" Margin="0,50,0,35" NavigationUIVisibility="Hidden"/>
-
+        
+        <tb:TaskbarIcon x:Name="notifyIcon" Visibility="Visible" IconSource="images/MPLite.ico" PopupActivation="RightClick" 
+                        MenuActivation="LeftOrRightClick">
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="miClose" Header="Close" Style="{StaticResource MenuItemClose}"/>
+                    <MenuItem x:Name="miShowWindow" Header="Show window" Style="{StaticResource MenuItemShowWindow}"/>
+                    <MenuItem x:Name="miHideWindow" Header="Hide window" Style="{StaticResource MenuItemHideWindow}"/>
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
     </Grid>
 </Window>

@@ -576,12 +576,24 @@ namespace MPLite
         {
             Properties.Settings.Default.IsMuted = !Properties.Settings.Default.IsMuted;
             Properties.Settings.Default.Save();
+        #region System tray control
+        private void miClose_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
 
             int volume = (Properties.Settings.Default.IsMuted) ? 0 : Properties.Settings.Default.Volume;
             _musicPlayer.SetVolume(volume);
+        private void miShowWindow_Click(object sender, RoutedEventArgs e)
+        {
+            this.Show();
+        }
 
             // Change icon of btnVolumeControl
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
+        private void miHideWindow_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
         }
         #endregion
     }
