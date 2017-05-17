@@ -49,15 +49,6 @@ namespace MPLite
         // Track status displayer module
         private TrackStatusDispModule trackStatusDisplayer;
 
-        // Try to turn off navigation sound
-        private const int Feature = 21; //FEATURE_DISABLE_NAVIGATION_SOUNDS
-        private const int SetFeatureOnProcess = 0x00000002;
-        [DllImport("urlmon.dll")]
-        [PreserveSig]
-        [return: MarshalAs(UnmanagedType.Error)]
-        static extern int CoInternetSetFeatureEnabled(int featureEntry,
-            [MarshalAs(UnmanagedType.U4)] int dwFlags, bool fEnable);
-
         public MainWindow()
         {
             InitializeComponent();
@@ -257,11 +248,6 @@ namespace MPLite
         private void Btn_ExitProgram_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
-        }
-
-        private void CloseProxyWindow()
-        {
-            //scheduler;
         }
 
         private void winMain_PreviewKeyDown(object sender, KeyEventArgs e)
