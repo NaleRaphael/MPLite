@@ -184,6 +184,16 @@ namespace MPLite
 
                 if (error == 0)
                 {
+                    // Set volume
+                    try
+                    {
+                        SetVolume(MPLiteSetting.Volume);
+                    }
+                    catch
+                    {
+                        throw;
+                    }
+
                     // Save the trackInfo that is playing currently
                     CurrentTrack = track;
                     CurrentTrackIndex = trackQueue.Current();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Security;
@@ -9,9 +10,36 @@ namespace MPLite
     using PlaybackMode = Core.PlaybackMode;
     using TrackStatus = Core.TrackStatus;
 
-    public static class AppSetting
+    public static class MPLiteSetting
     {
-        
+        public static int Volume
+        {
+            set
+            {
+                if (value > 1000 || value < 0)
+                    throw new Exception("Value of volume shoud be in the range between 0 - 1000.");
+
+                Properties.Settings.Default.Volume = value;
+                Properties.Settings.Default.Save();
+            }
+            get
+            {
+                return Properties.Settings.Default.IsMuted ? 0 : Properties.Settings.Default.Volume;
+            }
+        }
+
+        public static bool IsMuted
+        {
+            set
+            {
+                Properties.Settings.Default.IsMuted = value;
+                Properties.Settings.Default.Save();
+            }
+            get
+            {
+                return Properties.Settings.Default.IsMuted;
+            }
+        }
     }
 
     public static class MPLiteExtension

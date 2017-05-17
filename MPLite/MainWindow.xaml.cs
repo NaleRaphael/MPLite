@@ -39,6 +39,7 @@ namespace MPLite
         
         // Timer (tracing track progress)
         private DispatcherTimer timer;
+        private DispatcherTimer volTimer;
 
         // Animation control
         private bool doesAnimationEnd = true;
@@ -101,6 +102,10 @@ namespace MPLite
 
             // Volume button
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
+
+            // Volume control
+            volTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+            volTimer.Tick += SetPlayerVolume;
 
             // Track status displayer
             trackStatusDisplayer = new TrackStatusDispModule(lbl_TrackProgess, lbl_TrackName, trackBar);
@@ -539,13 +544,27 @@ namespace MPLite
 
         private void trackbarVolume_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            _musicPlayer.SetVolume((int)trackbarVolume.Value);
+            if (volTimer.IsEnabled)
+                volTimer.Stop();
 
-            // TODO: change icon according volume
-            SetVolumeIcon((int)trackbarVolume.Value, Properties.Settings.Default.IsMuted);
+            SetPlayerVolume(null, null);
+            SetVolumeIcon(MPLiteSetting.Volume, MPLiteSetting.IsMuted);
+        }
 
-            Properties.Settings.Default.Volume = (int)trackbarVolume.Value;
-            Properties.Settings.Default.Save();
+        private void trackbarVolume_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!volTimer.IsEnabled)
+                volTimer.Start();
+        }
+
+        private void SetPlayerVolume(object sender, EventArgs e)
+        {
+            if ((int)trackbarVolume.Value == Properties.Settings.Default.Volume)
+                return;
+
+            MPLiteSetting.Volume = (int)trackbarVolume.Value;
+            _musicPlayer.SetVolume(MPLiteSetting.Volume);
+            SetVolumeIcon(MPLiteSetting.Volume, MPLiteSetting.IsMuted);
         }
 
         private void SetVolumeIcon(double value, bool isMuted)
@@ -574,23 +593,23 @@ namespace MPLite
 
         private void btnVolumeControl_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            Properties.Settings.Default.IsMuted = !Properties.Settings.Default.IsMuted;
-            Properties.Settings.Default.Save();
+            MPLiteSetting.IsMuted = !MPLiteSetting.IsMuted;
+            _musicPlayer.SetVolume(MPLiteSetting.Volume);
+            SetVolumeIcon(MPLiteSetting.Volume, MPLiteSetting.IsMuted);
+        }
+        #endregion
+
         #region System tray control
         private void miClose_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
         }
 
-            int volume = (Properties.Settings.Default.IsMuted) ? 0 : Properties.Settings.Default.Volume;
-            _musicPlayer.SetVolume(volume);
         private void miShowWindow_Click(object sender, RoutedEventArgs e)
         {
             this.Show();
         }
 
-            // Change icon of btnVolumeControl
-            SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
         private void miHideWindow_Click(object sender, RoutedEventArgs e)
         {
             this.Hide();

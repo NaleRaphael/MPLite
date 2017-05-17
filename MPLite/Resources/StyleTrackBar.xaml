@@ -25,7 +25,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border  BorderThickness="0" BorderBrush="Black" Background="#FF7D7D7D" Height="8"/>
+                    <Border  BorderThickness="0" BorderBrush="Black" Background="#FF7D7D7D" Height="11"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -37,7 +37,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
-                    <Border SnapsToDevicePixels="True" Background="Green"  BorderThickness="1" BorderBrush="YellowGreen" Height="5"/>
+                    <Border SnapsToDevicePixels="True" Background="Green" BorderThickness="1,1,0,1" BorderBrush="YellowGreen" Height="5"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -50,7 +50,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
                     <!-- Background="#FF0087FF" BorderThickness="1" BorderBrush="#FF7FF2FF" -->
-                    <Border SnapsToDevicePixels="True" Background="#FF00A1FF"  Height="8"/>
+                    <Border SnapsToDevicePixels="True" Background="#FF0070CC" Height="11"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -62,7 +62,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Rectangle Height="8" Width="5" Fill="Black"/>
+                    <Border BorderBrush="Gray" BorderThickness="0,1,1,1" Height="8" Width="5">
+                        <Rectangle Height="5" Width="5" Fill="Transparent"/>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -74,7 +76,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Rectangle Height="10" Width="5" Fill="Black"/>
+                    <Border BorderBrush="Transparent" BorderThickness="0,1,1,1">
+                        <Rectangle Height="11" Width="5" Fill="Gray"/>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

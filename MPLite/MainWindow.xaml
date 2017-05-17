@@ -53,8 +53,8 @@
                     <Button x:Name="btnVolumeControl" Width="30" Height="30" BorderThickness="0" Style="{DynamicResource Style_FlatImageButton}" Margin="120,0,0,0" MouseEnter="btnVolumeControl_MouseEnter" MouseLeave="btnVolumeControl_MouseLeave" PreviewMouseUp="btnVolumeControl_PreviewMouseUp">
                         <Image Source="images/volw_100.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                     </Button>
-                    <Slider x:Name="trackbarVolume" HorizontalAlignment="Left" VerticalAlignment="Top" Width="110" Height="30" Style="{DynamicResource StyleTrackBarVolumeControl}" Margin="5,0,0,0" 
-                            MouseLeave="trackbarVolume_MouseLeave" MouseEnter="trackbarVolume_MouseEnter" IsMoveToPointEnabled="True" PreviewMouseUp="trackbarVolume_PreviewMouseUp"/>
+                    <Slider x:Name="trackbarVolume" HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" Height="30" Style="{DynamicResource StyleTrackBarVolumeControl}" Margin="5,0,0,0" 
+                            MouseLeave="trackbarVolume_MouseLeave" MouseEnter="trackbarVolume_MouseEnter" IsMoveToPointEnabled="True" PreviewMouseDown="trackbarVolume_PreviewMouseDown" PreviewMouseUp="trackbarVolume_PreviewMouseUp"/>
                 </Grid>
             </ContentControl>
 
