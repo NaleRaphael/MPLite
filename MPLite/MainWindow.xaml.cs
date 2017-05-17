@@ -272,6 +272,7 @@ namespace MPLite
 
         private void winMain_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            notifyIcon.Dispose();
             Properties.Settings.Default.WindowHeight = this.ActualHeight;
             Properties.Settings.Default.WindowWidth = this.ActualWidth;
             Properties.Settings.Default.Save();
