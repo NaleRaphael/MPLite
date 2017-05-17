@@ -180,9 +180,7 @@
                 </ContextMenu>
             </Setter.Value>
         </Setter>
-
-        <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
-
+        
         <!-- Override these key to modify the color of "SelectedUnfucoused" ListBoxItem -->
         <!--
         <Style.Resources>

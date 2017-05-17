@@ -21,15 +21,6 @@ namespace Jarloo.Calendar.Themes
         public delegate void UpdateEventHandler(IEvent evnt);
         public static event UpdateEventHandler UpdateEvent;
 
-        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            CustomEvent obj = (CustomEvent)((ListBoxItem)sender).DataContext;
-            MessageBox.Show(obj.GUID.ToString());
-            
-            // Notify subscriber which event is selected
-            DayContentSelectionEvent(obj, SelectedDayContentActions.ShowInfo);
-        }
-
         private void ListBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.RightButton == MouseButtonState.Pressed && e.LeftButton == MouseButtonState.Released)
