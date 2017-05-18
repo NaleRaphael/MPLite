@@ -13,8 +13,9 @@ namespace MPLite
 
     public partial class PageSetting : Page
     {
-        private Key sysKey;
+        private ModifierKeys sysKey;
         private Key normalKey;
+        public static Hotkeys MPLiteHotKeys = null;
 
         public PageSetting()
         {
@@ -36,6 +37,11 @@ namespace MPLite
             // textbox
             txtPlaylistStoragePath.Text = Path.GetFullPath(AppSettings.TrackDBPath);
             txtSchedulerEventStoragePath.Text = Path.GetFullPath(AppSettings.EventDBPath);
+
+            // hotkey
+            MPLiteHotKeys = Hotkeys.Load();
+            cmbHotkey.ItemsSource = MPLiteHotKeys;
+            cmbHotkey.SelectedIndex = 0;
         }
 
         private void cmbPlaybackMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -98,49 +104,52 @@ namespace MPLite
             if (e == null) return;
             if (e.IsRepeat) return;
 
-            GetSystemKeyAndNormalKey(e, out sysKey, out normalKey, sysKey, normalKey);
+            Hotkey.GetSystemKeyAndNormalKey(e, Keyboard.Modifiers, out sysKey, out normalKey, sysKey, normalKey);
+#if DEBUG
             Console.WriteLine(Keyboard.Modifiers);
             Console.WriteLine(string.Format("{0}, {1}, {2}, {3}", e.SystemKey, e.Key, sysKey, normalKey));
-            txtHotkey.Text = (sysKey == Key.None) ? normalKey.ToString() : sysKey.ToString() + ((normalKey == Key.None) ? "" : "+" + normalKey.ToString());
+#endif
+            txtHotkey.Text = (sysKey == ModifierKeys.None) ? normalKey.ToString() : sysKey.ToString() + ((normalKey == Key.None) ? "" : "+" + normalKey.ToString());
+            txtHotkey.CaretIndex = txtHotkey.Text.Length;
         }
 
-        private void GetSystemKeyAndNormalKey(KeyEventArgs e, out Key sKey, out Key nKey, Key sKeyDefault = Key.None, Key nKeyDefault = Key.None)
+        private void txtHotkey_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            bool isModifierKeyPressed = Keyboard.Modifiers != ModifierKeys.None;
-            sKey = isModifierKeyPressed ? sKeyDefault : Key.None;
-            nKey = isModifierKeyPressed ? nKeyDefault : Key.None;
-
-            switch (e.SystemKey)
-            {
-                case Key.None:
-                    if (Keyboard.Modifiers != ModifierKeys.None)
-                    {
-                        switch (e.Key)
-                        {
-                            case Key.LeftCtrl:
-                            case Key.LeftShift:
-                            case Key.RightCtrl:
-                            case Key.RightShift:
-                                sKey = e.Key;
-                                break;
-                            default:
-                                nKey = e.Key;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        nKey = e.Key;
-                    }
-                    break;
-                case Key.LeftAlt:
-                case Key.RightAlt:
-                    sKey = e.SystemKey;
-                    break;
-                default:
-                    nKey = e.SystemKey;
-                    break;
-            }
+            MPLiteSetting.IsEditingHotkey = true;
         }
+
+        private void txtHotkey_LostFocus(object sender, RoutedEventArgs e)
+        {
+            MPLiteSetting.IsEditingHotkey = false;
+        }
+
+        private void btnSaveHotkey_Click(object sender, RoutedEventArgs e)
+        {
+            txtHotkey.IsReadOnly = true;
+            if (txtHotkey.Text == "") return;
+
+            Hotkey hotkey = cmbHotkey.SelectedItem as Hotkey;
+            if (hotkey == null) return;
+
+            if (hotkey.TrySet(txtHotkey.Text, '+'))
+            {
+                MessageBox.Show("Sucess");
+            }
+
+            MPLiteHotKeys.Save();
+        }
+
+        private void cmbHotkey_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Hotkey hotkey = cmbHotkey.SelectedItem as Hotkey;
+            if (hotkey == null) return;
+
+            txtHotkey.Text = ((hotkey.SystemKey == ModifierKeys.None) ? "" : hotkey.SystemKey.ToString() + "+") 
+                + ((hotkey.NormalKey == Key.None) ? "" : hotkey.NormalKey.ToString());
+
+            txtHotkey.CaretIndex = txtHotkey.Text.Length;
+        }
+
+        
     }
 }

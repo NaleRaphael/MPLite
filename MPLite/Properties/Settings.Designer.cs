@@ -169,37 +169,13 @@ namespace MPLite.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int HotkeyPlay {
+        [global::System.Configuration.DefaultSettingValueAttribute("MPLiteHotkeys.json")]
+        public string HotkeysSettingPath {
             get {
-                return ((int)(this["HotkeyPlay"]));
+                return ((string)(this["HotkeysSettingPath"]));
             }
             set {
-                this["HotkeyPlay"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int HotkeyStop {
-            get {
-                return ((int)(this["HotkeyStop"]));
-            }
-            set {
-                this["HotkeyStop"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int HotkeyPause {
-            get {
-                return ((int)(this["HotkeyPause"]));
-            }
-            set {
-                this["HotkeyPause"] = value;
+                this["HotkeysSettingPath"] = value;
             }
         }
     }

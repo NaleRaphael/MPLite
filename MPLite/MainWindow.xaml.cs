@@ -49,6 +49,9 @@ namespace MPLite
         // Track status displayer module
         private TrackStatusDispModule trackStatusDisplayer;
 
+        // Hotkeys
+        private Hotkeys MPLiteHotkeys;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -86,9 +89,9 @@ namespace MPLite
             trackBar.Visibility = Visibility.Hidden;
 
             // Volume bar
-            trackbarVolume.Visibility = Visibility.Hidden;
-            trackbarVolume.Maximum = 1000;  // limit: 1000 (mciSendString@winmm.dll)
-            trackbarVolume.Value = Properties.Settings.Default.Volume;
+            volumeBar.Visibility = Visibility.Hidden;
+            volumeBar.Maximum = 1000;  // limit: 1000 (mciSendString@winmm.dll)
+            volumeBar.Value = Properties.Settings.Default.Volume;
 
             // Volume button
             SetVolumeIcon(Properties.Settings.Default.Volume, Properties.Settings.Default.IsMuted);
@@ -114,6 +117,9 @@ namespace MPLite
             pageCalendar = new PageCalendar();      // workaround: create PageCalendar to load EventManager
             
             PageSwitchControl<PagePlaylist>(ref pagePlaylist);
+
+            pageSetting = new PageSetting();
+            this.MPLiteHotkeys = PageSetting.MPLiteHotKeys;
 
             _musicPlayer.PlayerStartedEvent += pagePlaylist.SetTrackStatus;
             _musicPlayer.PlayerStoppedEvent += pagePlaylist.SetTrackStatus;
@@ -253,6 +259,54 @@ namespace MPLite
         private void winMain_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // TODO: global hotkey for player control
+            if (MPLiteSetting.IsEditingHotkey) return;
+            string cmd = MPLiteHotkeys.FindName(e, Keyboard.Modifiers);
+#if DEBUG
+            Console.WriteLine(string.Format("{0}, {1}", e.SystemKey, e.Key));
+#endif
+            switch (cmd)
+            {
+                case "Play & Pause":
+                    btnStartPlayback_Click(null, null);
+                    break;
+                case "Stop":
+                    btnStop_Click(null, null);
+                    break;
+                case "Forward":
+                    btnForward_Click(null, null);
+                    break;
+                case "Backward":
+                    btnBackward_Click(null, null);
+                    break;
+                case "Increase Volume":
+                    if (volumeBar.Value + 10 <= 1000)
+                    {
+                        volumeBar.Value += 10;
+                        SetPlayerVolume(null, null);
+                    }
+                    break;
+                case "Decrease Volume":
+                    if (volumeBar.Value - 10 <= 1000)
+                    {
+                        volumeBar.Value -= 10;
+                        SetPlayerVolume(null, null);
+                    }
+                    break;
+                case "Fast Forward":
+                    trackBar_PreviewMouseDown(null, null);
+                    trackBar.Value = (trackBar.Value + trackBar.Maximum * 0.05 >= trackBar.Maximum) ? trackBar.Maximum : trackBar.Value + trackBar.Maximum * 0.05;
+                    trackBar_PreviewMouseUp(null, null);
+                    break;
+                case "Reverse":
+                    trackBar_PreviewMouseDown(null, null);
+                    trackBar.Value = (trackBar.Value - trackBar.Maximum * 0.05 <= 0) ? 0 : trackBar.Value - trackBar.Maximum * 0.05;
+                    trackBar_PreviewMouseUp(null, null);
+                    break;
+                default:
+                    break;
+            }
+
+            e.Handled = true;   // disable key beeping
         }
 
         private void winMain_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -493,7 +547,7 @@ namespace MPLite
         #region Volume control
         private void ShowOrHideVolumeBar(bool show)
         {
-            trackbarVolume.Visibility = show ? Visibility.Visible : Visibility.Hidden;
+            volumeBar.Visibility = show ? Visibility.Visible : Visibility.Hidden;
             btnBackward.Visibility = show ? Visibility.Hidden : Visibility.Visible;
             btnStop.Visibility = show ? Visibility.Hidden : Visibility.Visible;
             btnStartPlayback.Visibility = show ? Visibility.Hidden : Visibility.Visible;
@@ -502,7 +556,7 @@ namespace MPLite
 
         private void btnVolumeControl_MouseEnter(object sender, MouseEventArgs e)
         {
-            ShowOrHideVolumeBar(!(trackbarVolume.Visibility == Visibility.Visible));
+            ShowOrHideVolumeBar(!(volumeBar.Visibility == Visibility.Visible));
         }
 
         private void btnVolumeControl_MouseLeave(object sender, MouseEventArgs e)
@@ -517,18 +571,18 @@ namespace MPLite
             };
         }
 
-        private void trackbarVolume_MouseEnter(object sender, MouseEventArgs e)
+        private void volumeBar_MouseEnter(object sender, MouseEventArgs e)
         {
             hasEnteredVolumeBar = true;
         }
 
-        private void trackbarVolume_MouseLeave(object sender, MouseEventArgs e)
+        private void volumeBar_MouseLeave(object sender, MouseEventArgs e)
         {
             hasEnteredVolumeBar = false;
             ShowOrHideVolumeBar(false);
         }
 
-        private void trackbarVolume_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private void volumeBar_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             if (volTimer.IsEnabled)
                 volTimer.Stop();
@@ -537,7 +591,7 @@ namespace MPLite
             SetVolumeIcon(MPLiteSetting.Volume, MPLiteSetting.IsMuted);
         }
 
-        private void trackbarVolume_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void volumeBar_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (!volTimer.IsEnabled)
                 volTimer.Start();
@@ -545,10 +599,10 @@ namespace MPLite
 
         private void SetPlayerVolume(object sender, EventArgs e)
         {
-            if ((int)trackbarVolume.Value == Properties.Settings.Default.Volume)
+            if ((int)volumeBar.Value == Properties.Settings.Default.Volume)
                 return;
 
-            MPLiteSetting.Volume = (int)trackbarVolume.Value;
+            MPLiteSetting.Volume = (int)volumeBar.Value;
             _musicPlayer.SetVolume(MPLiteSetting.Volume);
             SetVolumeIcon(MPLiteSetting.Volume, MPLiteSetting.IsMuted);
         }

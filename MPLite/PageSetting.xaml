@@ -26,9 +26,15 @@
             </Grid>
             <Grid x:Name="gridHotkeySetting" HorizontalAlignment="Left" Height="60" Margin="10,195,0,0" VerticalAlignment="Top" Width="350">
                 <Label x:Name="lblHotkeySetting" Content="Hotkey Setting" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8" FontFamily="Segoe UI"/>
-                <ComboBox x:Name="cmbHotkey" HorizontalAlignment="Left" Margin="5,26,0,0" VerticalAlignment="Top" Width="120"/>
-                <TextBox x:Name="txtHotkey" HorizontalAlignment="Left" Height="22" Margin="140,26,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="141" HorizontalContentAlignment="Right" IsReadOnly="True" IsReadOnlyCaretVisible="True" KeyDown="txtHotkey_KeyDown" PreviewKeyDown="txtHotkey_PreviewKeyDown"/>
-                <CheckBox x:Name="chkIsGlobalHotkey" Content="Global" HorizontalAlignment="Left" Margin="296,29,0,0" VerticalAlignment="Top" Foreground="#FFC8C8C8"/>
+                <ComboBox x:Name="cmbHotkey" HorizontalAlignment="Left" Margin="5,26,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="cmbHotkey_SelectionChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <ListBoxItem Content="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox x:Name="txtHotkey" Height="22" Margin="150,26,59,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalContentAlignment="Right" IsReadOnly="True" IsReadOnlyCaretVisible="True" KeyDown="txtHotkey_KeyDown" PreviewKeyDown="txtHotkey_PreviewKeyDown" LostFocus="txtHotkey_LostFocus" PreviewMouseDown="txtHotkey_PreviewMouseDown"/>
+                <Button x:Name="btnSaveHotkey" Content="Save" HorizontalAlignment="Left" Margin="296,26,0,0" VerticalAlignment="Top" Width="40" Click="btnSaveHotkey_Click"/>
             </Grid>
         </Grid>
     </Grid>

@@ -100,6 +100,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CircularQueue.cs" />
+    <Compile Include="Hotkeys.cs" />
     <Compile Include="PagePlaylist.xaml.cs">
       <DependentUpon>PagePlaylist.xaml</DependentUpon>
     </Compile>

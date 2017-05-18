@@ -12,6 +12,10 @@ namespace MPLite
 
     public static class MPLiteSetting
     {
+        private static Hotkeys _hotkeys = null;
+        private static List<string> _hotkeyNames = new List<string> { "Play & Pause", "Stop", "Forward", "Backward",
+            "Increase Volume", "Decrease Volume", "Fast Forward", "Reverse" };
+
         public static int Volume
         {
             set
@@ -40,6 +44,36 @@ namespace MPLite
                 return Properties.Settings.Default.IsMuted;
             }
         }
+
+        public static string HotkeysSettingPath
+        {
+            set
+            {
+                Properties.Settings.Default.HotkeysSettingPath = value;
+                Properties.Settings.Default.Save();
+            }
+            get
+            {
+                return Properties.Settings.Default.HotkeysSettingPath;
+            }
+        }
+
+        public static Hotkeys Hotkeys
+        {
+            get
+            {
+                if (_hotkeys == null)
+                    _hotkeys = Hotkeys.Load();
+                return _hotkeys;
+            }
+        }
+
+        public static List<string> HotkeyNames
+        {
+            get { return _hotkeyNames; }
+        }
+
+        public static bool IsEditingHotkey { get; set; }
     }
 
     public static class MPLiteExtension

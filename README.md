@@ -7,7 +7,7 @@ A simple music player written in C# (.NET 4.0) with a built-in scheduler.
 ## TODO
 - [x] Rearrange tracks by dragging
 - [x] Multiple trigger event (For special task, like the class bell. It needs to be tiggered multiple time in a day.)
-- [ ] Smoothly volume control
+- [x] Smoothly volume control
 - [x] Window for showing event info
 - [ ] Remote control (through mobile phone)
 
@@ -18,3 +18,4 @@ A simple music player written in C# (.NET 4.0) with a built-in scheduler.
 - [Calendar.NET](https://www.codeproject.com/Articles/378900/Calendar-NET) `MPLite.Event` is built according to this library.
 - [Extended WPF toolkit](http://wpftoolkit.codeplex.com/)
 - [GongSolutions.WPF.DragDrop](https://github.com/punker76/gong-wpf-dragdrop)
+- [Hardcodet.Wpf.TaskbarNotification](http://www.hardcodet.net/wpf-notifyicon)
