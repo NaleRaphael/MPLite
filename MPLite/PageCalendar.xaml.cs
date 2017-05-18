@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace MPLite
 {
-    using CalendarViewingMode = Event.CalendarViewingMode;
-    using PlaybackMode = Core.PlaybackMode;
-    using PlaybackCommands = Event.PlaybackCommands;
-    using RecurringFrequencies = Event.RecurringFrequencies;
-    using CustomEvent = Event.CustomEvent;
-    using MultiTriggerEvent = Event.MultiTriggerEvent;
-    using SchedulerEventArgs = Event.SchedulerEventArgs;
     using SchedulerEventHandler = Event.SchedulerEventHandler;
     using SchedulerEventHandlerFactory = Event.SchedulerEventHandlerFactory;
 

@@ -10,7 +10,6 @@ using GongSolutions.Wpf.DragDrop;
 namespace MPLite
 {
     using TrackInfo = Core.TrackInfo;
-    using TrackStatus = Core.TrackStatus;
     using Playlist = Core.Playlist;
     using PlaylistCollection = Core.PlaylistCollection;
     using MPLiteConstant = Core.MPLiteConstant;
