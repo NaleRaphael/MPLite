@@ -3,6 +3,7 @@ A simple music player written in C# (.NET 4.0) with a built-in scheduler.
 (Windows XP SP3 is supported!)
 
 ## Screenshots
+* Playlist  
 ![](screenshots/ss_Player.png)
 
 * Page - Settings  
@@ -16,6 +17,8 @@ You can set multiple triggering time to a single event, and it also can be set a
 
     ![](screenshots/ss_EventSetting_01.png)  ![](screenshots/ss_EventSetting_02.png)
 
+## Download
+[MPLite v1.0.0](https://github.com/NaleRaphael/MPLite/releases/download/v1.0.0/MPLite-Release.rar)
 
 ## TODO
 - [x] Rearrange tracks by dragging
