@@ -306,6 +306,7 @@ namespace MPLite
         {
             if (e.Key == Key.F2)    // Rename listName in the ListBoxItem
             {
+                MPLiteSetting.IsEditing = true;
                 SwitchEditingMode((ListBoxItem)sender, true);
                 oriPlaylistName = (lb_PlaylistMenu.SelectedItem as Playlist).ListName;
             }
@@ -315,11 +316,13 @@ namespace MPLite
                 if (txtBox.IsFocused)
                     lb_PlaylistMenu.Focus();    // Transfer focus
                 oriPlaylistName = "";   // Reset
+                MPLiteSetting.IsEditing = false;
             }
             else if (e.Key == Key.Enter)    // User confirms the new name
             {
                 TextBox txtBox = ((ListBoxItem)sender).Template.FindName("txtEditBox", (FrameworkElement)sender) as TextBox;
                 txtEditBox_LostFocus(txtBox, new RoutedEventArgs());    // Trigger LostFocus event to save change
+                MPLiteSetting.IsEditing = false;
             }
             else if (e.Key == Key.Up)
             {

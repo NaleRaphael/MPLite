@@ -259,8 +259,9 @@ namespace MPLite
         private void winMain_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             // TODO: global hotkey for player control
-            if (MPLiteSetting.IsEditingHotkey) return;
+            if (MPLiteSetting.IsEditing) return;
             string cmd = MPLiteHotkeys.FindName(e, Keyboard.Modifiers);
+            bool isHotkeyCmd = true;
 #if DEBUG
             Console.WriteLine(string.Format("{0}, {1}", e.SystemKey, e.Key));
 #endif
@@ -303,10 +304,11 @@ namespace MPLite
                     trackBar_PreviewMouseUp(null, null);
                     break;
                 default:
+                    isHotkeyCmd = false;
                     break;
             }
 
-            e.Handled = true;   // disable key beeping
+            e.Handled = isHotkeyCmd;    // disable key beeping
         }
 
         private void winMain_Closing(object sender, System.ComponentModel.CancelEventArgs e)

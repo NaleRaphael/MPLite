@@ -73,7 +73,7 @@ namespace MPLite
             get { return _hotkeyNames; }
         }
 
-        public static bool IsEditingHotkey { get; set; }
+        public static bool IsEditing { get; set; }
     }
 
     public static class MPLiteExtension

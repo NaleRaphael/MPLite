@@ -114,12 +114,12 @@ namespace MPLite
 
         private void txtHotkey_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            MPLiteSetting.IsEditingHotkey = true;
+            MPLiteSetting.IsEditing = true;
         }
 
         private void txtHotkey_LostFocus(object sender, RoutedEventArgs e)
         {
-            MPLiteSetting.IsEditingHotkey = false;
+            MPLiteSetting.IsEditing = false;
         }
 
         private void btnSaveHotkey_Click(object sender, RoutedEventArgs e)
