@@ -1,22 +1,20 @@
 # MPLite
-A simple music player written in C# (.NET 4.0) with a built-in scheduler.
+A simple music player written in C# (.NET 4.0) with a built-in scheduler.  
 (Windows XP SP3 is supported!)
 
-
 ## Screenshots
-
 ![](screenshots/ss_Player.png)
 
-* Page - Settings
+* Page - Settings  
 ![](screenshots/ss_Settings.png)
 
-* Page - Calender (scheduler)
+* Page - Calender (scheduler)  
 ![](screenshots/ss_Calendar.png)
 
-* Scheduler event settings
-You can set multiple triggering time to a single event, and it also can be set as a custom recurring event.
+* Scheduler event settings  
+You can set multiple triggering time to a single event, and it also can be set as a custom recurring event.  
 
-![](screenshots/ss_EventSetting_01.png)  ![](screenshots/ss_EventSetting_02.png)
+    ![](screenshots/ss_EventSetting_01.png)  ![](screenshots/ss_EventSetting_02.png)
 
 
 ## TODO
@@ -26,13 +24,11 @@ You can set multiple triggering time to a single event, and it also can be set a
 - [x] Window for showing event info
 - [ ] Remote control (via web page)
 
-
 ## Known issues
 - [ ] Soundtrack might not be played if the file path contains Japanese characters.
     - Probably cause: Soundtrack is played via `mciSendString (winmm.dll)`, and Japanese characters cannot be handled.
 - [ ] Length of track might not be displayed correctly.
     - Probably cause: File is encoded in VBR (Variable Bit Rate).
-
 
 ## Awesome librarys this project used
 - [Jarloo.Calendar](http://www.jarloo.com/wpf-calendar-control/)
@@ -42,7 +38,6 @@ You can set multiple triggering time to a single event, and it also can be set a
 - [Extended WPF toolkit](http://wpftoolkit.codeplex.com/)
 - [GongSolutions.WPF.DragDrop](https://github.com/punker76/gong-wpf-dragdrop)
 - [Hardcodet.Wpf.TaskbarNotification](http://www.hardcodet.net/wpf-notifyicon)
-
 
 ## Contributing
 Any ideas / PR / bug reports are welcome, and feel free to customize your own music player by forking this repo! :)
