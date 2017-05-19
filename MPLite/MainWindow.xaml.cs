@@ -6,6 +6,10 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
+#if DEBUG
+using System.IO;
+#endif
+
 namespace MPLite
 {
     using PlayTrackEventArgs = Core.PlayTrackEventArgs;
@@ -51,6 +55,11 @@ namespace MPLite
 
         // Hotkeys
         private Hotkeys MPLiteHotkeys;
+
+#if DEBUG
+        FileStream ostrm;
+        StreamWriter writer;
+#endif
 
         public MainWindow()
         {
@@ -127,6 +136,23 @@ namespace MPLite
             PagePlaylist.ListContentIsRefreshedEvent += this.GetPlayingTrackStatus;
 
             UpdateLayout();
+
+#if DEBUG
+            try
+            {
+                ostrm = new FileStream("./MPLiteLog.txt", FileMode.OpenOrCreate, FileAccess.Write);
+                writer = new StreamWriter(ostrm);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(DateTime.Now);
+                Console.WriteLine("Cannot open MPLiteLog.txt for writting.");
+                Console.WriteLine(ex.Message);
+                return;
+            }
+
+            Console.SetOut(writer);
+#endif
         }
 
         private void InitializeWindow()
@@ -263,6 +289,7 @@ namespace MPLite
             string cmd = MPLiteHotkeys.FindName(e, Keyboard.Modifiers);
             bool isHotkeyCmd = true;
 #if DEBUG
+            Console.WriteLine(DateTime.Now);
             Console.WriteLine(string.Format("{0}, {1}", e.SystemKey, e.Key));
 #endif
             switch (cmd)
@@ -317,6 +344,11 @@ namespace MPLite
             Properties.Settings.Default.WindowHeight = this.ActualHeight;
             Properties.Settings.Default.WindowWidth = this.ActualWidth;
             Properties.Settings.Default.Save();
+
+#if DEBUG
+            writer.Close();
+            ostrm.Close();
+#endif
         }
         #endregion
 

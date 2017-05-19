@@ -384,7 +384,7 @@ namespace Jarloo.Calendar
             int trackAmount = plc.TrackLists.Find(x => x.GUID == pl.GUID).TrackAmount;
             if (trackAmount == 0)
             {
-                System.Windows.MessageBox.Show("No track is avalible in this playlist.");
+                System.Windows.MessageBox.Show(string.Format("No track is avalible in this playlist: {0}", pl.ListName));
                 cmbTrackIndex.ItemsSource = null;
                 return;
             }

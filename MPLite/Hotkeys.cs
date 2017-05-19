@@ -165,9 +165,10 @@ namespace MPLite
             bool isModifierKeyPressed = currentModifier != ModifierKeys.None;
             sKey = currentModifier;
             nKey = isModifierKeyPressed ? nKeyDefault : Key.None;
-
+#if DEBUG
+            Console.WriteLine(DateTime.Now);
             Console.WriteLine(string.Format("{0}, {1}", e.SystemKey, e.Key));
-
+#endif
             switch (e.SystemKey)
             {
                 case Key.None:

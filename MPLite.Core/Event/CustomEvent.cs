@@ -91,10 +91,15 @@ namespace MPLite.Event
 
             Timer = new DispatcherTimer { Interval = BeginningTime - DateTime.Now };
 #if DEBUG
+            Console.WriteLine(DateTime.Now);
             Console.WriteLine(string.Format("Event: `{0}` will start in: {1} secs", EventText, (BeginningTime - DateTime.Now).ToString()));
 #endif
             timerEventHandler = (sender, args) =>
             {
+#if DEBUG
+                Console.WriteLine(DateTime.Now);
+                Console.WriteLine(string.Format("Event: `{0}` started.", EventText));
+#endif
                 IsTriggered = true;
                 if (Timer != null)
                 {

@@ -105,6 +105,7 @@ namespace MPLite
 
             Hotkey.GetSystemKeyAndNormalKey(e, Keyboard.Modifiers, out sysKey, out normalKey, sysKey, normalKey);
 #if DEBUG
+            Console.WriteLine(DateTime.Now);
             Console.WriteLine(Keyboard.Modifiers);
             Console.WriteLine(string.Format("{0}, {1}, {2}, {3}", e.SystemKey, e.Key, sysKey, normalKey));
 #endif
