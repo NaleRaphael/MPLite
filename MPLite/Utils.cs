@@ -108,6 +108,10 @@ namespace MPLite
             for (int i = 0; i < lv.Items.Count; i++)
             {
                 ListViewItem lvi = lv.ItemContainerGenerator.ContainerFromIndex(i) as ListViewItem;
+
+                // Workaround: avoid NullReferenceException being thrown
+                if (lvi == null) continue;
+
                 if (lvi.IsSelected)
                     selectedIndices.Add(i);
             }
