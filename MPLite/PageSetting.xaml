@@ -36,6 +36,9 @@
                 <TextBox x:Name="txtHotkey" Height="22" Margin="150,26,59,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" HorizontalContentAlignment="Right" IsReadOnly="True" IsReadOnlyCaretVisible="True" KeyDown="txtHotkey_KeyDown" PreviewKeyDown="txtHotkey_PreviewKeyDown" LostFocus="txtHotkey_LostFocus" PreviewMouseDown="txtHotkey_PreviewMouseDown"/>
                 <Button x:Name="btnSaveHotkey" Content="Save" HorizontalAlignment="Left" Margin="296,26,0,0" VerticalAlignment="Top" Width="40" Click="btnSaveHotkey_Click"/>
             </Grid>
+            <Grid x:Name="gridLaunchSetting" HorizontalAlignment="Left" Height="30" Margin="10,255,0,0" VerticalAlignment="Top" Width="350">
+                <CheckBox x:Name="chkLaunchSetting" Content="Launch at startup" Foreground="#FFC8C8C8" Height="15" Click="chkLaunchSetting_Click"/>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

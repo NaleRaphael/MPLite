@@ -74,6 +74,16 @@ namespace MPLite
         }
 
         public static bool IsEditing { get; set; }
+
+        public static bool IsLaunchAtStartup
+        {
+            get { return Properties.Settings.Default.IsLaunchAtStartup; }
+            set
+            {
+                Properties.Settings.Default.IsLaunchAtStartup = value;
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 
     public static class MPLiteExtension

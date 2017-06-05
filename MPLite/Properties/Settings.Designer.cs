@@ -178,5 +178,17 @@ namespace MPLite.Properties {
                 this["HotkeysSettingPath"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool IsLaunchAtStartup {
+            get {
+                return ((bool)(this["IsLaunchAtStartup"]));
+            }
+            set {
+                this["IsLaunchAtStartup"] = value;
+            }
+        }
     }
 }

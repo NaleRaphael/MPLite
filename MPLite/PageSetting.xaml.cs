@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
 
 namespace MPLite
 {
@@ -41,6 +42,9 @@ namespace MPLite
             MPLiteHotKeys = Hotkeys.Load();
             cmbHotkey.ItemsSource = MPLiteHotKeys;
             cmbHotkey.SelectedIndex = 0;
+
+            // chkLaunchSetting
+            chkLaunchSetting.IsChecked = MPLiteSetting.IsLaunchAtStartup;
         }
 
         private void cmbPlaybackMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -150,6 +154,20 @@ namespace MPLite
             txtHotkey.CaretIndex = txtHotkey.Text.Length;
         }
 
-        
+        private void chkLaunchSetting_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkLaunchSetting.IsChecked.Value == MPLiteSetting.IsLaunchAtStartup) return;
+
+            MPLiteSetting.IsLaunchAtStartup = (chkLaunchSetting.IsChecked == true);
+
+            RegistryKey register = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            string exePath = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
+
+            if (chkLaunchSetting.IsChecked == true)
+                register.SetValue(appName, exePath);
+            else
+                register.DeleteValue(appName, false);
+        }
     }
 }
