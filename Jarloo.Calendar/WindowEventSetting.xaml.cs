@@ -295,7 +295,7 @@ namespace Jarloo.Calendar
                 PlaylistGUID = (cmbPlaylist.SelectedItem as Playlist).GUID,
                 Command = PlaybackCommands.Play,
                 Mode = (PlaybackMode)cmbPlaybackMode.SelectedItem,
-                TrackIndex = cmbTrackIndex.SelectedIndex
+                TrackIndex = (int)cmbTrackIndex.SelectedItem
             };
 
             evnt.ActionEndsEventArgs = new SchedulerEventArgs
@@ -380,6 +380,7 @@ namespace Jarloo.Calendar
         {
             Playlist pl = cmbPlaylist.SelectedItem as Playlist;
             if (pl == null) return;
+            if (cmbPlaybackMode.SelectedItem == null) return;
 
             int trackAmount = plc.TrackLists.Find(x => x.GUID == pl.GUID).TrackAmount;
             if (trackAmount == 0)
@@ -388,14 +389,32 @@ namespace Jarloo.Calendar
                 cmbTrackIndex.ItemsSource = null;
                 return;
             }
+            
+            cmbTrackIndex.ItemsSource = GenerateTrackIndicesArray(trackAmount, (PlaybackMode)cmbPlaybackMode.SelectedItem);
+            cmbTrackIndex.SelectedIndex = 0;
+        }
+
+        private int[] GenerateTrackIndicesArray(int trackAmount, PlaybackMode mode)
+        {
+            bool isShuffleMode = mode == PlaybackMode.Shuffle || mode == PlaybackMode.ShuffleOnce;
+            trackAmount = isShuffleMode ? trackAmount + 1 : trackAmount;
 
             int[] trackIndices = new int[trackAmount];
-            for (int i = 0; i < trackAmount; i++)
+            if (isShuffleMode)
             {
-                trackIndices[i] = i;
+                for (int i = 0; i < trackAmount; i++)
+                {
+                    trackIndices[i] = i-1;
+                }
             }
-            cmbTrackIndex.ItemsSource = trackIndices;
-            cmbTrackIndex.SelectedIndex = 0;
+            else
+            {
+                for (int i = 0; i < trackAmount; i++)
+                {
+                    trackIndices[i] = i;
+                }
+            }
+            return trackIndices;
         }
 
         private void btnCloseWindow_Click(object sender, RoutedEventArgs e)
@@ -529,6 +548,16 @@ namespace Jarloo.Calendar
             gdTimePicker.Children.Add(timePicker);
 
             spTimePickerList.Children.Add(gdTimePicker);
+        }
+
+        private void cmbPlaybackMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Playlist pl = cmbPlaylist.SelectedItem as Playlist;
+            if (pl.TrackAmount == 0)
+                return;
+            PlaybackMode mode = (PlaybackMode)cmbPlaybackMode.SelectedItem;
+            cmbTrackIndex.ItemsSource = GenerateTrackIndicesArray(pl.TrackAmount, mode);
+            cmbTrackIndex.SelectedIndex = 0;
         }
     }
 

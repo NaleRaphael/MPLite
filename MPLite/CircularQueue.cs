@@ -176,8 +176,6 @@ namespace MPLite
             this.Clear();
             playedTrackAmount = 0;
 
-            // Reset beginningIdx if no track is selected
-            beginningIdx = (beginningIdx == -1) ? 0 : beginningIdx;
             switch (mode)
             {
                 case PlaybackMode.Default:
@@ -208,12 +206,14 @@ namespace MPLite
 
         private void _SetTrackQueue_Default(int trackAmount, int beginningIdx)
         {
+            beginningIdx = (beginningIdx == -1) ? 0 : beginningIdx;
             for (int i = beginningIdx; i < trackAmount; i++)
                 this.Enqueue(i);
         }
 
         private void _SetTrackQueue_RepeatList(int trackAmount, int beginningIdx)
         {
+            beginningIdx = (beginningIdx == -1) ? 0 : beginningIdx;
             for (int i = beginningIdx; i < trackAmount; i++)
                 this.Enqueue(i);
             for (int i = 0; i < beginningIdx; i++)
@@ -225,6 +225,7 @@ namespace MPLite
             // TODO: improve this
             Random rand = new Random();
             int[] ary = new int[trackAmount - 1];
+            beginningIdx = (beginningIdx == -1) ? rand.Next(0, trackAmount) : beginningIdx;
 
             // Initialize array
             for (int i = 0; i < beginningIdx; i++)
@@ -248,6 +249,7 @@ namespace MPLite
 
         private void _SetTrackQueue_Single(int trackAmount, int beginningIdx)
         {
+            beginningIdx = (beginningIdx == -1) ? 0 : beginningIdx;
             this.Enqueue(beginningIdx);
         }
 
