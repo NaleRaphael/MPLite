@@ -221,9 +221,9 @@ namespace MPLite
         private TrackInfo GetTrack(MusicPlayer player, Guid listGUID,
             int selectedTrackIndex = -1, PlaybackMode mode = PlaybackMode.None, bool selectNext = true)
         {
-            if (lb_PlaylistMenu.Items.Count == 0 || lv_Playlist.Items.Count == 0)
+            if (lb_PlaylistMenu.Items.Count == 0)
             {
-                throw new EmptyPlaylistException("No tracks avalible");
+                throw new EmptyPlaylistException("No tracklist is avalible");
             }
 
             try
