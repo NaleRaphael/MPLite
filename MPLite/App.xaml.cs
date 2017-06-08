@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Diagnostics;
+using System.IO;
 
 namespace MPLite
 {
@@ -10,6 +12,7 @@ namespace MPLite
     {
         public App() : base()
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
         }
 

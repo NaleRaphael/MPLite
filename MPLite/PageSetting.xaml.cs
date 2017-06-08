@@ -162,7 +162,8 @@ namespace MPLite
 
             RegistryKey register = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            string exePath = System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase;
+            string baseDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string exePath = "\"" + Path.Combine(baseDir, "MPLite.exe") + "\"";
 
             if (chkLaunchSetting.IsChecked == true)
                 register.SetValue(appName, exePath);
