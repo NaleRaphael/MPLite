@@ -102,8 +102,9 @@ namespace MPLite.Event
                 return;
             }
 
-            IEvent target = ec.EventList.Find(x => x.GUID == evnt.GUID);
-            target = evnt;
+            int i = ec.EventList.FindIndex(x => x.GUID == evnt.GUID);
+            if (i == -1) return;
+            ec.EventList[i] = evnt;
             this.EventList = ec.EventList;
             DataControl.SaveData<EventCollection>(dbPath, this, true, true);
             ec = null;

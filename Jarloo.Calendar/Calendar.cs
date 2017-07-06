@@ -267,6 +267,9 @@ namespace Jarloo.Calendar
                 case SelectedDayContentActions.DeleteEvent:
                     EventManager.DeleteEvent(evnt.GUID);
                     break;
+                case SelectedDayContentActions.EnableEvent:
+                    EventManager.EnableEvent(evnt.GUID);
+                    break;
                 default:
                     break;
             }

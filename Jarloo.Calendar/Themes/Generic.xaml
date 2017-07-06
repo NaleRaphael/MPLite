@@ -105,6 +105,7 @@
                             <!-- Change Orange or Blue color here -->
                             <Setter TargetName="BackgroundBorder" Property="Background" Value="{StaticResource CheckedOrange}" />
                             <Setter TargetName="BackgroundBorder" Property="BorderBrush" Value="{StaticResource CheckedOrangeBorder}" />
+                            <!--<EventSetter Event="Checked" Handler="OrangeSwitch_Checked"/>-->
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <!-- ToDo: Add Style for Isenabled == False -->
@@ -113,6 +114,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <EventSetter Event="Click" Handler="OrangeSwitch_Click"/>
     </Style>
 
     <Image x:Key="MoveNext" Source="../Images/move_next.png" RenderOptions.BitmapScalingMode="HighQuality"/>

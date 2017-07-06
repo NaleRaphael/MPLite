@@ -114,6 +114,17 @@ namespace Jarloo.Calendar.Themes
             CustomEvent obj = (CustomEvent)lbi.DataContext;
             DayContentSelectionEvent(obj, SelectedDayContentActions.DeleteEvent);
         }
+
+        private void OrangeSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            ContextMenu cm = ((CheckBox)sender).Parent as ContextMenu;
+            ListBoxItem lbi = cm.PlacementTarget as ListBoxItem;
+            if (lbi == null) return;
+
+            CustomEvent obj = (CustomEvent)lbi.DataContext;
+
+            DayContentSelectionEvent(obj, SelectedDayContentActions.EnableEvent);
+        }
     }
 
     public enum SelectedDayContentActions
@@ -121,6 +132,7 @@ namespace Jarloo.Calendar.Themes
         ShowInfo = 1,
         AddEvent = 2,
         EditEvent = 3,
-        DeleteEvent = 4
+        DeleteEvent = 4,
+        EnableEvent = 5
     }
 }

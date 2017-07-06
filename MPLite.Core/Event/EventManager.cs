@@ -110,6 +110,18 @@ namespace MPLite.Event
             RefreshTasks();
         }
 
+        public void EnableEvent(Guid targetGUID)
+        {
+            IEvent target = ecdb.GetEvent(targetGUID);
+            if (target == null) return;
+
+            target.Enabled = !target.Enabled;
+
+            ecdb.UpdateEvent(target);
+            UpdateEventDB();
+            RefreshTasks();
+        }
+
         private bool IsEventInRange(IEvent target)
         {
             if (target.BeginningTime > NextRefreshingTime)
@@ -180,6 +192,9 @@ namespace MPLite.Event
 
         private void SetActivatedTask(IEvent ce)
         {
+            if (!ce.Enabled)
+                return;
+
             // TODO: check that the beginning time of task is updated, otherwise the task won't be triggered
             ce.UpdateBeginningTime();
              
