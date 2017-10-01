@@ -448,6 +448,12 @@ namespace MPLite
 
         public void UpdateQueue(UpdatePlaylistEventArgs e)
         {
+            if (this.PlayerStatus == PlaybackState.Stopped)
+                return;
+            // If given playlist to be updated is not played currently, there is no need to update.
+            if (this.CurrentPlaylistGUID != e.UpdatedPlaylist.GUID)
+                return;
+
             trackQueue = new TrackQueue(e.UpdatedPlaylist, e.IndexOfPlayingTrack, (PlaybackMode)Properties.Settings.Default.TaskPlaybackMode);
 
             if (trackQueue.Count != 0)
