@@ -190,5 +190,17 @@ namespace MPLite.Properties {
                 this["IsLaunchAtStartup"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool MinimizeWhenExiting {
+            get {
+                return ((bool)(this["MinimizeWhenExiting"]));
+            }
+            set {
+                this["MinimizeWhenExiting"] = value;
+            }
+        }
     }
 }

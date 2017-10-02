@@ -45,6 +45,9 @@ namespace MPLite
 
             // chkLaunchSetting
             chkLaunchSetting.IsChecked = MPLiteSetting.IsLaunchAtStartup;
+
+            // chkMinimizeWhenExiting
+            chkMinimizeWhenExiting.IsChecked = MPLiteSetting.MinimizeWhenExiting;
         }
 
         private void cmbPlaybackMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -169,6 +172,13 @@ namespace MPLite
                 register.SetValue(appName, exePath);
             else
                 register.DeleteValue(appName, false);
+        }
+
+        private void chkMinimizeWhenExiting_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkMinimizeWhenExiting.IsChecked.Value == MPLiteSetting.MinimizeWhenExiting) return;
+
+            MPLiteSetting.MinimizeWhenExiting = (chkMinimizeWhenExiting.IsChecked == true);
         }
     }
 }

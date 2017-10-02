@@ -84,6 +84,16 @@ namespace MPLite
                 Properties.Settings.Default.Save();
             }
         }
+
+        public static bool MinimizeWhenExiting
+        {
+            get { return Properties.Settings.Default.MinimizeWhenExiting; }
+            set
+            {
+                Properties.Settings.Default.MinimizeWhenExiting = value;
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 
     public static class MPLiteExtension

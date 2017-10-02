@@ -135,6 +135,8 @@ namespace MPLite
 
             PagePlaylist.ListContentIsRefreshedEvent += this.GetPlayingTrackStatus;
 
+            ChangeSystemTrayButtonState();
+
             UpdateLayout();
 
 #if DEBUG
@@ -279,7 +281,14 @@ namespace MPLite
 
         private void Btn_ExitProgram_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            if (Properties.Settings.Default.MinimizeWhenExiting)
+            {
+                ChangeWindowState(WindowState.Minimized);
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
         }
 
         private void winMain_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -681,12 +690,35 @@ namespace MPLite
 
         private void miShowWindow_Click(object sender, RoutedEventArgs e)
         {
-            this.Show();
+            ChangeWindowState(WindowState.Normal);
         }
 
         private void miHideWindow_Click(object sender, RoutedEventArgs e)
         {
-            this.Hide();
+            ChangeWindowState(WindowState.Minimized);
+        }
+
+        private void ChangeWindowState(WindowState ws)
+        {
+            if (ws == WindowState.Minimized)
+            {
+                this.Hide();
+                this.WindowState = WindowState.Minimized;
+                ChangeSystemTrayButtonState();
+            }
+            else
+            {
+                this.Show();
+                this.WindowState = WindowState.Normal;
+                ChangeSystemTrayButtonState();
+            }
+        }
+
+        private void ChangeSystemTrayButtonState()
+        {
+            bool isWindowMinimized = (this.WindowState == WindowState.Minimized);
+            miHideWindow.Visibility = isWindowMinimized ? Visibility.Collapsed : Visibility.Visible;
+            miShowWindow.Visibility = isWindowMinimized ? Visibility.Visible : Visibility.Collapsed;
         }
         #endregion
     }
