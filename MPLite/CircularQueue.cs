@@ -199,6 +199,10 @@ namespace MPLite
                     _SetTrackQueue_Single(trackAmount, beginningIdx);
                     playedTrackAmountLimit = 1;
                     break;
+                case PlaybackMode.RandomSingle:
+                    _SetTrackQueue_RandomSingle(trackAmount, beginningIdx);
+                    playedTrackAmountLimit = 1;
+                    break;
                 default:
                     break;
             }
@@ -253,6 +257,13 @@ namespace MPLite
             this.Enqueue(beginningIdx);
         }
 
+        private void _SetTrackQueue_RandomSingle(int trackAmount, int beginningIdx)
+        {
+            Random rand = new Random();
+            beginningIdx = rand.Next(0, trackAmount);
+            this.Enqueue(rand.Next(0, trackAmount));
+        }
+
         private TrackInfo GetNextTrackAccordingMode(int trackIdx)
         {
             TrackInfo track = null;
@@ -262,6 +273,7 @@ namespace MPLite
                 case PlaybackMode.Default:
                 case PlaybackMode.ShuffleOnce:
                 case PlaybackMode.PlaySingle:
+                case PlaybackMode.RandomSingle:
                     track = (playedTrackAmount++ >= playedTrackAmountLimit) ? null : this.Soundtracks[trackIdx];
                     break;
                 case PlaybackMode.RepeatTrack:

@@ -396,6 +396,9 @@ namespace Jarloo.Calendar
 
         private int[] GenerateTrackIndicesArray(int trackAmount, PlaybackMode mode)
         {
+            if (mode == PlaybackMode.RandomSingle)
+                return new int[] { -1 };
+
             bool isShuffleMode = mode == PlaybackMode.Shuffle || mode == PlaybackMode.ShuffleOnce;
             trackAmount = isShuffleMode ? trackAmount + 1 : trackAmount;
 

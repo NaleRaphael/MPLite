@@ -35,7 +35,11 @@
         /// <summary>
         /// Once a track ends, player stops.
         /// </summary>
-        PlaySingle
+        PlaySingle,
+        /// <summary>
+        /// Randomly play single track.
+        /// </summary>
+        RandomSingle
     }
 
     public enum TrackStatus
