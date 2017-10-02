@@ -160,7 +160,7 @@ namespace Jarloo.Calendar
                 ConvertRecurringFreqToBlocks(evnt.RecurringFrequency);
             }
 
-            gridRecurringDate.IsEnabled = false;
+            gridRecurringDate.IsEnabled = IsReadOnly ? false : true;
             chkAutoDelete.IsChecked = evnt.AutoDelete;
             chkThisDayForwardOnly.IsChecked = evnt.ThisDayForwardOnly;
 
