@@ -167,8 +167,9 @@ namespace Jarloo.Calendar
             // Settings of playback
             SchedulerEventArgs actionArgs = evnt.ActionStartsEventArgs as SchedulerEventArgs;
             cmbPlaylist.SelectedItem = cmbPlaylist.Items.OfType<Playlist>().ToList().Find(x => x.GUID == actionArgs.PlaylistGUID);
-            cmbTrackIndex.SelectedIndex = actionArgs.TrackIndex;
+            // NOTICE: mode should be set first, because it affects the item source of `cmbTrackIndex`
             cmbPlaybackMode.SelectedItem = actionArgs.Mode;
+            cmbTrackIndex.SelectedItem = actionArgs.TrackIndex;
 
             if (IsReadOnly)
             {
