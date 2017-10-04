@@ -135,17 +135,24 @@ namespace MPLite
 
         private void btnSaveHotkey_Click(object sender, RoutedEventArgs e)
         {
-            txtHotkey.IsReadOnly = true;
             if (txtHotkey.Text == "") return;
 
-            Hotkey hotkey = cmbHotkey.SelectedItem as Hotkey;
-            if (hotkey == null) return;
+            Hotkey target = cmbHotkey.SelectedItem as Hotkey;
+            if (target == null) return;
 
-            if (hotkey.TrySet(txtHotkey.Text, '+'))
+            Hotkey candidate = new Hotkey { Name = target.Name };
+            candidate.TrySet(txtHotkey.Text, '+');
+            
+            if (MPLiteHotKeys.CheckKeyConfilct(candidate))
             {
-                MessageBox.Show("Sucess");
+                MessageBox.Show("You've set a same key combination already.");
+                return;
             }
-
+            else
+            {
+                target = candidate;
+            }
+            
             MPLiteHotKeys.Save();
         }
 

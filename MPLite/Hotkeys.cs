@@ -41,7 +41,7 @@ namespace MPLite
             }
         }
 
-        public bool CheckNameConfilct(Hotkey target)
+        public bool CheckKeyConfilct(Hotkey target)
         {
             bool result = false;
 
@@ -115,10 +115,10 @@ namespace MPLite
 
         public string Name { get; set; }
 
-        public Hotkey()
+        public Hotkey(ModifierKeys mkey = ModifierKeys.None, Key key = Key.None)
         {
-            SystemKey = ModifierKeys.None;
-            NormalKey = Key.None;
+            SystemKey = mkey;
+            NormalKey = key;
         }
 
         public void Set(KeyEventArgs e, ModifierKeys currentModifier)

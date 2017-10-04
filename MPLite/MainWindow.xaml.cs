@@ -349,6 +349,7 @@ namespace MPLite
 
         private void winMain_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            notifyIcon.Visibility = Visibility.Hidden;
             notifyIcon.Dispose();
             Properties.Settings.Default.WindowHeight = this.ActualHeight;
             Properties.Settings.Default.WindowWidth = this.ActualWidth;
@@ -682,7 +683,7 @@ namespace MPLite
         }
         #endregion
 
-        #region System tray control
+        #region System tray (notifyIcon) control
         private void miClose_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
