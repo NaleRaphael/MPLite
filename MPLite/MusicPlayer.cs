@@ -154,6 +154,10 @@ namespace MPLite
                     prevTrack.TrackStatus = TrackStatus.IncorrectPath;
                     PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylistGUID, prevTrackIdx));
                 }
+
+                if (MPLiteSetting.KeepPlayingAfterCatchingError)
+                    TrackEndsEvent();
+
                 throw ex_FailedToOpen;
             }
             catch (InvalidFilePathException ex_InvaildPath)
@@ -172,6 +176,9 @@ namespace MPLite
                     prevTrack.TrackStatus = TrackStatus.IncorrectPath;
                     PlayerStoppedEvent(new TrackStatusEventArgs(prevTrack, Properties.Settings.Default.TaskPlaylistGUID, prevTrackIdx));
                 }
+
+                if (MPLiteSetting.KeepPlayingAfterCatchingError)
+                    TrackEndsEvent();
 
                 throw ex_InvaildPath;
             }

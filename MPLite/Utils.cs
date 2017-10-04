@@ -94,6 +94,16 @@ namespace MPLite
                 Properties.Settings.Default.Save();
             }
         }
+
+        public static bool KeepPlayingAfterCatchingError
+        {
+            get { return Properties.Settings.Default.KeepPlayingAfterCatchingError; }
+            set
+            {
+                Properties.Settings.Default.KeepPlayingAfterCatchingError = value;
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 
     public static class MPLiteExtension

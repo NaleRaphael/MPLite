@@ -202,5 +202,17 @@ namespace MPLite.Properties {
                 this["MinimizeWhenExiting"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool KeepPlayingAfterCatchingError {
+            get {
+                return ((bool)(this["KeepPlayingAfterCatchingError"]));
+            }
+            set {
+                this["KeepPlayingAfterCatchingError"] = value;
+            }
+        }
     }
 }

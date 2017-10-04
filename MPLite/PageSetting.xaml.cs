@@ -48,6 +48,9 @@ namespace MPLite
 
             // chkMinimizeWhenExiting
             chkMinimizeWhenExiting.IsChecked = MPLiteSetting.MinimizeWhenExiting;
+
+            // chkKeepPlaying
+            chkKeepPlaying.IsChecked = MPLiteSetting.KeepPlayingAfterCatchingError;
         }
 
         private void cmbPlaybackMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -177,8 +180,13 @@ namespace MPLite
         private void chkMinimizeWhenExiting_Click(object sender, RoutedEventArgs e)
         {
             if (chkMinimizeWhenExiting.IsChecked.Value == MPLiteSetting.MinimizeWhenExiting) return;
-
             MPLiteSetting.MinimizeWhenExiting = (chkMinimizeWhenExiting.IsChecked == true);
+        }
+
+        private void chkKeepPlaying_Click(object sender, RoutedEventArgs e)
+        {
+            if (chkKeepPlaying.IsChecked.Value == MPLiteSetting.KeepPlayingAfterCatchingError) return;
+            MPLiteSetting.KeepPlayingAfterCatchingError = (chkKeepPlaying.IsChecked == true);
         }
     }
 }
