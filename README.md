@@ -18,7 +18,7 @@ You can set multiple triggering time to a single event, and it also can be set a
     ![](screenshots/ss_EventSetting_01.png)  ![](screenshots/ss_EventSetting_02.png)
 
 ## Download
-[MPLite v1.1.1](https://github.com/NaleRaphael/MPLite/releases/download/v1.1.0/MPLite-1.1.0.rar)
+[Please see the `Release` page](https://github.com/NaleRaphael/MPLite/releases)
 
 ## TODO
 - [x] Rearrange tracks by dragging
