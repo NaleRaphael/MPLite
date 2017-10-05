@@ -150,7 +150,7 @@ namespace MPLite
             }
             else
             {
-                target = candidate;
+                candidate.CloneTo(target);
             }
             
             MPLiteHotKeys.Save();

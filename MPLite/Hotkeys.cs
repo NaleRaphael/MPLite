@@ -121,6 +121,13 @@ namespace MPLite
             NormalKey = key;
         }
 
+        public void CloneTo(Hotkey target)
+        {
+            target.Name = this.Name;
+            target.NormalKey = this.NormalKey;
+            target.SystemKey = this.SystemKey;
+        }
+
         public void Set(KeyEventArgs e, ModifierKeys currentModifier)
         {
             GetSystemKeyAndNormalKey(e, currentModifier, out _systemKey, out _normalKey, _systemKey, _normalKey);
