@@ -39,7 +39,11 @@
         /// <summary>
         /// Randomly play single track.
         /// </summary>
-        RandomSingle
+        RandomSingle,
+        /// <summary>
+        /// Randomly play remaining tracks after the first `n-1` tracks is played in order.
+        /// </summary>
+        SuffleFromNthTrack
     }
 
     public enum TrackStatus

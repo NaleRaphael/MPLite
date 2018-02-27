@@ -203,6 +203,19 @@ namespace MPLite
                     _SetTrackQueue_RandomSingle(trackAmount, beginningIdx);
                     playedTrackAmountLimit = 1;
                     break;
+                case PlaybackMode.SuffleFromNthTrack:
+                    if (beginningIdx > 0)
+                    {
+                        _SetTrackQueue_Default(beginningIdx, 0);
+                        playedTrackAmountLimit = beginningIdx;
+                    }
+                    else
+                    {
+                        // Specified track is the first track -> no song have to be played in order
+                        _SetTrackQueue_Shuffle(trackAmount, 0);
+                        playedTrackAmountLimit = -1;
+                    }
+                    break;
                 default:
                     break;
             }
@@ -264,6 +277,29 @@ namespace MPLite
             this.Enqueue(rand.Next(0, trackAmount));
         }
 
+        private void _SetTrackQueue_ShuffleFromNthTrack(int trackAmount, int n)
+        {
+            Random rand = new Random();
+            int arySize = trackAmount - n;
+            int[] ary = new int[arySize];
+
+            // Initialize array
+            for (int i = 0; i < arySize; i++)
+                ary[i] = n + i;
+
+            // Swap randomly
+            for (int i = 0; i < arySize - 1; i++)
+            {
+                int tempIdx = rand.Next(arySize);
+                int temp = ary[tempIdx];
+                ary[tempIdx] = ary[i];
+                ary[i] = temp;
+            }
+
+            for (int i = 0; i < arySize; i++)
+                this.Enqueue(ary[i]);
+        }
+
         private TrackInfo GetNextTrackAccordingMode(int trackIdx)
         {
             TrackInfo track = null;
@@ -281,6 +317,42 @@ namespace MPLite
                 case PlaybackMode.Shuffle:
                     track = this.Soundtracks[trackIdx];
                     playedTrackAmount++;
+                    break;
+                case PlaybackMode.SuffleFromNthTrack:
+                    if (playedTrackAmount++ >= playedTrackAmountLimit)
+                    {
+                        if (playedTrackAmountLimit != -1)
+                        {
+                            int nthTrack = playedTrackAmount - 1;
+                            // Reset track queue to shuffle mode
+                            this.Clear();
+                            _SetTrackQueue_ShuffleFromNthTrack(Soundtracks.Count, nthTrack);
+                            playedTrackAmountLimit = -1;
+                            playedTrackAmount = 0;
+                            track = GetNextTrackAccordingMode(base.Next());
+                        }
+                        else
+                        {
+                            // Already in shuffle mode
+                            track = this.Soundtracks[trackIdx];
+                            playedTrackAmount++;
+                        }
+                    }
+                    else
+                    {
+                        if (playedTrackAmountLimit == -1)
+                        {
+                            // shuffle mode
+                            track = this.Soundtracks[trackIdx];
+                            playedTrackAmount++;
+                        }
+                        else
+                        {
+                            // default mode
+                            track = this.Soundtracks[trackIdx];
+                        }
+                        
+                    }
                     break;
                 default:
                     // Throw exception?!

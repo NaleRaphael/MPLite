@@ -28,7 +28,7 @@ namespace MPLite
             // cmb_PlaybackSetting
             foreach (string mode in Enum.GetNames(typeof(PlaybackMode)))
             {
-                if (mode == "None")
+                if (mode == "None" || mode == "SuffleFromNthTrack")
                     continue;
                 cmbPlaybackMode.Items.Add(mode);
             }
