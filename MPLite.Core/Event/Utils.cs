@@ -75,18 +75,17 @@ namespace MPLite.Event
             byte nextRecurringWeekday = (byte)targetWeekday.ToCustomWeekday();
             byte targetRF = (byte)rf;
 
-            while (nextRecurringWeekday < 0xF0)    // 0x80: Weekday.Unknown (exceeds the range of weekdays)
+            while (nextRecurringWeekday <= 0x80)   // 0x80: Weekday.Unknown (exceeds the range of weekdays)
             {
-                //nextRecurringWeekday <<= 1;
-                if (nextRecurringWeekday == 0x00)   // Restart from Sunday (first day of the week)
-                    nextRecurringWeekday = 0x01;
-                if ((nextRecurringWeekday & targetRF) == 0)
+                if ((nextRecurringWeekday & targetRF) == 0x00)
                 {
-                    nextRecurringWeekday <<= 1;
+                    // Rotate left shift (size: 7-bit)
+                    nextRecurringWeekday = (byte)((nextRecurringWeekday << 1) | (nextRecurringWeekday >> 6));
                     continue;
                 }
                 else break;
             }
+
             return (Weekday)nextRecurringWeekday;
         }
 
